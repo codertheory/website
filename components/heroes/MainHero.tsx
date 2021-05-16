@@ -28,7 +28,7 @@ const MainHero = () => {
                             <br />
                             into a{' '}
                             <Typography
-                                color={'primary'}
+                                color={'secondary'}
                                 component={'span'}
                                 variant={'inherit'}
                             >
@@ -42,9 +42,9 @@ const MainHero = () => {
                     </Box>
                     <Box marginBottom={3}>
                         <Typography
+                            color='textPrimary'
                             variant="h6"
                             component="p"
-                            color="textSecondary"
                             sx={{ fontWeight: 400 }}
                         >
                             Webbee will make your product look modern and professional while
