@@ -2,7 +2,7 @@ import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import Link from '@material-ui/core/Link'
 import Typography from '@material-ui/core/Typography'
-import {Logo} from "@codertheory/components";
+import {CoderTheoryLogo as Logo} from '../../../../../svg/logos/logo'
 
 const Footer = () => (
     <Grid container spacing={2}>

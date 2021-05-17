@@ -1,19 +1,9 @@
-import Box from "@material-ui/core/Box";
-import {MainHero} from "../components/heroes";
-import {Container, Main, WithLayout} from "@codertheory/components";
+import {AppProps} from "next/app"
+import 'react-lazy-load-image-component/src/effects/blur.css';
+import 'aos/dist/aos.css';
 import Head from "next/head";
 
-const HomeComponent = () => {
-    return (
-        <Box>
-            <Container>
-                <MainHero/>
-            </Container>
-        </Box>
-    )
-}
-
-const HomeView = () => {
+function MyApp({Component, pageProps}: AppProps) {
     return (
         <>
             <Head>
@@ -27,9 +17,9 @@ const HomeView = () => {
                 <meta property="og:image:width" content="400"/>
                 <meta property="og:image:height" content="300"/>
             </Head>
-            <WithLayout Component={HomeComponent} Layout={Main}/>
+            <Component {...pageProps} />
         </>
     )
 }
 
-export default HomeView
+export default MyApp

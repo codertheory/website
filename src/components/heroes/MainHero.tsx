@@ -3,7 +3,7 @@ import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import {Rocket as RocketIllustration} from '@codertheory/components'
+import {Rocket as RocketIllustration} from '../../svg/illustrations/Rocket'
 import Typed from 'react-typed'
 
 const MainHero = () => {
@@ -28,7 +28,7 @@ const MainHero = () => {
                             <br />
                             into a{' '}
                             <Typography
-                                color={'secondary'}
+                                color={'primary'}
                                 component={'span'}
                                 variant={'inherit'}
                             >
@@ -42,9 +42,9 @@ const MainHero = () => {
                     </Box>
                     <Box marginBottom={3}>
                         <Typography
-                            color='textPrimary'
                             variant="h6"
                             component="p"
+                            color="textSecondary"
                             sx={{ fontWeight: 400 }}
                         >
                             Webbee will make your product look modern and professional while
@@ -67,7 +67,7 @@ const MainHero = () => {
                 </Box>
             </Grid>
         </Grid>
-    );
+    )
 };
 
 export default MainHero
