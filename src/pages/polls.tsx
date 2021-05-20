@@ -1,8 +1,8 @@
 import dynamic from "next/dynamic";
 
 
-const HomeView = dynamic(
-    () => import("../views/home"),
+const PollsView = dynamic(
+    () => import("../views/polls"),
     {
         ssr: false
     }
@@ -10,5 +10,5 @@ const HomeView = dynamic(
 
 
 export default function Home() {
-    return <HomeView/>
+    return <PollsView/>
 }
