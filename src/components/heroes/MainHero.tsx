@@ -33,7 +33,7 @@ const MainHero = () => {
                                 variant={'inherit'}
                             >
                                 <Typed
-                                    strings={['startup.', 'future.', 'success.']}
+                                    strings={['application.', 'learning experience.', 'success.']}
                                     typeSpeed={80}
                                     loop={true}
                                 />
@@ -47,8 +47,7 @@ const MainHero = () => {
                             color="textSecondary"
                             sx={{ fontWeight: 400 }}
                         >
-                            Webbee will make your product look modern and professional while
-                            saving you precious time.
+                            Codertheory. Learning the Theory and mindsets behind programming. Educating and helping everyone learn programming.
                         </Typography>
                     </Box>
                 </Box>
