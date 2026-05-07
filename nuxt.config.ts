@@ -59,15 +59,12 @@ export default defineNuxtConfig({
             }
         },
         cloudflare: {
+            // Cloudflare-specific config (name, KV bindings, cron triggers) lives in
+            // the root `wrangler.jsonc` so Cloudflare's git integration can read it.
+            // Nitro reads that file at build time and merges it into the generated
+            // `.output/server/wrangler.json`.
             deployConfig: true,
-            nodeCompat: true,
-            wrangler: {
-                kv_namespaces: [
-                    // Replace `id` with the namespace ID from `wrangler kv namespace create STATS`.
-                    // `preview_id` is for `wrangler dev`; safe to reuse the same id while iterating.
-                    { binding: 'STATS', id: 'REPLACE_WITH_KV_ID', preview_id: 'REPLACE_WITH_KV_ID' }
-                ]
-            }
+            nodeCompat: true
         }
     },
 

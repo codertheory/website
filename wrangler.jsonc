@@ -1,0 +1,18 @@
+// Cloudflare Workers config — read by Nitro at build time and merged into
+// the generated .output/server/wrangler.json. Keep Cloudflare-specific
+// settings here (name, KV bindings, cron triggers); Nitro handles `main`,
+// `assets`, `compatibility_date`, and Node-compat flags automatically.
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "codertheory-website",
+    "kv_namespaces": [
+        {
+            "binding": "STATS",
+            "id": "1355d160d62847f88e282fb9ad319238",
+            "preview_id": "1355d160d62847f88e282fb9ad319238"
+        }
+    ],
+    "triggers": {
+        "crons": ["0 */6 * * *"]
+    }
+}
