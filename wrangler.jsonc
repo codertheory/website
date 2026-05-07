@@ -3,16 +3,26 @@
 // settings here (name, KV bindings, cron triggers); Nitro handles `main`,
 // `assets`, `compatibility_date`, and Node-compat flags automatically.
 {
-    "$schema": "node_modules/wrangler/config-schema.json",
-    "name": "codertheory-website",
-    "kv_namespaces": [
-        {
-            "binding": "STATS",
-            "id": "1355d160d62847f88e282fb9ad319238",
-            "preview_id": "1355d160d62847f88e282fb9ad319238"
-        }
-    ],
-    "triggers": {
-        "crons": ["0 */6 * * *"]
-    }
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "codertheory-website",
+	"kv_namespaces": [
+		{
+			"binding": "STATS",
+			"id": "1355d160d62847f88e282fb9ad319238",
+			"preview_id": "1355d160d62847f88e282fb9ad319238"
+		}
+	],
+	"triggers": {
+		"crons": [
+			"0 */6 * * *"
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "codertheory-content",
+			"database_id": "9cba5c33-bc70-4c05-957a-5d4659ac69f7",
+			"remote": true
+		}
+	]
 }
