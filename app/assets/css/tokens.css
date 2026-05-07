@@ -1,0 +1,54 @@
+/* ============================================================
+   Codertheory — design tokens
+   ============================================================ */
+:root {
+  /* Brand */
+  --bulb: #F4C669;            /* the warm logo yellow */
+  --bulb-deep: #E8A93D;
+  --bulb-soft: #FBE7B7;
+  --bulb-glow: rgba(244, 198, 105, 0.32);
+
+  /* Light theme (default) */
+  --bg:        #FBF7EE;       /* warm paper */
+  --bg-elev:   #FFFCF4;
+  --bg-sunk:   #F2EBD9;
+  --ink:       #1F1B16;       /* warm black */
+  --ink-soft:  #4A4338;
+  --ink-mute:  #8A7F6E;
+  --rule:      #E8DEC5;
+  --rule-soft: #EFE7D2;
+  --accent:    var(--bulb-deep);
+  --accent-on: #1F1B16;
+  --code-bg:   #F4ECD7;
+  --highlight: #FFE9A8;
+
+  /* Type */
+  --f-display: "Fraunces", "Iowan Old Style", "Times New Roman", serif;
+  --f-sans:    "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --f-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --f-hand:    "Caveat", "Marker Felt", cursive;
+
+  /* Shape */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-theme="dark"] {
+  --bg:        #14110C;       /* warm coal */
+  --bg-elev:   #1B1812;
+  --bg-sunk:   #0D0B08;
+  --ink:       #F4ECD7;
+  --ink-soft:  #C7BCA1;
+  --ink-mute:  #807762;
+  --rule:      #2A241A;
+  --rule-soft: #1F1A12;
+  --accent:    var(--bulb);
+  --accent-on: #14110C;
+  --code-bg:   #1F1A12;
+  --highlight: #3A2E14;
+}

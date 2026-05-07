@@ -1,0 +1,29 @@
+{
+  "name": "codertheory",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "fetch:github": "node scripts/fetch-github-stats.mjs",
+    "diag:github": "node scripts/diag-github-stats.mjs",
+    "prebuild": "npm run fetch:github",
+    "pregenerate": "npm run fetch:github"
+  },
+  "dependencies": {
+    "@nuxt/content": "^3.13.0",
+    "@nuxt/eslint": "^1.15.2",
+    "@nuxt/fonts": "^0.14.0",
+    "@nuxt/hints": "^1.1.1",
+    "@nuxt/icon": "^2.2.2",
+    "@nuxt/image": "^2.0.0",
+    "better-sqlite3": "^12.9.0",
+    "eslint": "^10.3.0",
+    "nuxt": "^4.4.4",
+    "vue": "^3.5.33",
+    "vue-router": "^5.0.6"
+  }
+}
