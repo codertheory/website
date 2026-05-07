@@ -26,7 +26,14 @@
         </span>
       </div>
 
-      <div>
+      <EmptyDirectory v-if="(projects || []).length === 0" kind="projects" />
+      <EmptyFilter
+        v-else-if="filteredProjects.length === 0"
+        v-model:filter="filter"
+        :filters="FILTERS"
+        kind="projects"
+      />
+      <div v-else>
         <NuxtLink
           v-for="p in filteredProjects"
           :key="p.path"

@@ -8,9 +8,31 @@
     </section>
 
     <section class="wrap section">
-      <div class="blog-grid">
+      <div v-if="(posts || []).length > 0" class="proj-filters">
+        <button
+          v-for="f in categories"
+          :key="f"
+          :class="['proj-filter', { 'is-active': filter === f }]"
+          @click="filter = f"
+        >
+          {{ f }}
+        </button>
+        <span class="proj-filter-spacer" />
+        <span class="proj-filter-count">
+          {{ filteredPosts.length }} {{ filteredPosts.length === 1 ? 'post' : 'posts' }}
+        </span>
+      </div>
+
+      <EmptyDirectory v-if="(posts || []).length === 0" kind="blog" />
+      <EmptyFilter
+        v-else-if="filteredPosts.length === 0"
+        v-model:filter="filter"
+        :filters="categories"
+        kind="blog"
+      />
+      <div v-else class="blog-grid">
         <NuxtLink
-          v-for="post in (posts || [])"
+          v-for="post in filteredPosts"
           :key="post.path"
           :to="`/blog/${slugFromPath(post.path)}`"
           :class="['card', 'post-card', 'fade-up', { typographic: !post.image }]"
@@ -58,6 +80,20 @@
         queryCollection('news').order('date', 'DESC').all()
     )
 
+    const categories = computed<string[]>(() => {
+        const set = new Set<string>(['All'])
+        for (const p of posts.value || []) set.add(p.cat)
+        return Array.from(set)
+    })
+
+    const filter = ref<string>('All')
+
+    const filteredPosts = computed(() => {
+        const items = posts.value || []
+        if (filter.value === 'All') return items
+        return items.filter(p => p.cat === filter.value)
+    })
+
     const quoteSegments = (quote: string | undefined) => {
         if (!quote) return []
         return quote.split('*').map((text, i) => ({ text, em: i % 2 === 1 }))
@@ -65,5 +101,5 @@
 
     const firstWord = (title: string) => title.split(' ')[0] || ''
 
-    useScrollReveal()
+    useScrollReveal(filter)
 </script>

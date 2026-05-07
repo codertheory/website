@@ -85,7 +85,8 @@
         </NuxtLink>
       </div>
 
-      <div class="feed">
+      <HomeFeedEmpty v-if="feedItems.length === 0" />
+      <div v-else class="feed">
         <NuxtLink
           v-for="item in feedItems"
           :key="item.href"
@@ -146,7 +147,17 @@
 </template>
 
 <script setup lang="ts">
-    import githubStats from '~/data/github.json'
+    import githubFixture from '~/data/github.json'
+
+    type HeatmapCell = { date: string | null, count: number, level: number }
+    type GithubStats = {
+        contributions?: number
+        commits: number
+        pullRequests: number
+        reposTouched: number
+        heatmap: Array<HeatmapCell | number>
+    }
+    type StatsEnvelope<T> = { key: string, generatedAt: string, data: T, stale?: boolean }
 
     type FeedItem = {
         kind: 'project' | 'post'
@@ -210,14 +221,22 @@
             .slice(0, 6)
     })
 
-    const stats = githubStats as typeof githubStats & { contributions?: number }
-    const contributions = stats.contributions ?? stats.commits
-    const { pullRequests, reposTouched, heatmap } = stats
+    const fixture = githubFixture as unknown as GithubStats
+    const { data: github } = await useFetch<StatsEnvelope<GithubStats>>('/api/stats/github', {
+        key: 'stats-github',
+        default: () => ({ key: 'github', generatedAt: new Date(0).toISOString(), data: fixture })
+    })
 
-    type HeatmapCell = { date: string | null, count: number, level: number }
+    const stats = computed<GithubStats>(() => github.value?.data ?? fixture)
+    const contributions = computed(() => stats.value.contributions ?? stats.value.commits)
+    const pullRequests = computed(() => stats.value.pullRequests)
+    const reposTouched = computed(() => stats.value.reposTouched)
+
     const tipDate = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
-    const heatmapCells: HeatmapCell[] = (heatmap as Array<number | HeatmapCell>).map(c =>
-        typeof c === 'number' ? { date: null, count: 0, level: c } : c
+    const heatmapCells = computed<HeatmapCell[]>(() =>
+        (stats.value.heatmap as Array<number | HeatmapCell>).map(c =>
+            typeof c === 'number' ? { date: null, count: 0, level: c } : c
+        )
     )
     const tipFor = (c: HeatmapCell) => {
         if (!c.date) return null

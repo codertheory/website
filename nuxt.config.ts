@@ -28,6 +28,49 @@ export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
     devtools: {enabled: true},
 
+    runtimeConfig: {
+        githubToken: '', // NUXT_GITHUB_TOKEN
+        public: {
+            githubLogin: 'LucasCoderT' // NUXT_PUBLIC_GITHUB_LOGIN
+        }
+    },
+
+    nitro: {
+        experimental: {
+            tasks: true
+        },
+        scheduledTasks: {
+            // Refresh every stat source every 6 hours.
+            // Cloudflare Workers maps this onto the `scheduled()` handler automatically.
+            '0 */6 * * *': ['stats:refresh']
+        },
+        storage: {
+            // Production: Cloudflare KV binding named STATS (configured below).
+            stats: {
+                driver: 'cloudflareKVBinding',
+                binding: 'STATS'
+            }
+        },
+        devStorage: {
+            // Local dev: keep stat records on disk so we can iterate without KV.
+            stats: {
+                driver: 'fs',
+                base: './.data/stats'
+            }
+        },
+        cloudflare: {
+            deployConfig: true,
+            nodeCompat: true,
+            wrangler: {
+                kv_namespaces: [
+                    // Replace `id` with the namespace ID from `wrangler kv namespace create STATS`.
+                    // `preview_id` is for `wrangler dev`; safe to reuse the same id while iterating.
+                    { binding: 'STATS', id: 'REPLACE_WITH_KV_ID', preview_id: 'REPLACE_WITH_KV_ID' }
+                ]
+            }
+        }
+    },
+
     modules: [
         '@nuxt/content',
         '@nuxt/eslint',
@@ -56,7 +99,8 @@ export default defineNuxtConfig({
         '~/assets/css/home.css',
         '~/assets/css/projects.css',
         '~/assets/css/blog.css',
-        '~/assets/css/pages.css'
+        '~/assets/css/pages.css',
+        '~/assets/css/empty-states.css'
     ],
 
     fonts: {

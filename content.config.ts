@@ -50,6 +50,16 @@ export default defineContentConfig({
         href: z.string().optional(),
         updatedAt: z.string()
       })
+    }),
+    legal: defineCollection({
+      type: 'page',
+      source: 'legal/*.md',
+      schema: z.object({
+        title: z.string(),
+        eyebrow: z.string().default('Legal'),
+        updatedAt: z.string(),
+        lede: z.string()
+      })
     })
   }
 })
