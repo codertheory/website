@@ -10,8 +10,8 @@
       <div class="term-body">
         <div><span class="pmpt">$</span> ls -la <span class="arg">{{ copy.arg }}</span></div>
         <div class="dim" style="margin-top:6px;">total 0</div>
-        <div class="dim">drwxr-xr-x   2 jordan  staff   64 May  7  2026 .</div>
-        <div class="dim">drwxr-xr-x  14 jordan  staff  448 May  7  2026 ..</div>
+        <div class="dim">drwxr-xr-x   2 lucas  staff   64 May  7  2026 .</div>
+        <div class="dim">drwxr-xr-x  14 lucas  staff  448 May  7  2026 ..</div>
         <div style="margin-top:10px;"><span class="cmt">{{ copy.comment }}</span></div>
         <div style="margin-top:6px;"><span class="pmpt">$</span> <span class="blink" /></div>
       </div>
