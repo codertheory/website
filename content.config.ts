@@ -26,7 +26,11 @@ export default defineContentConfig({
           t: z.string(),
           d: z.string()
         })).optional(),
-        why: z.string().optional()
+        why: z.string().optional(),
+        screenshots: z.array(z.object({
+          src: z.string(),
+          alt: z.string().optional()
+        })).optional()
       })
     }),
     news: defineCollection({

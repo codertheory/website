@@ -78,15 +78,14 @@
       </div>
     </section>
 
-    <section class="wrap" style="padding-bottom: 80px;">
+    <section v-if="project.screenshots?.length" class="wrap" style="padding-bottom: 80px;">
       <h3 style="font-family: var(--f-display); font-size: 30px; font-weight: 600; letter-spacing: -0.015em; margin: 0;">
         Screenshots
       </h3>
-      <p style="color: var(--ink-soft); margin: 6px 0 0;">A few favourite views — drop in real shots when ready.</p>
+      <p style="color: var(--ink-soft); margin: 6px 0 0;">A few favourite views.</p>
       <div class="shots-strip">
-        <div v-for="n in 3" :key="n" class="shot fade-up">
-          <div class="stripe" />
-          <span class="label">screenshot_0{{ n }}.png</span>
+        <div v-for="(shot, i) in project.screenshots" :key="i" class="shot fade-up">
+          <NuxtImg :src="shot.src" :alt="shot.alt || `${project.title} screenshot ${i + 1}`" />
         </div>
       </div>
     </section>
