@@ -101,5 +101,10 @@
 
     const firstWord = (title: string) => title.split(' ')[0] || ''
 
+    useSiteSeo({
+        title: 'Blog',
+        description: 'Notes from the workbench — on teaching, shipping, and the why behind the keystrokes.'
+    })
+
     useScrollReveal(filter)
 </script>

@@ -87,5 +87,10 @@
         )
     })
 
+    useSiteSeo({
+        title: 'Projects',
+        description: "Things Lucas has shipped — apps, scripts, bots, and tools. Some alive and growing, some sleeping peacefully."
+    })
+
     useScrollReveal(filter)
 </script>

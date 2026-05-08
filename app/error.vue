@@ -17,7 +17,13 @@
 <script setup lang="ts">
     import type { NuxtError } from '#app'
 
-    defineProps<{ error: NuxtError }>()
+    const props = defineProps<{ error: NuxtError }>()
 
     const handleError = () => clearError({ redirect: '/' })
+
+    useSiteSeo({
+        title: `${props.error.statusCode || 404} — page not found`,
+        description: "That page isn't here. Head back home.",
+        noindex: true
+    })
 </script>

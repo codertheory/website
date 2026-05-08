@@ -77,5 +77,10 @@
         sent.value = true
     }
 
+    useSiteSeo({
+        title: 'Contact',
+        description: 'Mentoring questions, project feedback, bug reports, or just hello — all welcome. Lucas usually replies within a day or two.'
+    })
+
     useScrollReveal()
 </script>

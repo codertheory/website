@@ -57,5 +57,57 @@
         return list[(idx + 1) % list.length] || null
     })
 
+    const config = useRuntimeConfig()
+    const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '')
+
+    useSiteSeo(() => {
+        const p = post.value
+        return {
+            title: p?.title,
+            description: p?.excerpt,
+            image: p?.image || undefined,
+            imageAlt: p ? `${p.title} — ${p.cat}` : undefined,
+            type: 'article',
+            publishedTime: p?.date,
+            section: p?.cat,
+            author: config.public.siteAuthor as string
+        }
+    })
+
+    useHead(() => {
+        const p = post.value
+        if (!p) return {}
+        const image = p.image
+            ? (/^https?:\/\//.test(p.image) ? p.image : `${siteUrl}${p.image.startsWith('/') ? p.image : `/${p.image}`}`)
+            : `${siteUrl}${config.public.defaultOgImage as string}`
+        const url = `${siteUrl}/blog/${slug.value}`
+        const ldJson = {
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            headline: p.title,
+            description: p.excerpt,
+            image,
+            datePublished: p.date,
+            articleSection: p.cat,
+            mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+            author: {
+                '@type': 'Person',
+                name: config.public.siteAuthor as string,
+                url: siteUrl
+            },
+            publisher: {
+                '@type': 'Organization',
+                name: config.public.siteName as string,
+                logo: {
+                    '@type': 'ImageObject',
+                    url: `${siteUrl}/icon-512.png`
+                }
+            }
+        }
+        return {
+            script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(ldJson) }]
+        }
+    })
+
     useScrollReveal()
 </script>

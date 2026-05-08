@@ -68,5 +68,11 @@
 
     const bioSegments = (line: string) => line.split('*').map((text, i) => ({ text, em: i % 2 === 1 }))
 
+    useSiteSeo({
+        title: 'About',
+        description: "Lucas — a full-stack developer who'd rather teach you the why than hand you the answer. Seven-plus years of Python, JavaScript, Kotlin, and Swift across web and mobile.",
+        type: 'profile'
+    })
+
     useScrollReveal()
 </script>

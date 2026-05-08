@@ -31,7 +31,13 @@ export default defineNuxtConfig({
     runtimeConfig: {
         githubToken: '', // NUXT_GITHUB_TOKEN
         public: {
-            githubLogin: 'LucasCoderT' // NUXT_PUBLIC_GITHUB_LOGIN
+            githubLogin: 'LucasCoderT', // NUXT_PUBLIC_GITHUB_LOGIN
+            siteUrl: 'https://codertheory.dev', // NUXT_PUBLIC_SITE_URL
+            siteName: 'codertheory',
+            siteDescription: 'Software, writing, and the ideas behind them — by Lucas.',
+            siteAuthor: 'Lucas',
+            defaultOgImage: '/icon-512.png',
+            twitterHandle: '@codertheory'
         }
     },
 
@@ -111,12 +117,18 @@ export default defineNuxtConfig({
 
     app: {
         head: {
+            htmlAttrs: {lang: 'en'},
+            titleTemplate: '%s',
             link: [
                 {rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg'},
                 {rel: 'icon', type: 'image/png', sizes: '32x32', href: '/icon-32.png'},
                 {rel: 'icon', type: 'image/png', sizes: '16x16', href: '/icon-16.png'},
                 {rel: 'apple-touch-icon', href: '/apple-touch-icon.png'},
                 {rel: 'manifest', href: '/site.webmanifest'},
+            ],
+            meta: [
+                {name: 'theme-color', content: '#F4C669', media: '(prefers-color-scheme: light)'},
+                {name: 'theme-color', content: '#1F1B16', media: '(prefers-color-scheme: dark)'}
             ],
             script: [
                 {

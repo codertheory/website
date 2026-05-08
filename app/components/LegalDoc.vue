@@ -57,5 +57,12 @@
         return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })
     })
 
+    useSiteSeo(() => ({
+        title: doc.value?.title,
+        description: doc.value?.lede,
+        modifiedTime: doc.value?.updatedAt,
+        noindex: false
+    }))
+
     useScrollReveal()
 </script>

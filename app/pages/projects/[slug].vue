@@ -113,5 +113,55 @@
 
     const padNum = (n: number) => String(n).padStart(2, '0')
 
+    const config = useRuntimeConfig()
+    const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '')
+
+    useSiteSeo(() => {
+        const p = project.value
+        const firstShot = p?.screenshots?.[0]?.src
+        return {
+            title: p?.title,
+            description: p?.tag,
+            image: firstShot,
+            imageAlt: p ? `${p.title} — ${p.tag}` : undefined,
+            type: 'article',
+            publishedTime: p?.date,
+            section: p?.type,
+            tags: p?.platforms,
+            author: config.public.siteAuthor as string
+        }
+    })
+
+    useHead(() => {
+        const p = project.value
+        if (!p) return {}
+        const firstShot = p.screenshots?.[0]?.src
+        const image = firstShot
+            ? (/^https?:\/\//.test(firstShot) ? firstShot : `${siteUrl}${firstShot.startsWith('/') ? firstShot : `/${firstShot}`}`)
+            : `${siteUrl}${config.public.defaultOgImage as string}`
+        const url = `${siteUrl}/projects/${route.params.slug}`
+        const sameAs = (p.links || []).map(l => l.href).filter(Boolean)
+        const ldJson = {
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: p.title,
+            description: p.tag,
+            url,
+            image,
+            applicationCategory: p.type,
+            operatingSystem: (p.platforms || []).join(', ') || undefined,
+            datePublished: p.date,
+            author: {
+                '@type': 'Person',
+                name: config.public.siteAuthor as string,
+                url: siteUrl
+            },
+            ...(sameAs.length ? { sameAs } : {})
+        }
+        return {
+            script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(ldJson) }]
+        }
+    })
+
     useScrollReveal()
 </script>

@@ -245,5 +245,9 @@
         return `${what} on ${when}`
     }
 
+    useSiteSeo({
+        description: "Lucas builds small software, mentors newer engineers, and writes about the why behind the code. Projects, posts, and the workshop in one place."
+    })
+
     useScrollReveal()
 </script>
