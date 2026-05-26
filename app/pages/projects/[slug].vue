@@ -24,7 +24,9 @@
           <div class="detail-mock">
             <div class="deviceish">
               <div class="notch" />
-              <div class="device-icon">{{ project.icon }}</div>
+              <div :class="['device-icon', { 'device-icon--img': project.iconImage && !project.iconImageTile, 'device-icon--tile': project.iconImage && project.iconImageTile }]">
+                <ProjectIcon :image="project.iconImage" :image-dark="project.iconImageDark" :glyph="project.icon" :alt="`${project.title} icon`" />
+              </div>
             </div>
           </div>
 

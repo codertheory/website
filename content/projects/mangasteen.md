@@ -16,6 +16,8 @@ stack:
   - Ktor
   - QuickJS
 icon: M
+iconImage: /Mangasteen_Logo.png
+iconImageTile: true
 tone: green
 links:
   - label: TestFlight

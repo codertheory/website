@@ -16,6 +16,9 @@ export default defineContentConfig({
         started: z.string().optional(),
         stack: z.array(z.string()).optional(),
         icon: z.string().optional(),
+        iconImage: z.string().optional(),
+        iconImageDark: z.string().optional(),
+        iconImageTile: z.boolean().optional(),
         tone: z.string().optional(),
         links: z.array(z.object({
           label: z.string(),

@@ -41,7 +41,9 @@
           class="proj-row fade-up"
         >
           <div :class="['proj-thumb', `tone-${p.tone || 'blue'}`]">
-            <div class="icon-mark">{{ p.icon }}</div>
+            <div :class="['icon-mark', { 'icon-mark--img': p.iconImage && !p.iconImageTile, 'icon-mark--tile': p.iconImage && p.iconImageTile }]">
+              <ProjectIcon :image="p.iconImage" :image-dark="p.iconImageDark" :glyph="p.icon" :alt="`${p.title} icon`" />
+            </div>
           </div>
           <div>
             <div class="proj-meta">

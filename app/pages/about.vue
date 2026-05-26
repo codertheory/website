@@ -10,7 +10,14 @@
     <section class="wrap section" style="padding-top: 40px;">
       <div class="about-grid">
         <div class="about-portrait fade-up">
-          <span class="label">portrait.jpg</span>
+          <NuxtImg
+            src="/portrait.jpg"
+            alt="Lucas Lukowski"
+            width="800"
+            height="800"
+            sizes="280px"
+            loading="eager"
+          />
         </div>
 
         <div>

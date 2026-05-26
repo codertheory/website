@@ -37,6 +37,28 @@
 .proj-thumb.tone-green .icon-mark { background: #D7E9D9; border-color: #3F7A4D; color: #1B3F26; }
 .proj-thumb.tone-coral .icon-mark { background: #F8DCD2; border-color: #B5594A; color: #6E251A; }
 
+/* App-icon image variant: SVG/PNG carries its own background, so drop the tile chrome. */
+.proj-thumb .icon-mark--img,
+.proj-thumb.tone-blue .icon-mark--img,
+.proj-thumb.tone-green .icon-mark--img,
+.proj-thumb.tone-coral .icon-mark--img {
+  background: none; border: 0; overflow: hidden;
+}
+/* Tile variant: transparent logo sits on a fixed light tile so it reads in both themes. */
+.proj-thumb .icon-mark--tile,
+.proj-thumb.tone-blue .icon-mark--tile,
+.proj-thumb.tone-green .icon-mark--tile,
+.proj-thumb.tone-coral .icon-mark--tile {
+  background: #FBF6EC; border: 1px solid var(--rule); overflow: hidden;
+}
+.proj-thumb .icon-mark--tile .proj-icon-img {
+  width: 100%; height: 100%; box-sizing: border-box; padding: 14%; object-fit: contain;
+}
+.proj-icon-img { display: block; width: 100%; height: 100%; }
+.proj-icon-img--dark { display: none; }
+[data-theme="dark"] .proj-icon-img--light { display: none; }
+[data-theme="dark"] .proj-icon-img--dark { display: block; }
+
 .proj-meta {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
   margin-bottom: 10px;
@@ -167,6 +189,15 @@
   color: var(--bulb-deep);
 }
 [data-theme="dark"] .detail-mock .device-icon { background: rgba(244,198,105,0.18); }
+.detail-mock .device-icon--img,
+[data-theme="dark"] .detail-mock .device-icon--img { background: none; }
+.detail-mock .device-icon--img .proj-icon-img { width: 62%; height: auto; aspect-ratio: 1; }
+.detail-mock .device-icon--tile,
+[data-theme="dark"] .detail-mock .device-icon--tile { background: none; }
+.detail-mock .device-icon--tile .proj-icon-img {
+  width: 62%; height: auto; aspect-ratio: 1; box-sizing: border-box; padding: 14%;
+  object-fit: contain; background: #FBF6EC; border: 1px solid var(--rule); border-radius: 18%;
+}
 
 .detail-features {
   list-style: none; padding: 0; margin: 24px 0 0;

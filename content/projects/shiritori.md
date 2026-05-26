@@ -14,6 +14,8 @@ stack:
   - WebSockets
   - Redis
 icon: し
+iconImage: /shiritori-app-icon-light.svg
+iconImageDark: /shiritori-app-icon-dark.svg
 tone: coral
 links:
   - label: Play live

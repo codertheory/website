@@ -15,6 +15,7 @@ stack:
   - SwiftData
   - CloudKit
 icon: C
+iconImage: /cresthold-app-icon-512.png
 tone: blue
 features:
   - t: Inventory + groceries

@@ -12,6 +12,8 @@ stack:
   - Python
   - discord.py
 icon: 🍵
+iconImage: /iceteabot-app-icon.png
+iconImageTile: true
 tone: green
 links:
   - label: GitHub
