@@ -2,7 +2,8 @@
    About
    ============================================================ */
 .about-hero {
-  padding: 60px 0 30px;
+  padding-top: 60px;
+  padding-bottom: 30px;
 }
 .about-grid {
   display: grid; grid-template-columns: 1fr 1.4fr; gap: 56px; align-items: start;
