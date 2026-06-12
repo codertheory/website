@@ -122,6 +122,8 @@
 .contact-form .form-hint {
   font-family: var(--f-mono); font-size: 12px; color: var(--ink-mute);
 }
+.contact-form .form-hint--error { color: var(--danger, #c0392b); }
+.contact-form .cf-turnstile { min-height: 65px; }
 
 .contact-aside { padding: 36px; }
 .contact-aside h3 { font-family: var(--f-display); font-size: 28px; margin: 0 0 12px; font-weight: 600; }

@@ -30,6 +30,12 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         githubToken: '', // NUXT_GITHUB_TOKEN
+        contact: {
+            resendApiKey: '', // NUXT_CONTACT_RESEND_API_KEY
+            toEmail: 'lucascluk@icloud.com', // NUXT_CONTACT_TO_EMAIL
+            // Must be on a Resend-verified domain.
+            fromEmail: 'contact@codertheory.dev' // NUXT_CONTACT_FROM_EMAIL
+        },
         public: {
             githubLogin: 'LucasCoderT', // NUXT_PUBLIC_GITHUB_LOGIN
             siteUrl: 'https://codertheory.dev', // NUXT_PUBLIC_SITE_URL
@@ -80,8 +86,21 @@ export default defineNuxtConfig({
         '@nuxt/fonts',
         // '@nuxt/hints', // disabled: birpc timeout on hydration-mismatch reporting crashes dev server (1.1.1)
         '@nuxt/icon',
-        '@nuxt/image'
+        '@nuxt/image',
+        '@nuxtjs/turnstile'
     ],
+
+    turnstile: {
+        siteKey: '' // NUXT_PUBLIC_TURNSTILE_SITE_KEY (secret: NUXT_TURNSTILE_SECRET_KEY)
+    },
+
+    $development: {
+        // Cloudflare's public Turnstile test keys: widget renders and always passes.
+        turnstile: {siteKey: '1x00000000000000000000AA'},
+        runtimeConfig: {
+            turnstile: {secretKey: '1x0000000000000000000000000000000AA'}
+        }
+    },
 
     content: {
         build: {

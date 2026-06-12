@@ -12,19 +12,19 @@
 
     <section class="wrap section">
       <div class="contact-grid">
-        <form class="card contact-form fade-up" @submit="onSubmit">
+        <form class="card contact-form fade-up" @submit.prevent="onSubmit">
           <label>
             Your name
-            <input type="text" required placeholder="Ada Lovelace">
+            <input v-model="form.name" type="text" required placeholder="Ada Lovelace">
           </label>
           <label>
             Email
-            <input type="email" required placeholder="ada@example.com">
+            <input v-model="form.email" type="email" required placeholder="ada@example.com">
           </label>
           <label>
             What's this about?
-            <select>
-              <option value="" disabled selected>Pick one…</option>
+            <select v-model="form.topic" required>
+              <option value="" disabled>Pick one…</option>
               <option>Mentoring / pairing</option>
               <option>A project of yours</option>
               <option>Bug or feature request</option>
@@ -33,13 +33,15 @@
           </label>
           <label>
             Your message
-            <textarea required placeholder="Tell me what's on your mind…" />
+            <textarea v-model="form.message" required placeholder="Tell me what's on your mind…" />
           </label>
+          <NuxtTurnstile ref="turnstile" v-model="token" />
           <div class="form-foot">
-            <button class="btn btn--primary" type="submit">
-              {{ sent ? 'Sent — thanks!' : 'Send message' }} <ArrowRight />
+            <button class="btn btn--primary" type="submit" :disabled="status === 'sending'">
+              {{ buttonLabel }} <ArrowRight />
             </button>
-            <span class="form-hint">// or email me directly →</span>
+            <span v-if="status === 'error'" class="form-hint form-hint--error">// {{ error }}</span>
+            <span v-else class="form-hint">// or email me directly →</span>
           </div>
         </form>
 
@@ -71,10 +73,37 @@
 </template>
 
 <script setup lang="ts">
-    const sent = ref(false)
-    const onSubmit = (e: Event) => {
-        e.preventDefault()
-        sent.value = true
+    const form = reactive({name: '', email: '', topic: '', message: ''})
+    const token = ref('')
+    const turnstile = ref<{reset: () => void}>()
+    const status = ref<'idle' | 'sending' | 'sent' | 'error'>('idle')
+    const error = ref('')
+
+    const buttonLabel = computed(() => ({
+        idle: 'Send message',
+        sending: 'Sending…',
+        sent: 'Sent — thanks!',
+        error: 'Send message'
+    }[status.value]))
+
+    const onSubmit = async () => {
+        if (status.value === 'sending') return
+        status.value = 'sending'
+        try {
+            await $fetch('/api/contact', {
+                method: 'POST',
+                body: {...form, token: token.value}
+            })
+            status.value = 'sent'
+            Object.assign(form, {name: '', email: '', topic: '', message: ''})
+        } catch (e) {
+            status.value = 'error'
+            const err = e as {data?: {statusMessage?: string}, statusMessage?: string}
+            error.value = err.data?.statusMessage ?? err.statusMessage
+                ?? 'something went wrong — try emailing me directly'
+        } finally {
+            turnstile.value?.reset()
+        }
     }
 
     useSiteSeo({
