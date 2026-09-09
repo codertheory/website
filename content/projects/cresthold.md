@@ -17,6 +17,13 @@ stack:
 icon: C
 iconImage: /cresthold-app-icon-512.png
 tone: blue
+links:
+  - label: Website
+    href: 'https://cresthold.app'
+    kind: site
+  - label: TestFlight
+    href: 'https://testflight.apple.com/join/U1T31KMf'
+    kind: store
 features:
   - t: Inventory + groceries
     d: One app for the laptop in your bag and the eggs in your fridge. Categories, quantities, expiration dates, photos, custom fields.
@@ -63,4 +70,4 @@ Multiple lists, each item with quantity, unit, category, and notes. Check items 
 
 ## Status
 
-1.0 isn't out yet. App Store, marketing site, and TestFlight links will land here once they're live.
+1.0 isn't out yet. The marketing site is up at [cresthold.app](https://cresthold.app) and the beta is open on [TestFlight](https://testflight.apple.com/join/U1T31KMf) — the App Store link will land here once it's live.
