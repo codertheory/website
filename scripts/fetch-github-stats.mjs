@@ -41,31 +41,48 @@ if (!TOKEN) {
 const to = new Date()
 const from = new Date(to.getTime() - WEEKS * 7 * 24 * 60 * 60 * 1000)
 
-const res = await fetch('https://api.github.com/graphql', {
-  method: 'POST',
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-    'Content-Type': 'application/json',
-    'User-Agent': `${LOGIN}-codertheory-build`
-  },
-  body: JSON.stringify({
-    query: QUERY,
-    variables: { login: LOGIN, from: from.toISOString(), to: to.toISOString() }
+// These stats are a progressive enhancement and app/data/github.json is
+// committed, so every failure below degrades to the last good snapshot the
+// same way a missing token does. It must not be fatal: this script runs as
+// `prebuild`, so exiting non-zero takes down the entire site deploy — an
+// expired token did exactly that, and builds failed until it was rotated.
+const bail = (reason) => {
+  console.error(`[fetch-github-stats] ${reason}`)
+  console.warn('[fetch-github-stats] keeping the committed github.json — build continues.')
+  process.exit(0)
+}
+
+let res
+try {
+  res = await fetch('https://api.github.com/graphql', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      'Content-Type': 'application/json',
+      'User-Agent': `${LOGIN}-codertheory-build`
+    },
+    body: JSON.stringify({
+      query: QUERY,
+      variables: { login: LOGIN, from: from.toISOString(), to: to.toISOString() }
+    })
   })
-})
+} catch (err) {
+  bail(`request failed: ${err.message}`)
+}
 
 if (!res.ok) {
-  console.error(`[fetch-github-stats] HTTP ${res.status}: ${await res.text()}`)
-  process.exit(1)
+  bail(`HTTP ${res.status}: ${await res.text()}`)
 }
 
 const { data, errors } = await res.json()
 if (errors?.length) {
-  console.error('[fetch-github-stats] GraphQL errors:', JSON.stringify(errors, null, 2))
-  process.exit(1)
+  bail(`GraphQL errors: ${JSON.stringify(errors, null, 2)}`)
 }
 
-const c = data.user.contributionsCollection
+const c = data?.user?.contributionsCollection
+if (!c) {
+  bail('response contained no contributionsCollection')
+}
 const weeks = c.contributionCalendar.weeks.slice(-WEEKS)
 
 // 7 rows (Sun..Sat) × N cols (weeks, oldest left). Source order is row-major to match the CSS grid.
