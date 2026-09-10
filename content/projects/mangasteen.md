@@ -34,63 +34,55 @@ links:
     kind: code
 features:
   - t: One codebase, two stores
-    d: Kotlin Multiplatform + Compose Multiplatform — Android and iOS ship from the same project, with the same look, feel, and gestures on both.
+    d: Kotlin Multiplatform and Compose Multiplatform mean Android and iOS ship from the same project, with the same look, feel and gestures on both.
   - t: Open extension ecosystem
-    d: Sources are sandboxed JavaScript scripts running in an embedded QuickJS engine. Pull from the public repo or write your own from the SDK template; no app update required.
+    d: Sources are sandboxed JavaScript scripts running in an embedded QuickJS engine. Pull from the public repo or write your own from the SDK template. Neither one needs an app update.
   - t: A reader designed to disappear
-    d: Three modes (webtoon, manga, comic), pinch-zoom in every mode, and pull-to-load chapter navigation with a haptic confirm — no chrome buttons fighting for thumb space.
+    d: Three modes (webtoon, manga, comic), pinch-zoom in all of them, and pull-to-load chapter navigation with a haptic confirm, so no chrome buttons end up fighting for thumb space.
   - t: Library that scales
-    d: Categories with reorderable tabs, multi-select bulk actions, tri-state chapter filters, and graceful "source missing" states so library entries don't break when an extension isn't available.
+    d: Categories with reorderable tabs, multi-select bulk actions, tri-state chapter filters, and clear "source missing" states so library entries hold together when an extension isn't available.
 why: |
-  Friends were stuck on readers that hadn't shipped a real update in months and were starting to break. I wanted to give them something that actually got maintained. It's also my first mobile app — first TestFlight, first Play Store listing, first time learning how each store actually works — and there's a quiet pleasure in making something my friends use without me having to sell it to them.
+  Friends were stuck on readers that hadn't shipped a real update in months and were starting to break. I wanted to give them something that actually got maintained. It's also my first mobile app, so it came with my first TestFlight, my first Play Store listing and my first real look at how each store works. And there's a quiet pleasure in making something my friends use without me having to sell it to them.
 ---
 
 ## What it is
 
-Mangasteen is a cross-platform manga reader for iOS and Android, built on a single Kotlin Multiplatform codebase with a Compose Multiplatform UI. It's structured around an open extension ecosystem, so the catalog is whatever community sources you add — not a curated walled garden.
+Mangasteen is a cross-platform manga reader for iOS and Android, built on a single Kotlin Multiplatform codebase with a Compose Multiplatform UI. It's structured around an open extension ecosystem, so the catalog is whatever community sources you add rather than a curated walled garden.
 
 It starts with manga, but the reader and library are deliberately general; nothing in the architecture stops it from growing into other paginated mediums later.
 
 ## Reader
 
-- **Three modes** — webtoon (vertical strip), manga (right-to-left paged), comic (left-to-right paged).
-- **Pinch-zoom in every mode**, including webtoon, with images decoded at source resolution so pages stay sharp at native dimensions.
-- **Pull-to-load chapter navigation** — pull past the end of a chapter to load the next, past the start for the previous. A subtle haptic confirms when you've pulled far enough.
-- **Smart read-tracking** — chapters mark as read only after you reach the dedicated end card (paged) or scroll past every loaded image (webtoon). No premature ticks.
-- **Next-chapter preview banner** that grows as you pull, so you know what's coming before you commit.
+There are three reading modes: webtoon as a vertical strip, manga paged right-to-left, and comic paged left-to-right. Pinch-zoom works in all of them, webtoon included, and images are decoded at source resolution so pages stay sharp at their native dimensions.
+
+Chapter navigation is a pull rather than a button. Pull past the end of a chapter to load the next one, or past the start for the previous, with a subtle haptic when you've pulled far enough and a preview banner that grows as you go, so you know what's coming before you commit. Chapters only mark as read once you reach the dedicated end card in paged mode, or scroll past every loaded image in webtoon, which stops them ticking over early.
 
 ## Library
 
-- **Personal library** of saved manga, organised into user-defined categories with reorderable tabs and inline rename.
-- **Multi-select mode** — long-press to enter, then move, mark read/unread, update, download, or remove many at once. Bulk-action buttons stay visible and grey out when they don't apply.
-- **Tri-state chapter filters** — independent Unread and Downloaded filters, each with Ignored / Include / Exclude.
-- Library cards show unread counts and download status at a glance.
+Your library holds saved manga in categories you define yourself, with reorderable tabs and inline rename. Long-press puts it into multi-select, where you can move, mark read or unread, update, download or remove many at once. The bulk-action buttons stay visible the whole time and grey out when they don't apply, rather than vanishing on you.
 
-## Sources & extensions
+Unread and Downloaded filters work independently, and each has three states of Ignored, Include and Exclude. Library cards show unread counts and download status without you having to open anything.
 
-- **JavaScript-based extensions** sandboxed in an embedded QuickJS engine, with Ksoup for HTML parsing.
-- **Public source repo + extension template** — anyone can fork the template, write a source, and have it discoverable in the official repo.
-- **Source health screen** — version, capabilities, rate limit, and pause status of every installed source, with one-tap Enable / Pin / Resume from a long-press detail sheet.
-- **Graceful degradation** — sources missing from the current branch stay installed behind the scenes, so library entries re-link automatically if you switch back. Manga details, library, and the updates feed surface a clear "source missing" state instead of failing silently.
+## Sources and extensions
 
-## Browse, search, and updates
+Extensions are JavaScript, sandboxed in an embedded QuickJS engine, with Ksoup doing the HTML parsing. There's a public source repo and an extension template, so anyone can fork it, write a source and have it discoverable in the official repo. A source health screen lists the version, capabilities, rate limit and pause status of everything installed, with one-tap Enable, Pin and Resume from a long-press detail sheet.
 
-- **Per-source** catalog browsing with each extension's filters and sort options.
-- **Global Search** across every installed source from the Sources tab, with a filter sheet to pick which to include — your selection persists across sessions.
-- **Library updates feed** showing new chapters across all your saved manga, fed by a scheduled background worker that logs each run for diagnostics.
+Sources missing from the current branch stay installed quietly in the background, so library entries re-link on their own if you switch back. Manga details, the library and the updates feed all show a clear "source missing" state rather than failing silently.
+
+## Browse, search and updates
+
+You can browse any single source's catalog using that extension's own filters and sort options, or run a Global Search across every installed source from the Sources tab. A filter sheet picks which sources to include and remembers the choice between sessions. The library updates feed collects new chapters across everything you've saved, fed by a scheduled background worker that logs each run so you can see what happened.
 
 ## Downloads
 
-Background chapter downloads via KMP WorkManager — three at a time, a visible queue, cancel any in flight. Survives app restarts on both platforms.
+Chapter downloads run in the background through KMP WorkManager, three at a time, with a visible queue and the ability to cancel anything still in flight. They survive an app restart on both platforms.
 
 ## Plus
 
-- **Backup & restore** of library, categories, history, and settings — for moving devices or recovering from a reinstall.
-- **Material 3 theming**, with a custom Mangosteen-fruit-inspired light + dark palette as the default.
-- **Reading history** with quick resume.
-- **In-app updates on Android** (silent background download, with a blocking full-screen flow for high-priority updates); iOS ships through TestFlight on every push to `main`.
-- **Onboarding** — a short first-run flow that picks the reading mode and theme.
+Backup and restore covers the library, categories, history and settings, for moving devices or recovering from a reinstall. Theming is Material 3, defaulting to a custom light and dark palette based on the mangosteen fruit. Reading history gives you quick resume.
+
+Android gets in-app updates that download silently in the background, with a blocking full-screen flow reserved for high-priority ones, while iOS ships through TestFlight on every push to `main`. A short first-run flow sets the reading mode and theme.
 
 ## Under the hood
 
-MVVM + Clean Architecture with a clear Data / Presentation / Background split. Room for the local database, Ktor for networking, Coil 3 for image loading, Koin (annotations) for DI, Alarmee for cross-platform local notifications. Tested with Kotest, Compose UI Test, Ktor Mock Client, and Koin Test, with CI running `./gradlew test` on every push and PR.
+MVVM and Clean Architecture, with a clear Data, Presentation and Background split. Room for the local database, Ktor for networking, Coil 3 for image loading, Koin (annotations) for DI, Alarmee for cross-platform local notifications. Tested with Kotest, Compose UI Test, Ktor Mock Client and Koin Test, with CI running `./gradlew test` on every push and PR.

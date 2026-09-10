@@ -28,18 +28,18 @@ features:
   - t: Inventory + groceries
     d: One app for the laptop in your bag and the eggs in your fridge. Categories, quantities, expiration dates, photos, custom fields.
   - t: Sharing by location
-    d: Rooms are the unit of sharing — invite a roommate to a single shared kitchen, leave the rest private. Powered by CloudKit Sharing.
+    d: Rooms are the unit of sharing, so you can invite a roommate to one shared kitchen and keep the rest of the house private. It runs on CloudKit Sharing.
   - t: AI-assisted import
     d: Snap a receipt or paste a product URL; Cresthold parses the item, fills the fields, and tags the marketplace.
   - t: Native everywhere
     d: SwiftUI on iPhone, iPad, and Mac. SwiftData for local storage, CloudKit for end-to-end encrypted sync.
 why: |
-  Two reasons. *One:* I've always wanted to ship a real desktop app, and Swift turned out to be the most enjoyable language I've picked up in years. *Two:* I'm between jobs. If money gets tight enough that I'm selling things I don't strictly need, I want a real inventory of them — so I can decide what to part with instead of opening drawers in a panic.
+  Two reasons. *One:* I've always wanted to ship a real desktop app, and Swift turned out to be the most enjoyable language I've picked up in years. *Two:* I'm between jobs. If money gets tight enough that I'm selling things I don't strictly need, I want a real inventory of them, so I can decide what to part with instead of opening drawers in a panic.
 ---
 
 ## What it is
 
-Cresthold tracks three intertwined things — what you own, what's in your kitchen, and what you need to buy — in one native app that runs on iPhone, iPad, and Mac.
+Cresthold tracks what you own, what's in your kitchen, and what you need to buy, all in one native app that runs on iPhone, iPad and Mac.
 
 ## What you can store
 
@@ -47,7 +47,7 @@ Cresthold tracks three intertwined things — what you own, what's in your kitch
 
 Name, description, category, photos, price, currency, quantity, purchase date, where it lives, purchase URL, image URL, and notes. Optional fields for warranty (expiry date + notes), Amazon ASIN, marketplace, and a digital-vs-physical flag. Add custom fields when the built-ins don't fit.
 
-Built-in categories cover Clothes, Appliances, Tech, Games, Subscriptions, Software, Furniture, Books, and Other — and you can add your own.
+Built-in categories cover Clothes, Appliances, Tech, Games, Subscriptions, Software, Furniture, Books, and Other. You can add your own.
 
 ### Locations
 
@@ -59,15 +59,12 @@ Quantity, unit, expiration date, purchase date, price, category (Produce, Dairy,
 
 ### Shopping lists
 
-Multiple lists, each item with quantity, unit, category, and notes. Check items off as you shop. Optional sync to Apple Reminders. An item on a list can link back to the grocery it'll restock — so you stop buying things you already have.
+Multiple lists, each item with quantity, unit, category, and notes. Check items off as you shop. Optional sync to Apple Reminders. An item on a list can link back to the grocery it'll restock, so you stop buying things you already have.
 
 ### Plus
 
-- **Warranty documents** — attach PDFs and photos of receipts, manuals, and warranty paperwork to any item.
-- **Custom fields** — text, number, date, or URL fields you define yourself.
-- **Tags** — free-form labels that cut across categories.
-- **Photo gallery** — multiple full-res photos per item.
+You can attach warranty documents to any item, meaning PDFs and photos of receipts, manuals and paperwork. Custom fields can be text, number, date or URL, and you define them yourself. Tags are free-form labels that cut across categories, and every item takes as many full-resolution photos as you want to give it.
 
 ## Status
 
-1.0 isn't out yet. The marketing site is up at [cresthold.app](https://cresthold.app) and the beta is open on [TestFlight](https://testflight.apple.com/join/U1T31KMf) — the App Store link will land here once it's live.
+1.0 isn't out yet. The marketing site is up at [cresthold.app](https://cresthold.app) and the beta is open on [TestFlight](https://testflight.apple.com/join/U1T31KMf). The App Store link will land here once it's live.
