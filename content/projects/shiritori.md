@@ -16,6 +16,7 @@ stack:
 icon: し
 iconImage: /shiritori-app-icon-light.svg
 iconImageDark: /shiritori-app-icon-dark.svg
+ogImage: /shiritori-og.png
 tone: coral
 links:
   - label: Play live

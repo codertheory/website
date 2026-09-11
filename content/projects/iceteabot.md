@@ -14,6 +14,7 @@ stack:
 icon: 🍵
 iconImage: /iceteabot-app-icon.png
 iconImageTile: true
+ogImage: /iceteabot-og.png
 tone: green
 links:
   - label: GitHub

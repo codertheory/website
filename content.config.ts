@@ -19,6 +19,7 @@ export default defineContentConfig({
         iconImage: z.string().optional(),
         iconImageDark: z.string().optional(),
         iconImageTile: z.boolean().optional(),
+        ogImage: z.string().optional(),
         tone: z.string().optional(),
         links: z.array(z.object({
           label: z.string(),

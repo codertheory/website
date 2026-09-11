@@ -118,14 +118,28 @@
     const config = useRuntimeConfig()
     const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '')
 
+    // Image used when a project link is unfurled by Slack, Discord, X, iMessage and
+    // friends. Without one these fall back to the site icon, so every project embed
+    // looked identical. Explicit ogImage wins, then a screenshot, then the project's
+    // own app icon. SVG icons are skipped deliberately: no major unfurler renders an
+    // SVG og:image, so those projects point ogImage at a rasterised copy instead.
+    const embedImage = computed(() => {
+        const p = project.value
+        if (!p) return undefined
+        const icon = p.iconImage && !p.iconImage.toLowerCase().endsWith('.svg') ? p.iconImage : undefined
+        return p.ogImage || p.screenshots?.[0]?.src || icon
+    })
+
+    const absoluteUrl = (src: string) =>
+        /^https?:\/\//.test(src) ? src : `${siteUrl}${src.startsWith('/') ? src : `/${src}`}`
+
     useSiteSeo(() => {
         const p = project.value
-        const firstShot = p?.screenshots?.[0]?.src
         return {
             title: p?.title,
             description: p?.tag,
-            image: firstShot,
-            imageAlt: p ? `${p.title} — ${p.tag}` : undefined,
+            image: embedImage.value,
+            imageAlt: p ? `${p.title}, ${p.tag}` : undefined,
             type: 'article',
             publishedTime: p?.date,
             section: p?.type,
@@ -137,10 +151,8 @@
     useHead(() => {
         const p = project.value
         if (!p) return {}
-        const firstShot = p.screenshots?.[0]?.src
-        const image = firstShot
-            ? (/^https?:\/\//.test(firstShot) ? firstShot : `${siteUrl}${firstShot.startsWith('/') ? firstShot : `/${firstShot}`}`)
-            : `${siteUrl}${config.public.defaultOgImage as string}`
+        const resolved = embedImage.value
+        const image = resolved ? absoluteUrl(resolved) : `${siteUrl}${config.public.defaultOgImage as string}`
         const url = `${siteUrl}/projects/${route.params.slug}`
         const sameAs = (p.links || []).map(l => l.href).filter(Boolean)
         const ldJson = {

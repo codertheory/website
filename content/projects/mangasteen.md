@@ -18,6 +18,7 @@ stack:
 icon: M
 iconImage: /Mangasteen_Logo.png
 iconImageTile: true
+ogImage: /mangasteen-og.png
 tone: green
 links:
   - label: TestFlight
