@@ -100,7 +100,7 @@ export default defineNuxtConfig({
 
     sitemap: {
         // Legal pages exist for the contact form, not for search results.
-        exclude: ['/privacy', '/terms'],
+        exclude: ['/privacy', '/terms', '/search'],
         defaults: {changefreq: 'weekly', priority: 0.7},
         // Project and post routes come from content files, not app/pages.
         sources: ['/api/__sitemap__/urls']

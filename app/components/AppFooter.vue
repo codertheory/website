@@ -33,7 +33,9 @@
                 { label: 'Home', to: '/' },
                 { label: 'Projects', to: '/projects' },
                 { label: 'Blog', to: '/blog' },
-                { label: 'About', to: '/about' }
+                { label: 'About', to: '/about' },
+                { label: 'Now', to: '/now' },
+                { label: 'Search', to: '/search' }
             ]
         },
         {

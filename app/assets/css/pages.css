@@ -222,3 +222,49 @@
   margin-left: auto; margin-right: auto;
 }
 .notfound .cta { margin-top: 28px; }
+
+/* /now — the current-focus page. Reuses .now-strip from the homepage. */
+.now-lede { color: var(--ink-soft); margin-top: 14px; font-size: 18px; max-width: 560px; }
+.now-lede a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--bulb-deep); text-underline-offset: 3px; }
+.now-detail { padding: 0; margin-top: 40px; }
+.now-empty { color: var(--ink-mute); margin-top: 32px; font-style: italic; }
+.now-foot { margin-top: 56px; padding-bottom: 96px; }
+.now-foot p { color: var(--ink-mute); font-size: 15px; }
+.now-foot a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--bulb-deep); text-underline-offset: 3px; }
+
+/* /search — client-side lookup across projects and writing. */
+.search-box {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 28px;
+  border-bottom: 2px solid var(--rule);
+  padding-bottom: 10px;
+}
+.search-input {
+  flex: 1; min-width: 0;
+  background: none; border: 0; outline: none;
+  font-family: var(--f-display); font-size: 26px; font-weight: 500;
+  color: var(--ink);
+}
+.search-input::placeholder { color: var(--ink-mute); font-weight: 400; }
+.search-input:focus-visible { outline: none; }
+.search-box:focus-within { border-bottom-color: var(--bulb-deep); }
+.search-count {
+  font-family: var(--f-mono); font-size: 12px; color: var(--ink-mute); white-space: nowrap;
+}
+.search-results { margin-top: 28px; padding-bottom: 96px; }
+.search-hint { color: var(--ink-mute); font-size: 15px; margin: 0 0 24px; }
+.search-hit {
+  display: block; text-decoration: none; color: inherit;
+  padding: 18px 0; border-bottom: 1px solid var(--rule);
+}
+.search-hit:hover .title { color: var(--bulb-deep); }
+.search-hit .kind {
+  display: block; font-family: var(--f-mono); font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute);
+}
+.search-hit .title {
+  display: block; font-family: var(--f-display); font-size: 22px; font-weight: 600;
+  color: var(--ink); margin-top: 4px;
+}
+.search-hit .sub { display: block; color: var(--ink-soft); margin-top: 4px; font-size: 15px; }
+.search-hit .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
