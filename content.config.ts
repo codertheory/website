@@ -49,6 +49,15 @@ export default defineContentConfig({
         quote: z.string().optional()
       })
     }),
+    uses: defineCollection({
+      type: 'page',
+      source: 'uses.md',
+      schema: z.object({
+        title: z.string(),
+        lede: z.string(),
+        updatedAt: z.string()
+      })
+    }),
     now: defineCollection({
       type: 'page',
       source: 'now.md',

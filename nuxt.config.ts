@@ -43,7 +43,10 @@ export default defineNuxtConfig({
             siteDescription: 'Software, writing, and the ideas behind them — by Lucas.',
             siteAuthor: 'Lucas',
             defaultOgImage: '/icon-512.png',
-            twitterHandle: '@codertheory'
+            twitterHandle: '@codertheory',
+            // Analytics stays off entirely unless this is set at deploy time.
+            posthogKey: '', // NUXT_PUBLIC_POSTHOG_KEY
+            posthogHost: 'https://us.i.posthog.com' // NUXT_PUBLIC_POSTHOG_HOST
         }
     },
 

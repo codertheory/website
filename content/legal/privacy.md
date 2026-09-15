@@ -1,13 +1,17 @@
 ---
 title: Privacy policy
 eyebrow: Legal
-updatedAt: 2026-04-30
-lede: Short version — I don't track you, I don't sell anything about you, and the apps I make do as little with your data as they can get away with.
+updatedAt: 2026-09-15
+lede: Short version — I count page views and nothing else, I don't sell anything about you, and the apps I make do as little with your data as they can get away with.
 ---
 
 ## What I collect
 
-As little as possible. This site uses no analytics, no third-party trackers, and no cookies beyond what's strictly required to remember your theme preference. The contact form sends your message to my inbox — that's it.
+As little as possible. The only cookie-equivalent storage this site uses is the one that remembers whether you picked light or dark mode, which stays in your browser.
+
+I do count page views, using PostHog, so I can tell which projects and posts people actually read. It is configured to store nothing on your device: no cookies, no local storage, and no identifier that survives closing the tab. It builds no profile of you, records nothing you type or click, and captures no session replays. If your browser sends a Do Not Track header, it is not loaded at all.
+
+The contact form sends your message to my inbox, and nothing else happens to it.
 
 ## About my apps
 

@@ -35,6 +35,7 @@
                 { label: 'Blog', to: '/blog' },
                 { label: 'About', to: '/about' },
                 { label: 'Now', to: '/now' },
+                { label: 'Uses', to: '/uses' },
                 { label: 'Search', to: '/search' }
             ]
         },

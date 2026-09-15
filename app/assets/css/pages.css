@@ -268,3 +268,11 @@
 }
 .search-hit .sub { display: block; color: var(--ink-soft); margin-top: 4px; font-size: 15px; }
 .search-hit .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+
+/* /uses — tooling list, driven by content/uses.md. */
+.uses-lede { color: var(--ink-soft); margin-top: 14px; font-size: 18px; max-width: 560px; }
+.uses-meta {
+  font-family: var(--f-mono); font-size: 12px; color: var(--ink-mute);
+  letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px;
+}
+.uses-body { margin-top: 44px; padding-bottom: 96px; }
