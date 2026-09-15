@@ -91,6 +91,15 @@
         </div>
       </div>
     </section>
+
+    <section v-if="hasWriteup" class="project-writeup">
+      <div class="wrap-narrow">
+        <span class="eyebrow">In depth</span>
+      </div>
+      <article class="prose">
+        <ContentRenderer :value="project" />
+      </article>
+    </section>
   </div>
 </template>
 
@@ -114,6 +123,14 @@
     })
 
     const padNum = (n: number) => String(n).padStart(2, '0')
+
+    // The markdown body under the frontmatter was parsed and shipped but never
+    // rendered, so every project's long-form writeup was invisible. Guard on the
+    // parsed AST so a project with frontmatter only doesn't print a bare heading.
+    const hasWriteup = computed(() => {
+        const body = project.value?.body as { value?: unknown[] } | undefined
+        return Boolean(body?.value?.length)
+    })
 
     const config = useRuntimeConfig()
     const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '')
