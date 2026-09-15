@@ -87,8 +87,24 @@ export default defineNuxtConfig({
         // '@nuxt/hints', // disabled: birpc timeout on hydration-mismatch reporting crashes dev server (1.1.1)
         '@nuxt/icon',
         '@nuxt/image',
-        '@nuxtjs/turnstile'
+        '@nuxtjs/turnstile',
+        '@nuxtjs/sitemap'
     ],
+
+    site: {
+        // Read by @nuxtjs/sitemap for absolute URLs. Kept in step with
+        // runtimeConfig.public.siteUrl, which useSiteSeo uses for canonicals.
+        url: 'https://codertheory.dev',
+        name: 'codertheory'
+    },
+
+    sitemap: {
+        // Legal pages exist for the contact form, not for search results.
+        exclude: ['/privacy', '/terms'],
+        defaults: {changefreq: 'weekly', priority: 0.7},
+        // Project and post routes come from content files, not app/pages.
+        sources: ['/api/__sitemap__/urls']
+    },
 
     turnstile: {
         siteKey: '' // NUXT_PUBLIC_TURNSTILE_SITE_KEY (secret: NUXT_TURNSTILE_SECRET_KEY)

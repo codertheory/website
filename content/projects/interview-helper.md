@@ -16,6 +16,7 @@ stack:
   - WhisperKit
 icon: I
 iconImage: /interview-helper-app-icon-512.png
+ogImage: /interview-helper-og.png
 tone: coral
 links:
   - label: Download for macOS

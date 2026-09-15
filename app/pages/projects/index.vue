@@ -13,10 +13,10 @@
     <section class="wrap" style="margin-top: 36px; padding-top: 24px; padding-bottom: 80px;">
       <div class="proj-filters">
         <button
-          v-for="f in FILTERS"
+          v-for="f in PLATFORM_FILTERS"
           :key="f"
-          :class="['proj-filter', { 'is-active': filter === f }]"
-          @click="filter = f"
+          :class="['proj-filter', { 'is-active': platform === f }]"
+          @click="platform = f"
         >
           {{ f }}
         </button>
@@ -26,12 +26,25 @@
         </span>
       </div>
 
+      <div class="proj-filters proj-filters--tech">
+        <span class="proj-filter-label">tech</span>
+        <button
+          v-for="t in techFilters"
+          :key="t"
+          :class="['proj-filter', 'proj-filter--tech', { 'is-active': tech === t }]"
+          @click="tech = t"
+        >
+          {{ t }}
+        </button>
+      </div>
+
       <EmptyDirectory v-if="(projects || []).length === 0" kind="projects" />
       <EmptyFilter
         v-else-if="filteredProjects.length === 0"
-        v-model:filter="filter"
-        :filters="FILTERS"
+        :filter="activeLabel"
+        :filters="allFilters"
         kind="projects"
+        @update:filter="applyFilter"
       />
       <div v-else>
         <NuxtLink
@@ -75,24 +88,55 @@
         queryCollection('projects').order('date', 'DESC').all()
     )
 
-    const FILTERS = ['All', 'iOS', 'Web', 'Desktop', 'CLI', 'Bot'] as const
-    type Filter = typeof FILTERS[number]
-    const filter = ref<Filter>('All')
+    const PLATFORM_FILTERS = ['All', 'iOS', 'Web', 'Desktop', 'CLI', 'Bot'] as const
+    const platform = ref<string>('All')
+    const tech = ref<string>('All')
+
+    // Derived from the projects themselves so the row stays correct as the stack
+    // lists change, rather than being a second hardcoded list to keep in step.
+    const techFilters = computed(() => {
+        const seen = new Set<string>()
+        for (const p of projects.value || []) {
+            for (const entry of (p.stack || [])) seen.add(entry)
+        }
+        return ['All', ...[...seen].sort((a, b) => a.localeCompare(b))]
+    })
 
     const filteredProjects = computed(() => {
-        const items = projects.value || []
-        if (filter.value === 'All') return items
-        const f = filter.value.toLowerCase()
-        return items.filter(p =>
-            (p.platforms || []).some(pl => pl.toLowerCase() === f) ||
-            (p.type || '').toLowerCase().includes(f)
-        )
+        let items = projects.value || []
+        if (platform.value !== 'All') {
+            const f = platform.value.toLowerCase()
+            items = items.filter(p =>
+                (p.platforms || []).some(pl => pl.toLowerCase() === f) ||
+                (p.type || '').toLowerCase().includes(f)
+            )
+        }
+        if (tech.value !== 'All') {
+            items = items.filter(p => (p.stack || []).includes(tech.value))
+        }
+        return items
     })
+
+    // EmptyFilter speaks in a single label, so show whichever dimension is narrower
+    // and route its "try instead" chips back to the row they came from.
+    const activeLabel = computed(() => (tech.value !== 'All' ? tech.value : platform.value))
+    const allFilters = computed(() => [...PLATFORM_FILTERS, ...techFilters.value.slice(1)])
+
+    const applyFilter = (value: string) => {
+        if (value === 'All') {
+            platform.value = 'All'
+            tech.value = 'All'
+        } else if (techFilters.value.includes(value)) {
+            tech.value = value
+        } else {
+            platform.value = value
+        }
+    }
 
     useSiteSeo({
         title: 'Projects',
         description: "Things Lucas has shipped — apps, scripts, bots, and tools. Some alive and growing, some sleeping peacefully."
     })
 
-    useScrollReveal(filter)
+    useScrollReveal(filteredProjects)
 </script>

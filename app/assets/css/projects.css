@@ -307,3 +307,11 @@
 /* "In depth" — the project's markdown body, rendered below the screenshots. */
 .project-writeup { padding-top: 24px; padding-bottom: 96px; }
 .project-writeup .eyebrow { display: inline-block; margin-bottom: 18px; }
+
+/* Second filter row: tech, derived from each project's stack list. */
+.proj-filters--tech { margin-top: -8px; margin-bottom: 28px; }
+.proj-filter-label {
+  font-family: var(--f-mono); font-size: 11px; color: var(--ink-mute);
+  letter-spacing: 0.1em; text-transform: uppercase; margin-right: 4px;
+}
+.proj-filter--tech { padding: 4px 10px; font-size: 11px; }

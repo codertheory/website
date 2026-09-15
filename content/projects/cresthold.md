@@ -16,6 +16,7 @@ stack:
   - CloudKit
 icon: C
 iconImage: /cresthold-app-icon-512.png
+ogImage: /cresthold-og.png
 tone: blue
 links:
   - label: Website
