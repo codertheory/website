@@ -270,7 +270,9 @@
 
 .shots-strip {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* auto-fit rather than a fixed 3 columns: projects have however many
+     screenshots they have, and one lonely tile in a 3-wide grid looks broken. */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
   margin-top: 24px;
 }
@@ -290,6 +292,7 @@
   opacity: 0.6;
 }
 .shots-strip .shot .label { position: relative; }
+.shots-strip .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 
 @media (max-width: 900px) {
   .detail-grid { grid-template-columns: 1fr; }
