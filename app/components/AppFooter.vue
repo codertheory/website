@@ -43,7 +43,7 @@
             h: 'Contact',
             links: [
                 { label: 'Get in touch', to: '/contact' },
-                { label: 'RSS feed', to: '/blog' },
+                { label: 'Latest writing', to: '/blog' },
                 { label: 'GitHub', href: 'https://github.com/codertheory/' }
             ]
         },
