@@ -29,9 +29,9 @@ features:
   - t: Solo vs the bot
     d: Practice on your own. Chain as many words as you can and see how the bot answers back.
   - t: Bots alongside friends
-    d: Don't have enough humans? Fill an under-populated room with bots so the round still flows.
+    d: Not enough people around? Fill the empty seats with bots so the round still starts.
   - t: Difficulty modifiers
-    d: Shorter turn timers, stricter chain rules, a narrower dictionary. Stack them if you want a harder game.
+    d: Sudden death, length progression, long chain. Stack them if you want a harder game.
   - t: No accounts, just rooms
     d: Share a link and that's the whole setup. Six players can be in a room inside thirty seconds, and nothing about it is kept afterwards.
 screenshots:
@@ -40,7 +40,7 @@ screenshots:
   - src: /shots/shiritori-rules.webp
     alt: The how-to-play page, explaining the last-letter chain rule, the turn timer and the three-heart elimination system.
 why: |
-  Shiritori is a great game and the only online version I could find was thin and creaky. Felt like a clean target. I wanted a friendlier, faster one that I'd actually want to play with friends, and I wanted to make myself design proper realtime multiplayer along the way.
+  Shiritori is a great game and the only online version I could find was thin and kinda creaky, so I built one I would actually want to play with friends. I also wanted to make myself design realtime multiplayer properly. The first version did not really manage that, so the rewrite is me having another go at the same problem with everything I picked up since.
 ---
 
 ## What it is
@@ -51,10 +51,10 @@ This is the second version of the project. The current site is a full rewrite of
 
 ## The rules it settled on
 
-A random starting letter is drawn, and every word after it has to begin with the
-last letter of the word before. No word can be reused inside a game. You get
-thirty seconds a turn by default, and missing the timer costs you a heart the
-same way an invalid or repeated word does. Lose all three and you are out. Last
+A random starting letter gets drawn and every word after it has to begin with
+the last letter of the word before, with no reusing anything already played. You
+get thirty seconds a turn by default, and missing the timer costs you a heart the
+same as an invalid or repeated word does, so lose three and you are out. Last
 player standing wins.
 
 Hearts were the decision that made the game work socially. An instant knockout
@@ -101,8 +101,10 @@ worth capturing rather than losing to a shout in voice chat.
 
 ## Architecture
 
-One Nuxt 4 app does both the frontend and the realtime layer. Rooms live only in Redis, so every game disappears when it ends and nothing carries over between sessions. The WebSocket layer handles turn coordination, validation and broadcasting.
+One Nuxt 4 app does the frontend and the realtime layer. Rooms live in Redis and nowhere else, so a game disappears when it ends and nothing carries between sessions. The WebSocket layer handles turn coordination and validation/broadcasting.
 
 ## The 2023 prototype
 
-The current site is a rewrite of an older version, [`shiritori-v1`](https://github.com/codertheory/shiritori-v1), a Python and Vue full-stack experiment from early 2023. It worked, but the realtime side was creaky and the codebase had got messy. The rewrite is leaner, with a single Nuxt project doing what used to take several moving parts, and the gameplay loop finally got the iteration it always deserved. v1 is still up on GitHub for posterity.
+[`shiritori-v1`](https://github.com/codertheory/shiritori-v1) was a Python and Vue thing I built in early 2023. It worked, sort of. The realtime side was creaky and the codebase got messy fast, so I rewrote the whole lot as one Nuxt project instead of the pile of moving parts it used to be, and the gameplay loop finally got the iteration I never gave it the first time.
+
+v1 is still up on GitHub if you want to see where it started.

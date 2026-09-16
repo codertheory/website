@@ -32,7 +32,7 @@ features:
   - t: Each session feeds the next one
     d: It records the call and transcribes it with real speaker labels, then files away any question you had no card for. Over several sessions it works out which beats you keep dropping.
 why: |
-  I prepare for interviews properly. Pages of notes, cue cards, full answers written out for every question I think is coming. Then the nerves show up and none of it comes back to me while I'm actually talking. It isn't that I don't know the answer. I know it and I blank on it, usually on the last beats, the lesson I learned and the guardrail I added afterwards, which are the parts that make the answer worth anything. So I built something that reads my own cue cards back to me while I talk. It listens, finds the card I wrote for whatever was just asked, and ticks the points off as I cover them, so what's left lit on screen is only what I still haven't said. I want to be clear about one thing: there is no AI writing answers here. Every word on that panel is one I wrote in advance, for questions I expected. All the app does is make sure I don't leave any of it sitting in the notes.
+  I prepare for interviews properly, pages of notes and cue cards and full answers written out for every question I think is coming. Then the nerves show up and none of it comes back to me while I am actually talking. It is not that I do not know the answer, I know it and I blank on it, usually on the last beats, the lesson I learned and the guardrail I added afterwards, which are the parts that make an answer worth anything. So I built the thing that reads my own cue cards back to me while I talk. It listens, finds the card I wrote for whatever was just asked, and ticks the points off as I cover them, so the only thing still lit on screen is what I have not said yet. I want to be clear about one thing, there is no AI writing answers here. Every word on that panel is one I wrote in advance for questions I expected. The app just makes sure I do not leave any of it sitting in the notes.
 ---
 
 ## What it is
@@ -43,13 +43,15 @@ InterviewHelper is a macOS app built to answer one question while you are still 
 
 It listens to both sides of the call, your microphone for you and the call app's audio for them, then matches what the interviewer asked against a bank of answer cards you wrote. The card that fits goes on screen with your talking points beside it, and each point ticks off as you cover it. Whatever is still lit is what you haven't said.
 
-It doesn't write answers. There is no generative model in the app at all. The cards, the wording and the beats are yours, written ahead of time, and all the app does is recognise and keep count. One exception exists, it ships off by default, and it is labelled on screen wherever it appears. It gets its own section below.
+It does not write answers. There is no generative model in the app at all, the cards and the wording and the beats are all yours, written ahead of time, and the app just recognises them and keeps count. There is one exception to that, it ships switched off, and it gets its own section further down.
 
 ## The Nook
 
 The app has no main window and no Dock icon. What it has is the Nook, a floating panel that sits at the top of the screen and never activates. It lives up there next to the webcam on purpose, so a glance at your notes still looks like a glance at the camera. Clicking it doesn't pull focus away from the call.
 
-It shows up in three states. As a pill it's a slim capsule with a breathing dot that names what it's capturing (`listening · Teams · rec`). While audio is queued for transcription it shimmers instead. When it has something to show you it opens the card, with the interviewer's question written out, your full answer down the left and your points down the right. Points you haven't made yet are large with a filled dot. One you've covered flashes a check, sits there a moment in case the tick was wrong, then slides away.
+It shows up in three states. As a pill it is a slim capsule with a breathing dot naming what it is capturing (`listening · Teams · rec`), and it shimmers instead while audio is sitting in the transcription queue.
+
+The third one is the card. The interviewer's question written out, your full answer down the left, your points down the right. Points you have not made yet are large with a filled dot, and one you have covered flashes a check, sits there a moment in case the tick was wrong, then slides away.
 
 Global hotkeys handle the rest without the call ever losing focus. You can start and stop listening, open a picker that searches every question, cue and beat you've written, file the last thing you were asked as unprepped, or step through a presentation deck.
 
@@ -63,15 +65,15 @@ Matching is biased toward missing a tick rather than adding one. If a point stay
 
 The app hears the interviewer in whole turns rather than fragments. Their speech accumulates until they stop or you start answering, so a question that arrives as ten separate transcription segments over thirty seconds still counts as one question. It then runs two passes over that turn.
 
-First it looks for cues, the phrases you wrote against each card, matched at word boundaries. A hit opens that card straight away with no confidence score attached, because it isn't a guess. If no cue fires, the turn gets embedded on your own machine and ranked against every card you have. Anything above your confidence threshold opens with the percentage shown on it. Anything below goes to a panel that shows the question as it was asked, with the nearest few cards sitting one click away.
+First it looks for cues, the phrases you wrote against each card, matched at word boundaries. A hit opens that card straight away with no confidence score on it, because it is not a guess. If no cue fires, the turn gets embedded on your own machine and ranked against every card you have, and anything above your confidence threshold opens with the percentage shown. Anything below that goes to a panel with the question as it was asked and the nearest few cards sitting one click away.
 
 A bare follow-up like "Why?" or "how did you measure that?" never swaps the card out. It opens that card's *If they push* layer instead, which is the extra depth you wrote for exactly that moment.
 
 ## The one exception
 
-Everything above is the app recognising things you already wrote. One feature genuinely does generate text. It runs outside the app, it ships switched off, and it's called consult. Turn it on and each interviewer turn gets written to a folder where a Claude Code session on your own machine picks it up. That session reads your bank and whatever repo you point it at, then answers with the card it thinks fits. If nothing in the bank fits, it writes two to five short bullets built from your own notes and your own code.
+Everything above is the app recognising things you already wrote. One feature does genuinely generate text, it runs outside the app, it ships switched off, and it is called consult. Turn it on and each interviewer turn gets written to a folder where a Claude Code session on your own machine picks it up, reads your bank and whatever repo you point it at, then answers with the card it thinks fits. If nothing in the bank fits, it writes two to five short bullets built out of your own notes and your own code.
 
-The app never blocks on any of that. Your own card opens immediately and the second opinion arrives whenever it arrives, either agreeing with you, or as a small chip next to the answer you're already giving, or as bullets under a heading that reads *Drafted, not your words*. That label matters more than the feature does. Bullets you can put into your own words as you go. Paragraphs you end up reciting, and reciting is audible from the other end of a call.
+The app never blocks on any of that. Your own card opens immediately and the second opinion lands whenever it lands, either agreeing with you, or as a small chip next to the answer you are already giving, or as bullets under a heading that reads *Drafted, not your words*. That label matters more than the feature does, because bullets you can put into your own words as you go, whereas paragraphs you end up reciting and reciting is audible from the other end of a call.
 
 It ships off because switching it on costs you something real. Your interviewer's questions and whatever project you pointed it at leave your machine and reach Anthropic through your own Claude session. Settings spells that out rather than burying it in a tooltip.
 
@@ -101,12 +103,18 @@ One JSON file per interview. There is really only one line format to learn:
 Rolled back first, debugged second :: rolled back, revert, bleeding [DELIBERATE]
 ```
 
-Left of the `::` is what you see on the card. Right of it are the words you'd actually say, paraphrases included. The tag in brackets sets your posture before you start the sentence. Cues work differently, because those are what the *interviewer* says, so write them the way people actually ask. Two rules do most of the work. Keep beats under about eight words or you'll end up reading them aloud, and six sharp cards will beat forty vague ones every time.
+Left of the `::` is what you see on the card, right of it are the words you would actually say with the paraphrases included, and the tag in brackets sets your posture before you start the sentence. Cues work differently, because those are what the *interviewer* says, so write them the way people actually ask.
+
+Two rules do most of the work here. Keep beats under about eight words or you will end up reading them aloud, and six sharp cards will beat forty vague ones every time.
 
 ## Under the hood
 
-ScreenCaptureKit captures the call app's audio and nothing else. The video path is starved down to 2×2 pixels, so the app never records your screen. AVAudioEngine handles the microphone. Both streams feed a voice-activity gate that flushes when you pause, then a single serialised WhisperKit instance, then the matcher. SwiftUI does the views, AppKit does the panel behaviour SwiftUI can't express. It's signed with a Developer ID, notarised, and updates itself through Sparkle, which refuses to interrupt while a session is live.
+ScreenCaptureKit captures the call app's audio and nothing else, with the video path starved down to 2x2 pixels so the app never records your screen, and AVAudioEngine handles the microphone. Both streams feed a voice-activity gate that flushes when you pause, then one serialised WhisperKit instance, then the matcher. SwiftUI does the views and AppKit does the panel behaviour SwiftUI cannot express.
+
+It is signed with a Developer ID, notarised, and updates itself through Sparkle, which refuses to interrupt while a session is live.
 
 ## Scope
 
-It's a personal tool and doesn't pretend otherwise. There is no App Store listing, no onboarding, and nothing built for a second user. There is also nothing in it designed to hide it from the interviewer. It doesn't exclude itself from screen sharing and it doesn't disguise its process. It's my own notes on my own screen, which as far as I can tell is the same as having a page on the desk.
+It is a personal tool and does not pretend otherwise, so there is no App Store listing, no onboarding, and nothing built for a second user. There is also nothing in it designed to hide it from the interviewer, it does not exclude itself from screen sharing and it does not disguise its process.
+
+These are my own notes on my own screen, which as far as I can tell is the same as having a page on the desk.

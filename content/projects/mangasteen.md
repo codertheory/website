@@ -1,6 +1,6 @@
 ---
 title: Mangasteen
-tag: A UX-friendly, extensible manga reader for iOS and Android. Kotlin Multiplatform under the hood, with a public extension ecosystem so anyone can add a source.
+tag: An extensible manga reader for iOS and Android. One Kotlin Multiplatform codebase underneath, with a public extension system so anyone can add a source.
 date: 2026-03-08
 status: wip
 statusLabel: Beta
@@ -35,22 +35,22 @@ links:
     kind: code
 features:
   - t: One codebase, two stores
-    d: Kotlin Multiplatform and Compose Multiplatform mean Android and iOS ship from the same project, with the same look, feel and gestures on both.
+    d: One Kotlin Multiplatform project ships to Android and iOS, with the same look/feel/gestures on both.
   - t: Open extension ecosystem
     d: Sources are sandboxed JavaScript scripts running in an embedded QuickJS engine. Pull from the public repo or write your own from the SDK template. Neither one needs an app update.
-  - t: A reader designed to disappear
+  - t: A reader that gets out of the way
     d: Three modes (webtoon, manga, comic), pinch-zoom in all of them, and pull-to-load chapter navigation with a haptic confirm, so no chrome buttons end up fighting for thumb space.
   - t: Library that scales
     d: Categories with reorderable tabs, multi-select bulk actions, tri-state chapter filters, and clear "source missing" states so library entries hold together when an extension isn't available.
 why: |
-  Friends were stuck on readers that hadn't shipped a real update in months and were starting to break. I wanted to give them something that actually got maintained. It's also my first mobile app, so it came with my first TestFlight, my first Play Store listing and my first real look at how each store works. And there's a quiet pleasure in making something my friends use without me having to sell it to them.
+  My friends were stuck on readers that had not shipped a real update in months and were starting to break, so I built them one that actually gets maintained. It is also my first mobile app, which meant my first TestFlight, my first Play Store listing, and a lot of figuring out how each store actually works. There is something quietly nice about making a thing your friends use without having to talk them into it.
 ---
 
 ## What it is
 
 Mangasteen is a cross-platform manga reader for iOS and Android, built on a single Kotlin Multiplatform codebase with a Compose Multiplatform UI. It's structured around an open extension ecosystem, so the catalog is whatever community sources you add rather than a curated walled garden.
 
-It starts with manga, but the reader and library are deliberately general; nothing in the architecture stops it from growing into other paginated mediums later.
+It starts with manga, but the reader and the library are general enough that nothing really stops it growing into other paginated stuff later on.
 
 ## Reader
 
@@ -86,4 +86,4 @@ Android gets in-app updates that download silently in the background, with a blo
 
 ## Under the hood
 
-MVVM and Clean Architecture, with a clear Data, Presentation and Background split. Room for the local database, Ktor for networking, Coil 3 for image loading, Koin (annotations) for DI, Alarmee for cross-platform local notifications. Tested with Kotest, Compose UI Test, Ktor Mock Client and Koin Test, with CI running `./gradlew test` on every push and PR.
+MVVM and Clean Architecture with a Data/Presentation/Background split. Room for the local database, Ktor for networking, Coil 3 for image loading, Koin (annotations) for DI, Alarmee for cross-platform local notifications. Tested with Kotest, Compose UI Test, Ktor Mock Client and Koin Test, and CI runs `./gradlew test` on every push/PR.

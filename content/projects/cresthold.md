@@ -31,16 +31,16 @@ features:
   - t: Sharing by location
     d: Rooms are the unit of sharing, so you can invite a roommate to one shared kitchen and keep the rest of the house private. It runs on CloudKit Sharing.
   - t: AI-assisted import
-    d: Snap a receipt or paste a product URL; Cresthold parses the item, fills the fields, and tags the marketplace.
+    d: Snap a receipt or paste a product URL and it parses the item, fills in the fields, and tags the marketplace.
   - t: Native everywhere
     d: SwiftUI on iPhone, iPad, and Mac. SwiftData for local storage, CloudKit for end-to-end encrypted sync.
 why: |
-  Two reasons. *One:* I've always wanted to ship a real desktop app, and Swift turned out to be the most enjoyable language I've picked up in years. *Two:* I'm between jobs. If money gets tight enough that I'm selling things I don't strictly need, I want a real inventory of them, so I can decide what to part with instead of opening drawers in a panic.
+  Two reasons. I have always wanted to ship a real desktop app, and Swift turned out to be the most fun I have had with a language in years. The other one is that I am between jobs right now, and if money gets tight enough that I start selling things I do not strictly need, I want an actual list of what I own so I can decide what to let go of instead of opening drawers in a panic.
 ---
 
 ## What it is
 
-Cresthold tracks what you own, what's in your kitchen, and what you need to buy, all in one native app that runs on iPhone, iPad and Mac.
+Cresthold keeps track of what you own, what is in your kitchen, and what you still need to buy, in one native app across iPhone/iPad/Mac.
 
 ## What you can store
 
@@ -52,7 +52,7 @@ Built-in categories cover Clothes, Appliances, Tech, Games, Subscriptions, Softw
 
 ### Locations
 
-Rooms and nested sub-locations, each with their own icon and color. Locations double as the sharing unit: invite someone to your kitchen and they see only the kitchen, not the rest of the house.
+Rooms and nested sub-locations, each with their own icon and colour. Locations are also how sharing works, so you can invite someone to your kitchen and that is all they get to see.
 
 ### Groceries
 
@@ -68,4 +68,4 @@ You can attach warranty documents to any item, meaning PDFs and photos of receip
 
 ## Status
 
-1.0 isn't out yet. The marketing site is up at [cresthold.app](https://cresthold.app) and the beta is open on [TestFlight](https://testflight.apple.com/join/U1T31KMf). The App Store link will land here once it's live.
+1.0 is not out yet. The site is up at [cresthold.app](https://cresthold.app) and the beta is open on [TestFlight](https://testflight.apple.com/join/U1T31KMf), so the App Store link is the one thing still missing and it will land here once it exists.
