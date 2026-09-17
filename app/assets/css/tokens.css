@@ -6,6 +6,10 @@
   --bulb: #F4C669;            /* the warm logo yellow */
   --bulb-deep: #E8A93D;
   --bulb-soft: #FBE7B7;
+  /* Amber is the brand colour but fails contrast as text: #E8A93D on paper is
+     1.93:1. --bulb/--bulb-deep stay for fills, borders and the stamp shadows;
+     anything that is actually read uses --bulb-text, which flips per theme. */
+  --bulb-text: #8F6109;
   --bulb-glow: rgba(244, 198, 105, 0.32);
 
   /* Light theme (default) */
@@ -14,7 +18,7 @@
   --bg-sunk:   #F2EBD9;
   --ink:       #1F1B16;       /* warm black */
   --ink-soft:  #4A4338;
-  --ink-mute:  #8A7F6E;
+  --ink-mute:  #6F6555;   /* was #8A7F6E, 3.3:1 in the footer */
   --rule:      #E8DEC5;
   --rule-soft: #EFE7D2;
   --accent:    var(--bulb-deep);
@@ -44,9 +48,10 @@
   --bg-sunk:   #0D0B08;
   --ink:       #F4ECD7;
   --ink-soft:  #C7BCA1;
-  --ink-mute:  #807762;
+  --ink-mute:  #9A8F78;   /* was #807762, 4.43:1 on the dark background */
   --rule:      #2A241A;
   --rule-soft: #1F1A12;
+  --bulb-text: #F4C669;
   --accent:    var(--bulb);
   --accent-on: #14110C;
   --code-bg:   #1F1A12;

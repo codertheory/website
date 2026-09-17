@@ -35,9 +35,17 @@
             Your message
             <textarea v-model="form.message" required placeholder="Tell me what's on your mind…" />
           </label>
-          <NuxtTurnstile ref="turnstile" v-model="token" />
+          <NuxtTurnstile v-if="spamCheckReady" ref="turnstile" v-model="token" />
+          <p v-else class="form-unavailable">
+            The form is off while its spam check is being reconfigured. Email me at
+            <a href="mailto:support@codertheory.dev">support@codertheory.dev</a> and it reaches the same inbox.
+          </p>
           <div class="form-foot">
-            <button class="btn btn--primary" type="submit" :disabled="status === 'sending'">
+            <button
+              class="btn btn--primary"
+              type="submit"
+              :disabled="status === 'sending' || !spamCheckReady"
+            >
               {{ buttonLabel }} <ArrowRight />
             </button>
             <span v-if="status === 'error'" class="form-hint form-hint--error">// {{ error }}</span>
@@ -45,8 +53,8 @@
           </div>
         </form>
 
-        <aside class="card contact-aside fade-up">
-          <h3>Other ways to reach me</h3>
+        <div class="card contact-aside fade-up">
+          <h2 class="contact-aside-h">Other ways to reach me</h2>
           <p>Email is fastest. Everything else I check, but slower.</p>
           <div class="channels">
             <a class="ch" href="mailto:support@codertheory.dev">
@@ -66,13 +74,19 @@
               <ExternalIcon />
             </a>
           </div>
-        </aside>
+        </div>
       </div>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
+    // The contact API rejects any submission without a Turnstile token, so with no
+    // site key configured the form can only ever return a 400 that blames the
+    // sender. Better to say so and point at the inbox that still works.
+    const runtimeConfig = useRuntimeConfig()
+    const spamCheckReady = computed(() => Boolean(runtimeConfig.public.turnstile?.siteKey))
+
     const form = reactive({name: '', email: '', topic: '', message: ''})
     const token = ref('')
     const turnstile = ref<{reset: () => void}>()

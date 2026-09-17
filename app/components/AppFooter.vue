@@ -9,7 +9,7 @@
         <p class="footer-tagline">Software, writing, and the ideas behind them. By Lucas.</p>
       </div>
       <div v-for="c in cols" :key="c.h" class="footer-col">
-        <h5>{{ c.h }}</h5>
+        <h2 class="footer-col-h">{{ c.h }}</h2>
         <ul>
           <li v-for="l in c.links" :key="l.label">
             <NuxtLink v-if="'to' in l" :to="l.to">{{ l.label }}</NuxtLink>

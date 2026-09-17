@@ -145,6 +145,12 @@ export default defineNuxtConfig({
     ],
 
     fonts: {
+        // Every family here is referenced only through a CSS custom property
+        // (--f-display and friends in tokens.css). @nuxt/fonts scans for literal
+        // `font-family:` declarations, so without this it found nothing to
+        // resolve and shipped zero @font-face rules, silently falling back to
+        // Iowan Old Style / Times New Roman for every visitor.
+        experimental: {processCSSVariables: true},
         families: [
             {name: 'Fraunces', provider: 'google', weights: [400, 500, 600, 700]},
             {name: 'Inter', provider: 'google', weights: [400, 500, 600, 700]},

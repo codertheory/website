@@ -126,7 +126,7 @@
 .contact-form .cf-turnstile { min-height: 65px; }
 
 .contact-aside { padding: 36px; }
-.contact-aside h3 { font-family: var(--f-display); font-size: 28px; margin: 0 0 12px; font-weight: 600; }
+.contact-aside .contact-aside-h { font-family: var(--f-display); font-size: 28px; margin: 0 0 12px; font-weight: 600; }
 .contact-aside p { color: var(--ink-soft); margin: 0 0 22px; }
 .contact-aside .channels { display: grid; gap: 12px; }
 .contact-aside .ch {
@@ -276,3 +276,11 @@
   letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px;
 }
 .uses-body { margin-top: 44px; padding-bottom: 96px; }
+
+/* Shown instead of the Turnstile widget when no site key is configured. */
+.form-unavailable {
+  margin: 0; padding: 14px 16px;
+  border: 1px solid var(--rule); border-radius: var(--r-md);
+  background: var(--bg-sunk); color: var(--ink-soft); font-size: 14px;
+}
+.form-unavailable a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }

@@ -35,12 +35,12 @@ img { max-width: 100%; display: block; }
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.18em;
   text-transform: uppercase; font-weight: 600;
-  color: var(--bulb-deep);
+  color: var(--bulb-text);
 }
 .eyebrow::before {
   content: ""; width: 18px; height: 2px; background: var(--bulb-deep);
 }
-[data-theme="dark"] .eyebrow { color: var(--bulb); }
+/* --bulb-text already flips per theme, so no dark override is needed. */
 [data-theme="dark"] .eyebrow::before { background: var(--bulb); }
 
 .h-display {
