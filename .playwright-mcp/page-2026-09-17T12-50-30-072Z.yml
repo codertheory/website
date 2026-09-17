@@ -1,0 +1,133 @@
+- generic [ref=f67e2]:
+  - status [ref=f67e3]: About · codertheory
+  - generic [ref=f67e4]:
+    - banner [ref=f67e5]:
+      - generic [ref=f67e6]:
+        - link "codertheory .dev" [ref=f67e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f67e28]: codertheory
+          - generic [ref=f67e29]: .dev
+        - navigation [ref=f67e30]:
+          - link "Home" [ref=f67e31] [cursor=pointer]:
+            - /url: /
+          - link "Projects" [ref=f67e32] [cursor=pointer]:
+            - /url: /projects
+          - link "Blog" [ref=f67e33] [cursor=pointer]:
+            - /url: /blog
+          - link "About" [ref=f67e34] [cursor=pointer]:
+            - /url: /about
+          - link "Contact" [ref=f67e35] [cursor=pointer]:
+            - /url: /contact
+          - button "Toggle theme" [ref=f67e36] [cursor=pointer]
+    - main [ref=f67e39]:
+      - generic [ref=f67e40]:
+        - generic [ref=f67e41]:
+          - generic [ref=f67e42]: About
+          - heading [level=1] [ref=f67e43]:
+            - text: Hi, I'm
+            - generic [ref=f67e44]: Lucas
+            - text: ", a programmer who'd rather teach you the why."
+        - generic [ref=f67e48]:
+          - img "Lucas Lukowski" [ref=f67e50]
+          - generic [ref=f67e51]:
+            - generic [ref=f67e52]:
+              - paragraph [ref=f67e53]:
+                - text: I'm Lucas, a self-taught full-stack developer who'd rather teach you the
+                - emphasis [ref=f67e54]: why
+                - text: than hand you the answer.
+              - paragraph [ref=f67e55]: Over 7 years building web applications, mostly Python (Django, FastAPI) on the back and Vue/Nuxt or React on the front, with the AWS underneath it. Lately I have been deep in Kotlin Multiplatform and Swift, shipping a manga reader to iOS and Android.
+              - paragraph [ref=f67e56]: Codertheory is where I keep the things I make and the things I think out loud about. Take whatever is useful.
+            - heading "The path so far" [level=3] [ref=f67e57]
+            - paragraph [ref=f67e58]: // roughly chronological
+            - list [ref=f67e59]:
+              - listitem [ref=f67e60]:
+                - generic [ref=f67e61]: 2025-2026
+                - generic [ref=f67e62]: Full-stack at TripNinja
+                - generic [ref=f67e63]: Built an auth microservice, then scaffolded and spun up the API Gateway our API sits behind, routing 10k+ daily requests to the Django core. Also untangled Celery and ECS auto-scaling under peak load.
+              - listitem [ref=f67e64]:
+                - generic [ref=f67e65]: 2023-2025
+                - generic [ref=f67e66]: Full-stack at ChartD
+                - generic [ref=f67e67]: Founding engineer. Built an AI chat app that plugged into companies' own data, learned to train/deploy models on SageMaker, then we pivoted into an SDLC product. Owned all the AWS as one of two engineers.
+              - listitem [ref=f67e68]:
+                - generic [ref=f67e69]: 2021-2023
+                - generic [ref=f67e70]: Full-stack at FarmLink
+                - generic [ref=f67e71]: Vue + Django Price Map for North American grain farmers to find/locate bins and see prices, with filters that email you when a price goes below/above what you set. Also mentored co-ops on TDD.
+              - listitem [ref=f67e72]:
+                - generic [ref=f67e73]: 2019-2021
+                - generic [ref=f67e74]: Founding engineer at LoKnow
+                - generic [ref=f67e75]: Built an ad-automation SaaS from zero with Scrapyd scrapers, taught myself AWS along the way (ECS/ECR/RDS), and shipped a Django + Vue RBAC system with a 5-person team.
+            - heading "What I work in" [level=3] [ref=f67e76]
+            - paragraph [ref=f67e77]: // not a checklist, just honest
+            - generic [ref=f67e78]:
+              - generic [ref=f67e79]: TypeScript
+              - generic [ref=f67e80]: Python
+              - generic [ref=f67e81]: Swift
+              - generic [ref=f67e82]: Kotlin
+              - generic [ref=f67e83]: Dart
+              - generic [ref=f67e84]: Django
+              - generic [ref=f67e85]: FastAPI
+              - generic [ref=f67e86]: Vue / Nuxt
+              - generic [ref=f67e87]: React
+              - generic [ref=f67e88]: Compose Multiplatform
+              - generic [ref=f67e89]: Flutter
+              - generic [ref=f67e90]: MongoDB
+              - generic [ref=f67e91]: MySQL
+              - generic [ref=f67e92]: AWS (ECS / RDS / SageMaker)
+              - generic [ref=f67e93]: Docker
+              - generic [ref=f67e94]: GitHub Actions
+            - link "Say hello" [ref=f67e96] [cursor=pointer]:
+              - /url: /contact
+    - contentinfo [ref=f67e99]:
+      - generic [ref=f67e100]:
+        - generic [ref=f67e101]:
+          - link "codertheory" [ref=f67e102] [cursor=pointer]:
+            - /url: /
+          - paragraph [ref=f67e124]: Software, writing, and the ideas behind them. By Lucas.
+        - generic [ref=f67e125]:
+          - heading "Site" [level=2] [ref=f67e126]
+          - list [ref=f67e127]:
+            - listitem [ref=f67e128]:
+              - link "Home" [ref=f67e129] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=f67e130]:
+              - link "Projects" [ref=f67e131] [cursor=pointer]:
+                - /url: /projects
+            - listitem [ref=f67e132]:
+              - link "Blog" [ref=f67e133] [cursor=pointer]:
+                - /url: /blog
+            - listitem [ref=f67e134]:
+              - link "About" [ref=f67e135] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=f67e136]:
+              - link "Now" [ref=f67e137] [cursor=pointer]:
+                - /url: /now
+            - listitem [ref=f67e138]:
+              - link "Uses" [ref=f67e139] [cursor=pointer]:
+                - /url: /uses
+            - listitem [ref=f67e140]:
+              - link "Search" [ref=f67e141] [cursor=pointer]:
+                - /url: /search
+        - generic [ref=f67e142]:
+          - heading "Contact" [level=2] [ref=f67e143]
+          - list [ref=f67e144]:
+            - listitem [ref=f67e145]:
+              - link "Get in touch" [ref=f67e146] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=f67e147]:
+              - link "Latest writing" [ref=f67e148] [cursor=pointer]:
+                - /url: /blog
+            - listitem [ref=f67e149]:
+              - link "GitHub" [ref=f67e150] [cursor=pointer]:
+                - /url: https://github.com/codertheory/
+        - generic [ref=f67e151]:
+          - heading "Legal" [level=2] [ref=f67e152]
+          - list [ref=f67e153]:
+            - listitem [ref=f67e154]:
+              - link "Privacy" [ref=f67e155] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=f67e156]:
+              - link "Terms" [ref=f67e157] [cursor=pointer]:
+                - /url: /terms
+      - generic [ref=f67e158]:
+        - generic [ref=f67e159]: © 2026 codertheory.dev
+        - generic [ref=f67e160]: // built with care, deployed on cloudflare

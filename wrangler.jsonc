@@ -5,6 +5,18 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "codertheory-website",
+	// Plain runtime variables have to live here, not in the dashboard. Every
+	// Workers Build deploys the `vars` bindings from this file, so anything set
+	// through the UI is wiped by the next push. Secrets are stored separately
+	// and do survive, which is why NUXT_GITHUB_TOKEN and friends kept working.
+	//
+	// Both of these are public by design: the Turnstile site key is rendered
+	// into the contact page's HTML, and a PostHog phc_ key is a write-only
+	// ingest key that ships to every browser. Neither is a secret.
+	"vars": {
+		"NUXT_PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAADjfnMcMVv_b_aNI",
+		"NUXT_PUBLIC_POSTHOG_KEY": "phc_BGjJ2x7icbv3KQvyE27CLNXvriiE8dafsQZaDwQAdzx3"
+	},
 	"kv_namespaces": [
 		{
 			"binding": "STATS",
