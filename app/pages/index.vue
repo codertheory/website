@@ -15,7 +15,7 @@
               <span class="accented">Type</span> second.
             </h1>
             <p class="hero-sub">
-              I build small software, mentor newer engineers, and write about the why behind the code — not just the keystrokes. This is where it all lives.
+              I build small software, mentor newer engineers, and write about the why behind the code rather than just the keystrokes. This is where all of it lives.
             </p>
             <div class="hero-ctas">
               <NuxtLink class="btn btn--primary" to="/projects">
@@ -43,7 +43,7 @@
         <div>
           <div class="label">// now</div>
           <div class="what">
-            <em>{{ now.focus }}</em> — {{ now.what }}
+            <em>{{ now.focus }}</em> {{ now.what }}
           </div>
         </div>
         <ClientOnly>
@@ -58,7 +58,7 @@
         <div>
           <div class="label">// now</div>
           <div class="what">
-            <em>{{ now.focus }}</em> — {{ now.what }}
+            <em>{{ now.focus }}</em> {{ now.what }}
           </div>
         </div>
         <ClientOnly>
@@ -113,9 +113,9 @@
       <div class="quote-block fade-up">
         <span class="marks">“</span>
         <div class="q">
-          The best engineers I know don't write more code — they understand the <em>shape</em> of the problem first, then write very little code.
+          The best engineers I know don't write more code, they work out the <em>shape</em> of the problem first and then write very little of it.
         </div>
-        <div class="who">— a thing I tell every mentee, eventually</div>
+        <div class="who">a thing I tell every mentee, eventually</div>
       </div>
     </section>
 

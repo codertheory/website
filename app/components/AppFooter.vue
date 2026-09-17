@@ -6,7 +6,7 @@
           <span class="brand-mark"><BrandLogo :size="32" /></span>
           <b>codertheory</b>
         </NuxtLink>
-        <p class="footer-tagline">Software, writing, and the ideas behind them — by Lucas.</p>
+        <p class="footer-tagline">Software, writing, and the ideas behind them. By Lucas.</p>
       </div>
       <div v-for="c in cols" :key="c.h" class="footer-col">
         <h5>{{ c.h }}</h5>

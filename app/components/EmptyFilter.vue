@@ -38,7 +38,7 @@
             pillLabel: 'filter',
             headlinePrefix: 'Nothing tagged',
             headlineSuffix: 'yet.',
-            body: "It's a thin shelf for now. Try a neighbouring category — or come back when I've finished the thing on the workbench.",
+            body: "It's a thin shelf for now. Try a neighbouring category, or come back when I've finished the thing on the workbench.",
             secondary: 'Tell me what to build next'
         },
         blog: {

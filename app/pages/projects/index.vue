@@ -3,7 +3,7 @@
     <section class="wrap" style="padding-top: 60px;">
       <span class="eyebrow">Projects</span>
       <h1 class="h-section" style="margin-top: 14px; max-width: 760px;">
-        Things I've shipped, in <span class="scribble">all shapes<ScribbleUnder /></span> — apps, scripts, bots, tools.
+        Things I've shipped, in <span class="scribble">all shapes<ScribbleUnder /></span>. Apps, scripts, bots, tools.
       </h1>
       <p style="max-width: 600px; color: var(--ink-soft); margin-top: 14px; font-size: 18px;">
         Some are alive and growing, some are sleeping peacefully. They all taught me something worth keeping.
@@ -135,7 +135,7 @@
 
     useSiteSeo({
         title: 'Projects',
-        description: "Things Lucas has shipped — apps, scripts, bots, and tools. Some alive and growing, some sleeping peacefully."
+        description: "Things Lucas has shipped. Apps, scripts, bots and tools, some alive and growing, some sleeping peacefully."
     })
 
     useScrollReveal(filteredProjects)

@@ -58,7 +58,7 @@
 
     useSiteSeo({
         title: 'Now',
-        description: "What Lucas is working on at the moment — the current focus, and what's on the workbench."
+        description: "What Lucas is working on at the moment, the current focus and what's on the workbench."
     })
 
     useScrollReveal()

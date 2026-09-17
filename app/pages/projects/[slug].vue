@@ -100,6 +100,19 @@
         <ContentRenderer :value="project" />
       </article>
     </section>
+
+    <nav v-if="prevProject && nextProject" class="wrap project-nav" aria-label="More projects">
+      <NuxtLink class="project-nav__item" :to="`/projects/${slugFromPath(prevProject.path)}`">
+        <span class="dir">// previous</span>
+        <span class="title">{{ prevProject.title }}</span>
+        <span class="tag">{{ prevProject.tag }}</span>
+      </NuxtLink>
+      <NuxtLink class="project-nav__item project-nav__item--next" :to="`/projects/${slugFromPath(nextProject.path)}`">
+        <span class="dir">// next</span>
+        <span class="title">{{ nextProject.title }}</span>
+        <span class="tag">{{ nextProject.tag }}</span>
+      </NuxtLink>
+    </nav>
   </div>
 </template>
 
@@ -123,6 +136,26 @@
     })
 
     const padNum = (n: number) => String(n).padStart(2, '0')
+
+    const slugFromPath = (path: string | undefined) => (path || '').split('/').filter(Boolean).pop() || ''
+
+    // Same date-DESC order as the index, so prev/next match the order people
+    // just browsed. Wraps at both ends, like the blog's "next up", so the
+    // footer is never half-empty on the newest or oldest project.
+    const { data: allProjects } = await useAsyncData('projects-nav', () =>
+        queryCollection('projects').order('date', 'DESC').all()
+    )
+
+    const neighbourAt = (offset: number) => computed(() => {
+        const list = allProjects.value || []
+        if (list.length < 2) return null
+        const idx = list.findIndex(p => p.path === project.value?.path)
+        if (idx === -1) return null
+        return list[(idx + offset + list.length) % list.length] || null
+    })
+
+    const prevProject = neighbourAt(-1)
+    const nextProject = neighbourAt(1)
 
     // The markdown body under the frontmatter was parsed and shipped but never
     // rendered, so every project's long-form writeup was invisible. Guard on the

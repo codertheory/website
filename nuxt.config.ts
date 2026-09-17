@@ -40,7 +40,7 @@ export default defineNuxtConfig({
             githubLogin: 'LucasCoderT', // NUXT_PUBLIC_GITHUB_LOGIN
             siteUrl: 'https://codertheory.dev', // NUXT_PUBLIC_SITE_URL
             siteName: 'codertheory',
-            siteDescription: 'Software, writing, and the ideas behind them — by Lucas.',
+            siteDescription: 'Software, writing, and the ideas behind them. By Lucas.',
             siteAuthor: 'Lucas',
             defaultOgImage: '/icon-512.png',
             twitterHandle: '@codertheory',

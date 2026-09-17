@@ -6,7 +6,7 @@
         Send me a <span class="scribble">note<ScribbleUnder /></span>. I read everything.
       </h1>
       <p style="max-width: 560px; color: var(--ink-soft); margin-top: 14px; font-size: 18px;">
-        Mentoring questions, project feedback, bug reports, or just hello — all welcome. I usually reply within a day or two.
+        Mentoring questions, project feedback, bug reports, or just hello. All welcome, and I usually reply within a day or two.
       </p>
     </section>
 
@@ -82,7 +82,7 @@
     const buttonLabel = computed(() => ({
         idle: 'Send message',
         sending: 'Sending…',
-        sent: 'Sent — thanks!',
+        sent: 'Sent, thanks',
         error: 'Send message'
     }[status.value]))
 
@@ -100,7 +100,7 @@
             status.value = 'error'
             const err = e as {data?: {statusMessage?: string}, statusMessage?: string}
             error.value = err.data?.statusMessage ?? err.statusMessage
-                ?? 'something went wrong — try emailing me directly'
+                ?? 'something went wrong, try emailing me directly'
         } finally {
             turnstile.value?.reset()
         }
@@ -108,7 +108,7 @@
 
     useSiteSeo({
         title: 'Contact',
-        description: 'Mentoring questions, project feedback, bug reports, or just hello — all welcome. Lucas usually replies within a day or two.'
+        description: 'Mentoring questions, project feedback, bug reports, or just hello. Lucas usually replies within a day or two.'
     })
 
     useScrollReveal()

@@ -40,7 +40,7 @@
     type TocLink = { id: string, text: string, depth?: number, children?: TocLink[] }
     const tocLinks = computed<TocLink[]>(() => {
         const raw = (doc.value as unknown as { body?: { toc?: { links?: TocLink[] } } })?.body?.toc?.links ?? []
-        // Flatten to top-level H2s only — matches the original sidebar shape.
+        // Flatten to top-level H2s only, matching the original sidebar shape.
         return raw.flatMap(l => (l.depth === 2 ? [l] : (l.children || []).filter(c => c.depth === 2)))
     })
 

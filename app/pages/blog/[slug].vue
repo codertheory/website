@@ -7,7 +7,7 @@
         <span>{{ post.cat }}</span>
       </div>
       <h1>{{ post.title }}</h1>
-      <div class="meta">{{ formatDate(post.date) }} · {{ post.cat }} · 3 min read</div>
+      <div class="meta">{{ formatDate(post.date) }} · {{ post.cat }} · {{ readingTime(post) }} min read</div>
     </section>
 
     <article class="prose wrap-narrow">
@@ -66,7 +66,7 @@
             title: p?.title,
             description: p?.excerpt,
             image: p?.image || undefined,
-            imageAlt: p ? `${p.title} — ${p.cat}` : undefined,
+            imageAlt: p ? `${p.title}, ${p.cat}` : undefined,
             type: 'article',
             publishedTime: p?.date,
             section: p?.cat,

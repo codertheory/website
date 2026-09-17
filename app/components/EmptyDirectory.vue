@@ -36,16 +36,16 @@
         projects: {
             label: '~ /codertheory/projects',
             arg: './projects',
-            comment: "# nothing shipped yet — that's fine.",
+            comment: "# nothing shipped yet, and that's fine.",
             headline: 'An empty directory is honest.',
-            body: "I'd rather show you nothing than ship filler. The next thing is in progress — usually closer than it looks.",
+            body: "I'd rather show you nothing than ship filler. The next thing is in progress and usually closer than it looks.",
             primary: { to: '/blog', label: 'Read recent posts' },
             secondary: { to: '/about', label: "What I'm doing now" }
         },
         blog: {
             label: '~ /codertheory/blog',
             arg: './posts',
-            comment: '# no posts yet — drafts in ~/notebooks.',
+            comment: '# no posts yet, drafts in ~/notebooks.',
             headline: 'An empty page is also a page.',
             body: "I write less and re-read more than I'd like to admit. New posts arrive when they're actually worth your time.",
             primary: { to: '/projects', label: 'Browse projects' },

@@ -5,10 +5,10 @@
       <div>
         <div class="label">// the feed is empty</div>
         <div class="what">
-          Nothing posted lately. The <em>workshop light</em> is on, though — something's brewing.
+          Nothing posted lately, though the <em>workshop light</em> is on and something's brewing.
         </div>
       </div>
-      <span class="ago">last update —</span>
+      <span class="ago">last update</span>
     </div>
     <div class="ghost-feed">
       <div v-for="(kind, i) in ['Project', 'Post']" :key="i" class="ghost-card">
@@ -19,12 +19,12 @@
         <div class="gc-line lg" />
         <div class="gc-line md" />
         <div class="gc-line sm" />
-        <div class="gc-foot">// placeholder — appears here when there's news</div>
+        <div class="gc-foot">// placeholder, appears here when there's news</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-    // Static placeholder — no props, no logic.
+    // Static placeholder, no props and no logic.
 </script>

@@ -3,7 +3,7 @@
     <section class="wrap" style="padding-top: 60px;">
       <span class="eyebrow">Writing</span>
       <h1 class="h-section" style="margin-top: 14px; max-width: 800px;">
-        Notes from the workbench — on <span class="scribble">teaching<ScribbleUnder /></span>, shipping, and the why behind the keystrokes.
+        Notes from the workbench, on <span class="scribble">teaching<ScribbleUnder /></span>, shipping, and the why behind the keystrokes.
       </h1>
     </section>
 
@@ -60,7 +60,7 @@
           <p class="excerpt">{{ post.excerpt }}</p>
           <div class="post-foot">
             <span>{{ formatDate(post.date) }}</span>
-            <span>3 min read</span>
+            <span>{{ readingTime(post) }} min read</span>
           </div>
         </NuxtLink>
       </div>
@@ -103,7 +103,7 @@
 
     useSiteSeo({
         title: 'Blog',
-        description: 'Notes from the workbench — on teaching, shipping, and the why behind the keystrokes.'
+        description: 'Notes from the workbench, on teaching, shipping, and the why behind the keystrokes.'
     })
 
     useScrollReveal(filter)
