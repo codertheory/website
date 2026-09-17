@@ -26,3 +26,6 @@ logs
 .env.*
 !.env.example
 /design_handoff_codertheory_redesign/
+
+# Playwright MCP scratch output (page snapshots, console logs, screenshots)
+.playwright-mcp/
