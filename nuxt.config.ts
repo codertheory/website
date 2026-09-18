@@ -172,7 +172,14 @@ export default defineNuxtConfig({
             ],
             meta: [
                 {name: 'theme-color', content: '#F4C669', media: '(prefers-color-scheme: light)'},
-                {name: 'theme-color', content: '#1F1B16', media: '(prefers-color-scheme: dark)'}
+                {name: 'theme-color', content: '#1F1B16', media: '(prefers-color-scheme: dark)'},
+                // Browsers take the first theme-color whose media matches, so the
+                // two above still drive the address bar. Discord ignores media
+                // entirely and takes the last one in the document, and was
+                // therefore accenting every embed with the near-black ink colour.
+                // This unconditional brand amber sits last so the embed bar is
+                // amber, and acts as the no-preference fallback for browsers.
+                {name: 'theme-color', content: '#F4C669'}
             ],
             script: [
                 {

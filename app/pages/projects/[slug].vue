@@ -222,9 +222,33 @@
             },
             ...(sameAs.length ? { sameAs } : {})
         }
-        return {
-            script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(ldJson) }]
+        // Discord renders this instead of the standard card when it can. The
+        // meta tags above stay the authority for every other platform, and for
+        // Discord whenever the payload can't be used.
+        const embed = buildProjectEmbed({
+            title: p.title,
+            tag: p.tag,
+            url,
+            image,
+            statusLabel: p.statusLabel,
+            platforms: p.platforms,
+            stack: p.stack,
+            links: p.links
+        })
+
+        const scripts: Array<Record<string, string>> = [
+            { type: 'application/ld+json', innerHTML: JSON.stringify(ldJson) }
+        ]
+        if (embed) {
+            const body = serialiseEmbed(embed)
+            // Past the size cap Discord drops the payload, so fall back to the
+            // standard preview rather than shipping something it will reject.
+            if (new TextEncoder().encode(body).length <= DISCORD_MAX_BYTES) {
+                scripts.push({ id: 'discord:component-embed', type: 'application/json', innerHTML: body })
+            }
         }
+
+        return { script: scripts }
     })
 
     useScrollReveal()
