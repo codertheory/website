@@ -33,7 +33,7 @@
 
     const formatDate = (s: string) => {
         const d = new Date(s)
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
     }
 
     const { data: post } = await useAsyncData(
@@ -65,7 +65,9 @@
         return {
             title: p?.title,
             description: p?.excerpt,
-            image: p?.image || undefined,
+            // p.image is a layout keyword, not a file; resolvePostImage keeps
+            // the site icon rather than pointing og:image at /stack.
+            image: p ? resolvePostImage(p.image, siteUrl, config.public.defaultOgImage as string) : undefined,
             imageAlt: p ? `${p.title}, ${p.cat}` : undefined,
             type: 'article',
             publishedTime: p?.date,
@@ -77,9 +79,7 @@
     useHead(() => {
         const p = post.value
         if (!p) return {}
-        const image = p.image
-            ? (/^https?:\/\//.test(p.image) ? p.image : `${siteUrl}${p.image.startsWith('/') ? p.image : `/${p.image}`}`)
-            : `${siteUrl}${config.public.defaultOgImage as string}`
+        const image = resolvePostImage(p.image, siteUrl, config.public.defaultOgImage as string)
         const url = `${siteUrl}/blog/${slug.value}`
         const ldJson = {
             '@context': 'https://schema.org',
@@ -104,9 +104,28 @@
                 }
             }
         }
-        return {
-            script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(ldJson) }]
+        const embed = buildPostEmbed({
+            title: p.title,
+            excerpt: p.excerpt,
+            url,
+            image,
+            category: p.cat,
+            date: p.date,
+            quote: p.quote,
+            readingMinutes: readingTime(p)
+        })
+
+        const scripts: Array<Record<string, string>> = [
+            { type: 'application/ld+json', innerHTML: JSON.stringify(ldJson) }
+        ]
+        if (embed) {
+            const body = serialiseEmbed(embed)
+            if (new TextEncoder().encode(body).length <= DISCORD_MAX_BYTES) {
+                scripts.push({ id: 'discord:component-embed', type: 'application/json', innerHTML: body })
+            }
         }
+
+        return { script: scripts }
     })
 
     useScrollReveal()

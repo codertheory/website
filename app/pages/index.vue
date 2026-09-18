@@ -170,7 +170,7 @@
 
     const formatDate = (s: string) => {
         const d = new Date(s)
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
     }
 
     const slugFromPath = (path: string | undefined) => (path || '').split('/').filter(Boolean).pop() || ''

@@ -27,7 +27,7 @@
         const d = new Date(s)
         return Number.isNaN(d.getTime())
             ? s
-            : d.toLocaleDateString('en-US', {month: 'long', year: 'numeric'})
+            : d.toLocaleDateString('en-US', {month: 'long', year: 'numeric', timeZone: 'UTC'})
     }
 
     useSiteSeo({

@@ -106,6 +106,77 @@ export const buildProjectEmbed = (p: ProjectEmbedInput): ComponentEmbed | undefi
     return countComponents(embed.component) <= DISCORD_MAX_COMPONENTS ? embed : undefined
 }
 
+export type PostEmbedInput = {
+    title: string
+    excerpt?: string
+    url: string
+    image?: string
+    category?: string
+    date?: string
+    quote?: string
+    readingMinutes?: number
+}
+
+/**
+ * A post has no external links or gallery, so the value over the standard card
+ * is the detail around it: category, reading time, date, and the pull quote,
+ * plus one unambiguous button to open it.
+ */
+export const buildPostEmbed = (p: PostEmbedInput): ComponentEmbed | undefined => {
+    if (!p.title || !isUsableUrl(p.url)) return undefined
+
+    const components: Component[] = []
+
+    const heading: Component = {
+        type: 9,
+        components: [{
+            type: 10,
+            content: `# [${escapeMd(p.title)}](${p.url})${p.excerpt ? `\n${escapeMd(trim(p.excerpt, 240))}` : ''}`
+        }]
+    }
+    if (isUsableUrl(p.image)) heading.accessory = {type: 11, media: {url: p.image}}
+    components.push(heading)
+
+    const facts = [
+        p.category,
+        p.readingMinutes ? `${p.readingMinutes} min read` : undefined,
+        formatDate(p.date)
+    ].filter((v): v is string => Boolean(v))
+    if (facts.length) components.push({type: 10, content: `-# ${escapeMd(facts.join('  ·  '))}`})
+
+    // The pull quote already uses *asterisks* for emphasis in the frontmatter,
+    // which is the same syntax Discord renders, so it carries over untouched.
+    if (p.quote) components.push({type: 10, content: `> ${trim(p.quote, 300).replace(/\n+/g, ' ')}`})
+
+    components.push({type: 14})
+    components.push({type: 1, components: [{type: 2, style: 5, url: p.url, label: 'Read the post'}]})
+
+    const embed: ComponentEmbed = {
+        component: {type: 17, accent_color: DISCORD_ACCENT, components}
+    }
+    return countComponents(embed.component) <= DISCORD_MAX_COMPONENTS ? embed : undefined
+}
+
+const formatDate = (value: string | undefined) => {
+    if (!value) return undefined
+    const d = new Date(value)
+    return Number.isNaN(d.getTime())
+        ? undefined
+        : d.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC'})
+}
+
+/**
+ * The `image` field on a post is a layout keyword ("stack"/"other") that picks
+ * a thumbnail treatment on the index, not a file. Only treat it as an image
+ * when it actually looks like one, or a post ends up advertising
+ * og:image=/stack and gets no preview picture at all.
+ */
+export const resolvePostImage = (image: string | null | undefined, siteUrl: string, fallback: string) => {
+    const abs = (src: string) => /^https?:\/\//.test(src) ? src : `${siteUrl}${src.startsWith('/') ? src : `/${src}`}`
+    if (image && (/^https?:\/\//.test(image) || image.startsWith('/'))) return abs(image)
+    return abs(fallback)
+}
+
 const trim = (value: string, max: number) =>
     value.length <= max ? value : `${value.slice(0, max - 1).trimEnd()}…`
 
