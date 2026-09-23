@@ -230,7 +230,7 @@
   padding: 28px;
   position: sticky; top: 100px;
 }
-.detail-side h5 { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); margin: 0 0 12px; font-weight: 500; }
+.detail-side .detail-side-h { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); margin: 0 0 12px; font-weight: 500; }
 .detail-side .row {
   display: flex; justify-content: space-between; align-items: center;
   padding: 10px 0;

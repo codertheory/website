@@ -149,8 +149,8 @@
   color: var(--ink);
 }
 .prose pre {
-  background: var(--ink);
-  color: #F4ECD7;
+  background: var(--code-block-bg);
+  color: var(--code-block-ink);
   padding: 20px 22px;
   border-radius: var(--r-md);
   font-family: var(--f-mono);
@@ -158,14 +158,14 @@
   line-height: 1.6;
   overflow: auto;
   margin: 28px 0;
-  border: 1px solid var(--ink);
+  border: 1px solid var(--code-block-rule);
   position: relative;
 }
 .prose pre::before {
   content: "code";
   position: absolute; top: 10px; right: 14px;
   font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em;
-  color: var(--ink-mute); text-transform: uppercase;
+  color: var(--code-block-label); text-transform: uppercase;
 }
 .prose pre.language-ts::before { content: "ts"; }
 .prose pre.language-tsx::before { content: "tsx"; }

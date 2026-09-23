@@ -30,9 +30,9 @@
             </div>
           </div>
 
-          <h3 style="font-family: var(--f-display); font-size: 30px; margin-top: 40px; margin-bottom: 6px; font-weight: 600; letter-spacing: -0.015em;">
+          <h2 style="font-family: var(--f-display); font-size: 30px; margin-top: 40px; margin-bottom: 6px; font-weight: 600; letter-spacing: -0.015em;">
             What's inside
-          </h3>
+          </h2>
           <p style="color: var(--ink-soft); margin: 0;">The features I'd actually point a friend to.</p>
           <ul class="detail-features">
             <li v-for="(f, i) in (project.features || [])" :key="i" class="fade-up">
@@ -45,26 +45,26 @@
           </ul>
         </div>
 
-        <aside class="card detail-side">
-          <h5>At a glance</h5>
+        <div class="card detail-side">
+          <h3 class="detail-side-h">At a glance</h3>
           <div class="row"><span class="k">platform</span><span class="v">{{ (project.platforms || []).join(', ') }}</span></div>
           <div class="row"><span class="k">type</span><span class="v">{{ project.type }}</span></div>
           <div class="row"><span class="k">started</span><span class="v">{{ project.started }}</span></div>
           <div class="row"><span class="k">status</span><span class="v">{{ project.statusLabel }}</span></div>
 
-          <h5 style="margin-top: 24px;">Stack</h5>
+          <h3 class="detail-side-h" style="margin-top: 24px;">Stack</h3>
           <div class="stack-chips">
             <span v-for="s in (project.stack || [])" :key="s" class="chip">{{ s }}</span>
           </div>
 
-          <h5 style="margin-top: 24px;">Links</h5>
+          <h3 class="detail-side-h" style="margin-top: 24px;">Links</h3>
           <div class="detail-links">
             <a v-for="(l, i) in (project.links || [])" :key="i" :href="l.href">
               <span>{{ l.label }}</span>
               <ExternalIcon />
             </a>
           </div>
-        </aside>
+        </div>
       </div>
     </section>
 
@@ -81,9 +81,9 @@
     </section>
 
     <section v-if="project.screenshots?.length" class="wrap" style="padding-bottom: 80px;">
-      <h3 style="font-family: var(--f-display); font-size: 30px; font-weight: 600; letter-spacing: -0.015em; margin: 0;">
+      <h2 style="font-family: var(--f-display); font-size: 30px; font-weight: 600; letter-spacing: -0.015em; margin: 0;">
         Screenshots
-      </h3>
+      </h2>
       <p style="color: var(--ink-soft); margin: 6px 0 0;">A few favourite views.</p>
       <div class="shots-strip">
         <div v-for="(shot, i) in project.screenshots" :key="i" class="shot fade-up">

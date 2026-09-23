@@ -24,6 +24,14 @@
   --accent:    var(--bulb-deep);
   --accent-on: #1F1B16;
   --code-bg:   #F4ECD7;
+  /* Fenced code blocks are a dark "terminal" panel in both themes. They used
+     to take `background: var(--ink)` with a hardcoded cream `color`, so in
+     dark mode --ink flipped to that same cream and the text became invisible
+     against its own background. These do not flip. */
+  --code-block-bg:    #1F1B16;
+  --code-block-ink:   #F4ECD7;
+  --code-block-rule:  #1F1B16;
+  --code-block-label: #9A8F78;
   --highlight: #FFE9A8;
 
   /* Type */
@@ -55,5 +63,7 @@
   --accent:    var(--bulb);
   --accent-on: #14110C;
   --code-bg:   #1F1A12;
+  --code-block-bg:   #241F18;
+  --code-block-rule: #453D31;
   --highlight: #3A2E14;
 }
