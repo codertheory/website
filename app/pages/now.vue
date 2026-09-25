@@ -51,10 +51,10 @@
             : d.toLocaleDateString('en-US', {month: 'long', year: 'numeric', timeZone: 'UTC'})
     }
 
-    const hasDetail = computed(() => {
-        const body = now.value?.body as { value?: unknown[] } | undefined
-        return Boolean(body?.value?.length)
-    })
+    // Content-based for the same reason as the project writeup: a body can be
+    // present and still render to nothing, and the fallback line below is a
+    // better answer than an empty space.
+    const hasDetail = computed(() => countWords(now.value) > 0)
 
     useSiteSeo({
         title: 'Now',

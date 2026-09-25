@@ -158,12 +158,13 @@
     const nextProject = neighbourAt(1)
 
     // The markdown body under the frontmatter was parsed and shipped but never
-    // rendered, so every project's long-form writeup was invisible. Guard on the
-    // parsed AST so a project with frontmatter only doesn't print a bare heading.
-    const hasWriteup = computed(() => {
-        const body = project.value?.body as { value?: unknown[] } | undefined
-        return Boolean(body?.value?.length)
-    })
+    // rendered, so every project's long-form writeup was invisible.
+    //
+    // Guard on whether the body actually has words in it, not on whether the
+    // parsed array is non-empty. A body can be present and still render to
+    // nothing (an HTML comment, stray blank lines), and an "In depth" heading
+    // with silence underneath is worse than no heading.
+    const hasWriteup = computed(() => countWords(project.value) > 0)
 
     const config = useRuntimeConfig()
     const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '')
