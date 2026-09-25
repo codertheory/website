@@ -1,6 +1,6 @@
 ---
 title: Job Pipeline
-tag: A private dashboard that reads my Notion job-tracker and turns it into a pipeline view. One Nuxt app deployed as a single Cloudflare Worker, with no auth code in it at all.
+tag: Something like a private Indeed with a dashboard attached. Postings come in scored and ranked, everything I apply to gets tracked from the same place, and the charts say whether any of it is working.
 date: 2026-09-24
 status: active
 statusLabel: Active
@@ -23,12 +23,12 @@ links:
     href: 'https://github.com/LucasCoderT/job_tracker'
     kind: code
 features:
-  - t: Notion stays the source of truth
-    d: All the data entry happens in Notion where it already was. This reads that database and folds it into a conversion strip, weekly velocity, and a searchable board, so there are no two places to keep in step.
-  - t: No auth code in the app
-    d: Cloudflare Access sits in front of the custom domain and the Worker never learns what a session is. There are no passwords, no tokens and no login route to get wrong, and workers.dev is off so nothing can slip past it.
-  - t: The charts are hand-rolled
-    d: CSS bars and small inline SVG, written as Vue template elements so they render during SSR. The one charting dependency went out the door with the Sankey and nothing has needed it since.
+  - t: A job board with only my jobs on it
+    d: Postings arrive already scored and ranked, with the pay, the stack and why it matched. I read them on my phone and either dismiss one or send it off to have a tailored CV built.
+  - t: It tells me where the process leaks
+    d: The headline is the step rate between stages, so the bottleneck names itself instead of me squinting at a funnel. Underneath it, a bar showing where every application is sitting right now.
+  - t: History that Notion cannot keep
+    d: Statuses change in place, so once a row flips the old state is gone. A daily snapshot means there are trend lines at all, which is the only way to see whether things are getting better or worse.
   - t: It feeds InterviewHelper
     d: Press Build pack on a job and it assembles an answer bank for that interview, which InterviewHelper then imports. Cards can be edited from a phone and the edit writes back to Notion.
 why: |
@@ -37,9 +37,9 @@ why: |
 
 ## What it is
 
-A single-page dashboard over the Notion database I already track applications in. It reads that database and renders a conversion strip, trend cards, a weekly velocity chart, a reply-rate breakdown by where the job came from, and a searchable board.
+Two halves of the same job hunt. One is a job board that only ever has my jobs on it, where postings turn up already scored and ranked and I decide from my phone whether any of them are worth the afternoon. The other is the dashboard over everything I have actually applied to, which is the half that tells me whether the effort is going anywhere.
 
-Notion stays the place I type things into. This is read-mostly analytics sitting on top, so I am never keeping two systems in step.
+That second half is a conversion strip, trend cards, a weekly velocity chart, a reply-rate breakdown by where the job came from, and a searchable board. Notion stays the place I type into, and this is read-mostly analytics sitting on top, so there are never two systems to keep in step.
 
 ## How a job actually moves
 
