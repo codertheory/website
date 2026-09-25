@@ -41,17 +41,39 @@ A single-page dashboard over the Notion database I already track applications in
 
 Notion stays the place I type things into. This is read-mostly analytics sitting on top, so I am never keeping two systems in step.
 
+## How a job actually moves
+
+:pipeline-flow
+
+The shape worth noticing is that the Mac is never called. It sits on a desk
+behind a residential connection and nothing on the internet can reach it, so
+every handoff in its direction is the Mac asking whether there is anything to
+do. The Worker just holds state and waits.
+
+That also means nothing is lost if the Mac is asleep. Work queues in KV and
+gets picked up whenever it next polls.
+
+## Two things the diagram simplifies
+
+`state` and `pack` are separate fields, not one ladder. `state` is his decision
+(new, dismissed, applied) and `pack` is the Mac's progress (none, requested,
+building, done, failed). Folding them together would make "dismissed, but the
+pack already built" impossible to represent, which is a real thing that
+happens.
+
+And `state: applied` cannot be set directly. It is a consequence of the Notion
+row existing, because claiming it without the row would put a job in the
+funnel's story that the funnel has never heard of.
+
 ## The auth story is that there isn't one
 
-Cloudflare Access sits in front of the Worker's custom domain, so the app itself contains no auth code. No sessions, no passwords, no tokens, no login route. `workers_dev` is deliberately off, because that hostname would route around Access and undo the whole arrangement.
+Cloudflare Access sits in front of the Worker's custom domain, so the app
+itself contains no auth code. No sessions, no passwords, no tokens, no login
+route. `workers_dev` is deliberately off, because that hostname would route
+around Access and undo the whole arrangement.
 
-Because access is gated at the edge before a request ever reaches the Worker, the API is free to return company names and Notion links without thinking about it.
-
-## Why there is a cron
-
-Notion mutates statuses in place. The moment a row flips from applied to rejected, the fact that it used to be applied is gone, and there is no way to reconstruct when anything happened. So a scheduled task writes the day's counts and metrics into KV, which is the only reason any of the trend lines exist.
-
-Stats are edge-cached for a few minutes as well, so Notion sees a handful of queries an hour no matter how often I reload it.
+The Mac presents an Access service token for the polling in the diagram above,
+so the Worker never has to tell the difference between him and a script.
 
 ## Interview packs
 
