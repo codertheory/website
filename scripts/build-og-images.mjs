@@ -23,7 +23,8 @@ const PROJECTS = [
     {out: 'mangasteen-og.png', src: 'Mangasteen_Logo.png', tiled: true},
     {out: 'iceteabot-og.png', src: 'iceteabot-app-icon.png', tiled: true},
     {out: 'cresthold-og.png', src: 'cresthold-app-icon-512.png', tiled: false},
-    {out: 'interview-helper-og.png', src: 'interview-helper-app-icon-512.png', tiled: false}
+    {out: 'interview-helper-og.png', src: 'interview-helper-app-icon-512.png', tiled: false},
+    {out: 'job-pipeline-og.png', src: 'job-pipeline-app-icon-512.png', tiled: false}
 ]
 
 for (const {out, src, tiled} of PROJECTS) {

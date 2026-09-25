@@ -15,6 +15,8 @@ stack:
   - Notion API
   - PrimeVue
 icon: J
+iconImage: /job-pipeline-app-icon-512.png
+ogImage: /job-pipeline-og.png
 tone: blue
 links:
   - label: GitHub
