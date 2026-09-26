@@ -21,6 +21,9 @@ iconImageTile: true
 ogImage: /mangasteen-og.png
 tone: green
 links:
+  - label: Website
+    href: 'https://mangasteen.codertheory.dev'
+    kind: site
   - label: TestFlight
     href: 'https://testflight.apple.com/join/qGVquvur'
     kind: store
