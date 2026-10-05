@@ -20,7 +20,7 @@ ogImage: /interview-helper-og.png
 tone: coral
 links:
   - label: Download for macOS
-    href: 'https://pub-ce734f5d22364b119423e4911c068868.r2.dev/InterviewHelper-1.0.0.dmg'
+    href: 'https://dl.codertheory.dev/interviewhelper/InterviewHelper.dmg'
     kind: site
 features:
   - t: Your notes tick themselves off
