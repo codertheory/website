@@ -40,7 +40,7 @@ export function useSiteSeo(options: SeoOptions | (() => SeoOptions) = {}) {
     const pageTitle = computed(() => opts.value.title)
     const fullTitle = computed(() => {
         const t = pageTitle.value
-        return t ? `${t} · ${siteName}` : `${siteName} — software, writing, and ideas`
+        return t ? `${t} · ${siteName}` : `${siteName} · software, writing, and ideas`
     })
     const ogImage = computed(() => {
         const img = opts.value.image || defaultOgImage
@@ -80,7 +80,9 @@ export function useSiteSeo(options: SeoOptions | (() => SeoOptions) = {}) {
         ogImageAlt: () => imageAlt.value,
         ogImageWidth: () => imageWidth.value,
         ogImageHeight: () => imageHeight.value,
-        ogImageType: () => imageType.value,
+        // The meta type only lists png, jpeg and gif; webp and avif are valid
+        // og:image:type values too, so this is a typing gap and not a wrong value.
+        ogImageType: () => imageType.value as 'image/png' | 'image/jpeg' | 'image/gif' | undefined,
         twitterCard: 'summary',
         twitterTitle: () => fullTitle.value,
         twitterDescription: () => description.value,
@@ -97,7 +99,8 @@ export function useSiteSeo(options: SeoOptions | (() => SeoOptions) = {}) {
         articleSection: () => opts.value.section,
         articleTag: () => opts.value.tags,
         robots: () => opts.value.noindex ? 'noindex, nofollow' : 'index, follow'
-    })
+        // og:pubdate is not in the typed key list, hence the assertion.
+    } as Parameters<typeof useSeoMeta>[0])
 
     useHead({
         link: [{rel: 'canonical', href: () => fullUrl.value}]

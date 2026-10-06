@@ -10,12 +10,13 @@
       </p>
     </section>
 
-    <section class="wrap" style="margin-top: 36px; padding-top: 24px; padding-bottom: 80px;">
+    <section class="wrap proj-index">
       <div class="proj-filters">
         <button
-          v-for="f in PLATFORM_FILTERS"
+          v-for="f in platformFilters"
           :key="f"
           :class="['proj-filter', { 'is-active': platform === f }]"
+          :aria-pressed="platform === f"
           @click="platform = f"
         >
           {{ f }}
@@ -26,117 +27,58 @@
         </span>
       </div>
 
-      <div class="proj-filters proj-filters--tech">
-        <span class="proj-filter-label">tech</span>
-        <button
-          v-for="t in techFilters"
-          :key="t"
-          :class="['proj-filter', 'proj-filter--tech', { 'is-active': tech === t }]"
-          @click="tech = t"
-        >
-          {{ t }}
-        </button>
-      </div>
-
       <EmptyDirectory v-if="(projects || []).length === 0" kind="projects" />
       <EmptyFilter
         v-else-if="filteredProjects.length === 0"
-        :filter="activeLabel"
-        :filters="allFilters"
+        :filter="platform"
+        :filters="platformFilters"
         kind="projects"
-        @update:filter="applyFilter"
+        @update:filter="platform = $event"
       />
-      <div v-else>
-        <NuxtLink
-          v-for="p in filteredProjects"
-          :key="p.path"
-          :to="`/projects/${slugFromPath(p.path)}`"
-          class="proj-row fade-up"
-        >
-          <div :class="['proj-thumb', `tone-${p.tone || 'blue'}`]">
-            <div :class="['icon-mark', { 'icon-mark--img': p.iconImage && !p.iconImageTile, 'icon-mark--tile': p.iconImage && p.iconImageTile }]">
-              <ProjectIcon :image="p.iconImage" :image-dark="p.iconImageDark" :glyph="p.icon" :alt="`${p.title} icon`" />
-            </div>
-          </div>
-          <div>
-            <div class="proj-meta">
-              <span :class="['dot', `dot--${p.status}`]" />
-              <span class="label">{{ p.statusLabel }}</span>
-              <span class="sep">·</span>
-              <span class="platforms">{{ (p.platforms || []).join(' · ') }}</span>
-            </div>
-            <h3 class="proj-title">{{ p.title }}</h3>
-            <p class="proj-tag">{{ p.tag }}</p>
-            <div class="proj-stack">
-              <span v-for="s in (p.stack || [])" :key="s" class="chip">{{ s }}</span>
-            </div>
-          </div>
-          <div class="proj-cta">
-            <span>open →</span>
-            <span class="arrow"><ArrowRight :size="20" /></span>
-          </div>
-        </NuxtLink>
-      </div>
+      <ul v-else class="prow-list">
+        <li v-for="p in filteredProjects" :key="p.path">
+          <ProjectRow :project="p" show-stack />
+        </li>
+      </ul>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-    const slugFromPath = (path: string | undefined) => (path || '').split('/').filter(Boolean).pop() || ''
-
     const { data: projects } = await useAsyncData('projects-index', () =>
         queryCollection('projects').order('date', 'DESC').all()
     )
 
     const PLATFORM_FILTERS = ['All', 'iOS', 'Web', 'Desktop', 'CLI', 'Bot'] as const
-    const platform = ref<string>('All')
-    const tech = ref<string>('All')
 
-    // Derived from the projects themselves so the row stays correct as the stack
-    // lists change, rather than being a second hardcoded list to keep in step.
-    const techFilters = computed(() => {
-        const seen = new Set<string>()
-        for (const p of projects.value || []) {
-            for (const entry of (p.stack || [])) seen.add(entry)
-        }
-        return ['All', ...[...seen].sort((a, b) => a.localeCompare(b))]
+    // Only offer a platform that at least one project answers to.
+    const matchesPlatform = (p: { platforms?: string[], type?: string }, f: string) =>
+        (p.platforms || []).some(pl => pl.toLowerCase() === f) || (p.type || '').toLowerCase().includes(f)
+    const platformFilters = computed<string[]>(() =>
+        PLATFORM_FILTERS.filter(f => f === 'All' || (projects.value || []).some(p => matchesPlatform(p, f.toLowerCase())))
+    )
+
+    // The filter lives in the URL so Back from a project returns to the same
+    // list. Anything the URL carries that is not a real filter means "All".
+    const route = useRoute()
+    const router = useRouter()
+    const fromQuery = (v: unknown) =>
+        (typeof v === 'string' && platformFilters.value.includes(v) ? v : 'All')
+    const platform = ref<string>(fromQuery(route.query.platform))
+    watch(platform, (pl) => {
+        router.replace({ query: pl !== 'All' ? { platform: pl } : {} })
     })
 
     const filteredProjects = computed(() => {
-        let items = projects.value || []
-        if (platform.value !== 'All') {
-            const f = platform.value.toLowerCase()
-            items = items.filter(p =>
-                (p.platforms || []).some(pl => pl.toLowerCase() === f) ||
-                (p.type || '').toLowerCase().includes(f)
-            )
-        }
-        if (tech.value !== 'All') {
-            items = items.filter(p => (p.stack || []).includes(tech.value))
-        }
-        return items
+        const items = projects.value || []
+        if (platform.value === 'All') return items
+        const f = platform.value.toLowerCase()
+        return items.filter(p => matchesPlatform(p, f))
     })
-
-    // EmptyFilter speaks in a single label, so show whichever dimension is narrower
-    // and route its "try instead" chips back to the row they came from.
-    const activeLabel = computed(() => (tech.value !== 'All' ? tech.value : platform.value))
-    const allFilters = computed(() => [...PLATFORM_FILTERS, ...techFilters.value.slice(1)])
-
-    const applyFilter = (value: string) => {
-        if (value === 'All') {
-            platform.value = 'All'
-            tech.value = 'All'
-        } else if (techFilters.value.includes(value)) {
-            tech.value = value
-        } else {
-            platform.value = value
-        }
-    }
 
     useSiteSeo({
         title: 'Projects',
         description: "Things Lucas has shipped. Apps, scripts, bots and tools, some alive and growing, some sleeping peacefully."
     })
 
-    useScrollReveal(filteredProjects)
 </script>

@@ -31,6 +31,7 @@ features:
     d: Statuses change in place, so once a row flips the old state is gone. A daily snapshot means there are trend lines at all, which is the only way to see whether things are getting better or worse.
   - t: It feeds InterviewHelper
     d: Press Build pack on a job and it assembles an answer bank for that interview, which InterviewHelper then imports. Cards can be edited from a phone and the edit writes back to Notion.
+leadFigure: pipeline-flow
 why: |
   I was tracking applications in Notion and Notion is fine for typing things into, but it will not tell you the thing you actually want to know, which is whether any of this is working. So I built a read-only layer on top that answers it. The part I did not expect to care about is the daily snapshot. Statuses mutate in place in Notion, so once a row flips from applied to rejected the earlier state is just gone and there is no history to chart. A cron writes the day's counts into KV so there is something to look back at later. It is also where I keep finding excuses to learn the Cloudflare platform properly, which is most of why it exists at all.
 ---
@@ -42,8 +43,6 @@ Two halves of the same job hunt. One is a job board that only ever has my jobs o
 That second half is a conversion strip, trend cards, a weekly velocity chart, a reply-rate breakdown by where the job came from, and a searchable board. Notion stays the place I type into, and this is read-mostly analytics sitting on top, so there are never two systems to keep in step.
 
 ## How a job actually moves
-
-:pipeline-flow
 
 The shape worth noticing is that the Mac is never called. It sits on a desk
 behind a residential connection and nothing on the internet can reach it, so

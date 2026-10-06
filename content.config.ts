@@ -31,6 +31,8 @@ export default defineContentConfig({
           d: z.string()
         })).optional(),
         why: z.string().optional(),
+        // A real artefact to lead the page with when there are no screenshots.
+        leadFigure: z.enum(['pipeline-flow']).optional(),
         screenshots: z.array(z.object({
           src: z.string(),
           alt: z.string().optional()

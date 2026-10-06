@@ -18,13 +18,13 @@ export default defineSitemapEventHandler(async (event) => {
             loc: `/projects/${slugOf(p.path)}`,
             lastmod: p.date,
             changefreq: 'monthly' as const,
-            priority: 0.8
+            priority: 0.8 as const
         })),
         ...posts.map(p => ({
             loc: `/blog/${slugOf(p.path)}`,
             lastmod: p.date,
             changefreq: 'monthly' as const,
-            priority: 0.6
+            priority: 0.6 as const
         }))
     ]
 })

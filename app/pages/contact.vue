@@ -5,26 +5,38 @@
       <h1 class="h-section" style="margin-top: 14px; max-width: 720px;">
         Send me a <span class="scribble">note<ScribbleUnder /></span>. I read everything.
       </h1>
-      <p style="max-width: 560px; color: var(--ink-soft); margin-top: 14px; font-size: 18px;">
+      <!-- TODO(lucas): stand-in for visitors who arrive from "Open to roles". Write your own. -->
+      <p v-if="isRole" class="contact-lede">
+        Tell me about the role. I usually reply within a day or two.
+      </p>
+      <p v-else class="contact-lede">
         Mentoring questions, project feedback, bug reports, or just hello. All welcome, and I usually reply within a day or two.
       </p>
     </section>
 
     <section class="wrap section">
       <div class="contact-grid">
-        <form class="card contact-form fade-up" @submit.prevent="onSubmit">
+        <div v-if="status === 'sent'" class="card contact-form contact-sent" role="status">
+          <p class="contact-sent-h">{{ buttonLabel }}</p>
+          <button class="arrow-link" type="button" @click="status = 'idle'">
+            Send message <ArrowRight :size="14" />
+          </button>
+        </div>
+        <form v-else class="card contact-form fade-up" @submit.prevent="onSubmit">
           <label>
             Your name
-            <input v-model="form.name" type="text" required placeholder="Ada Lovelace">
+            <input v-model="form.name" type="text" name="name" autocomplete="name" required placeholder="Ada Lovelace">
           </label>
           <label>
             Email
-            <input v-model="form.email" type="email" required placeholder="ada@example.com">
+            <input v-model="form.email" type="email" name="email" autocomplete="email" required placeholder="ada@example.com">
           </label>
           <label>
             What's this about?
-            <select v-model="form.topic" required>
+            <select v-model="form.topic" name="topic" required>
               <option value="" disabled>Pick one…</option>
+              <!-- TODO(lucas): placeholder label for hiring enquiries. -->
+              <option>{{ ROLE_TOPIC }}</option>
               <option>Mentoring / pairing</option>
               <option>A project of yours</option>
               <option>Bug or feature request</option>
@@ -33,7 +45,7 @@
           </label>
           <label>
             Your message
-            <textarea v-model="form.message" required placeholder="Tell me what's on your mind…" />
+            <textarea v-model="form.message" name="message" required placeholder="Tell me what's on your mind…" />
           </label>
           <NuxtTurnstile v-if="spamCheckReady" ref="turnstile" v-model="token" />
           <p v-else class="form-unavailable">
@@ -48,9 +60,10 @@
             >
               {{ buttonLabel }} <ArrowRight />
             </button>
-            <span v-if="status === 'error'" class="form-hint form-hint--error">// {{ error }}</span>
-            <span v-else class="form-hint">// or email me directly →</span>
+            <a class="form-hint" href="mailto:support@codertheory.dev">// or email me directly →</a>
           </div>
+          <!-- Shown with the email link above, not instead of it: a failed send is when it is needed. -->
+          <p v-if="status === 'error'" class="form-hint form-hint--error" role="alert">// {{ error }}</p>
         </form>
 
         <div class="card contact-aside fade-up">
@@ -87,7 +100,11 @@
     const runtimeConfig = useRuntimeConfig()
     const spamCheckReady = computed(() => Boolean(runtimeConfig.public.turnstile?.siteKey))
 
-    const form = reactive({name: '', email: '', topic: '', message: ''})
+    // The homepage status link arrives as /contact?topic=role.
+    const ROLE_TOPIC = 'A job or role'
+    const route = useRoute()
+    const isRole = computed(() => route.query.topic === 'role')
+    const form = reactive({name: '', email: '', topic: isRole.value ? ROLE_TOPIC : '', message: ''})
     const token = ref('')
     const turnstile = ref<{reset: () => void}>()
     const status = ref<'idle' | 'sending' | 'sent' | 'error'>('idle')

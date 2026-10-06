@@ -1,10 +1,11 @@
 <template>
-  <figure class="pipe">
-    <div class="pipe-scroll">
+  <figure :class="['pipe', { 'pipe--preview': preview }]">
+    <div class="pipe-scroll" v-bind="scrollerAttrs">
     <svg
       class="pipe-svg"
       viewBox="0 0 720 632"
-      role="img"
+      :role="preview ? undefined : 'img'"
+      :aria-hidden="preview || undefined"
       aria-label="How a job moves through the pipeline. The Mac finds and evaluates postings and pushes them to Cloudflare KV; the phone reads them and decides; the Mac polls the Worker for queued work because it cannot be reached from the internet; marking a job applied creates the Notion row that puts it in the funnel."
     >
       <defs>
@@ -125,12 +126,22 @@
       <text class="pf-s" x="16" y="616">Notion mutates statuses in place, so the cron is the only history there is.</text>
     </svg>
     </div>
-    <figcaption>
+    <figcaption v-if="!preview">
       The Mac cannot be reached from the internet, so every handoff to it is a poll.
       Amber arrows are the Mac pulling work; everything else is a push.
     </figcaption>
   </figure>
 </template>
+
+<script setup lang="ts">
+    // `preview` is the cropped, decorative peek used on the homepage row: no
+    // caption, no scrolling, hidden from assistive tech (the row names itself).
+    const props = withDefaults(defineProps<{ preview?: boolean }>(), { preview: false })
+
+    const scrollerAttrs = computed(() => props.preview
+        ? {}
+        : { tabindex: 0, role: 'group', 'aria-label': 'Diagram, scrolls sideways on narrow screens' })
+</script>
 
 <style scoped>
 .pipe { margin: 36px 0; }
@@ -138,7 +149,19 @@
    scrolls or its labels shrink into nothing. The Sankey this project used to
    have died of exactly that: an 800x400 space squeezed to 360px rendered its
    text at about 5px. Scroll instead, and never let it go below legible. */
-.pipe-scroll { overflow-x: auto; overscroll-behavior-x: contain; }
+/* Edge shadows that only show where there is more to scroll to: the page-colour
+   covers travel with the content, the shadows stay put. */
+.pipe-scroll {
+  overflow-x: auto; overscroll-behavior-x: contain;
+  background:
+    linear-gradient(var(--bg), var(--bg)) left / 28px 100% no-repeat local,
+    linear-gradient(var(--bg), var(--bg)) right / 28px 100% no-repeat local,
+    linear-gradient(to right, color-mix(in oklab, var(--ink) 22%, transparent), transparent) left / 14px 100% no-repeat scroll,
+    linear-gradient(to left, color-mix(in oklab, var(--ink) 22%, transparent), transparent) right / 14px 100% no-repeat scroll;
+}
+.pipe--preview { margin: 0; }
+.pipe--preview .pipe-scroll { overflow: hidden; background: none; }
+.pipe--preview .pipe-svg { width: 620px; }
 .pipe-svg {
   display: block; width: 100%; min-width: 620px; height: auto;
   color: var(--ink-soft);

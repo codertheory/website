@@ -60,10 +60,10 @@
   padding-bottom: 2px;
   transition: gap 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
 }
-.arrow-link:hover { gap: 14px; border-color: var(--accent); color: var(--accent); }
+.arrow-link:hover { gap: 14px; border-color: var(--accent); color: var(--bulb-text); }
 
 /* accent inline link */
-.accent-link { color: var(--bulb-deep); border-bottom: 1.5px solid var(--bulb); transition: all 0.15s var(--ease); }
+.accent-link { color: var(--bulb-text); border-bottom: 1.5px solid var(--bulb); transition: all 0.15s var(--ease); }
 .accent-link:hover { background: var(--bulb-soft); }
 [data-theme="dark"] .accent-link { color: var(--bulb); border-bottom-color: var(--bulb-deep); }
 [data-theme="dark"] .accent-link:hover { background: rgba(244,198,105,0.18); }
@@ -117,10 +117,10 @@
   border-radius: var(--r-lg);
   transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), border-color 0.25s var(--ease);
 }
-.card:hover {
-  transform: translateY(-3px);
-  border-color: var(--bulb-deep);
-  box-shadow: 0 24px 40px -28px rgba(31,27,22,0.30);
+/* Only cards that are links lift. A form or a panel of facts stays put. */
+a.card:hover {
+  border-color: var(--ink);
+  box-shadow: 0 4px 0 var(--bulb-deep);
 }
 
 .spin-tag {
@@ -130,6 +130,127 @@
   font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
 }
 [data-theme="dark"] .spin-tag { background: rgba(244,198,105,0.14); color: var(--bulb); }
+
+/* ============================================================
+   Project rows: one list language for projects, on every page
+   ============================================================ */
+.prow-list {
+  list-style: none; margin: 0; padding: 0;
+  border-top: 1px solid var(--rule);
+}
+.prow {
+  position: relative;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  padding: 24px 4px 24px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.prow--compact { grid-template-columns: 44px minmax(0, 1fr) auto; gap: 16px; padding: 13px 4px 13px 0; }
+.prow--post { grid-template-columns: minmax(0, 1fr) auto; }
+.prow--figure { grid-template-columns: 64px minmax(0, 1fr) 300px auto; }
+/* A fixed window onto a larger drawing, fading out where it is cut. */
+.prow-figure {
+  height: 148px; overflow: hidden;
+  border: 1px solid var(--rule); border-radius: var(--r-md);
+  background: var(--bg-elev);
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent), linear-gradient(to right, #000 78%, transparent);
+  mask-image: linear-gradient(to bottom, #000 62%, transparent), linear-gradient(to right, #000 78%, transparent);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
+.prow-figure > * { transform: translate(-6px, -26px); }
+.proj-thumb.prow-thumb {
+  width: 64px; aspect-ratio: 1;
+  background: none; border: 0; border-radius: 0; overflow: visible;
+}
+.prow--compact .proj-thumb.prow-thumb { width: 44px; }
+.proj-thumb.prow-thumb .icon-mark { width: 100%; font-size: 28px; }
+.prow--compact .proj-thumb.prow-thumb .icon-mark { font-size: 20px; }
+.prow-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+}
+.prow-title {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  margin: 0;
+}
+.prow--compact .prow-title { font-size: 20px; }
+/* The title link covers the row; anything else clickable sits above it. */
+.prow-link::after { content: ""; position: absolute; inset: 0; }
+.prow-link:focus-visible { outline: none; }
+.prow:has(.prow-link:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: var(--r-sm); }
+.prow-status {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono); font-size: 12px; color: var(--ink-mute);
+  letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+}
+.prow-tag {
+  font-size: 16px; line-height: 1.5; color: var(--ink-soft);
+  margin: 6px 0 8px; max-width: 62ch; text-wrap: pretty;
+}
+.prow-meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 2px 16px;
+  font-family: var(--f-mono); font-size: 12px; color: var(--ink-mute);
+  margin: 2px 0 0;
+}
+.prow-ext {
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 0;
+  font-family: var(--f-sans); font-size: 13px; font-weight: 600; color: var(--ink);
+  text-decoration: underline; text-decoration-color: var(--bulb-deep);
+  text-decoration-thickness: 2px; text-underline-offset: 4px;
+}
+.prow-ext:hover { color: var(--bulb-text); }
+.prow-stack {
+  font-family: var(--f-mono); font-size: 12px; color: var(--ink-mute);
+  margin: 6px 0 0;
+}
+.prow-arrow {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--bg-elev);
+  border: 1.5px solid var(--rule);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink);
+  transition: transform 0.2s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+.prow--compact .prow-arrow { width: 34px; height: 34px; }
+/* The arrow means "open the project page", so it stays quiet while the pointer
+   is on the link that leaves the site. */
+.prow:hover:not(:has(.prow-ext:hover)) .prow-arrow,
+.prow:has(.prow-link:focus-visible) .prow-arrow {
+  background: var(--ink);
+  color: var(--bg);
+  transform: translate(3px, -3px);
+  box-shadow: -3px 3px 0 var(--bulb-deep);
+}
+.prow:hover:not(:has(.prow-ext:hover)) .prow-title { text-decoration: underline; text-decoration-color: var(--bulb-deep); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+
+@media (max-width: 900px) {
+  .prow--figure { grid-template-columns: 64px minmax(0, 1fr) auto; }
+  .prow--figure .prow-figure { grid-column: 2 / -1; grid-row: 2; }
+}
+/* Phone: the arrow stays, smaller, so a row still says it opens something. */
+@media (max-width: 700px) {
+  .prow { grid-template-columns: 52px minmax(0, 1fr) auto; gap: 14px; padding: 20px 0; }
+  .prow--compact { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px; padding: 12px 0; }
+  .prow--post { grid-template-columns: minmax(0, 1fr) auto; }
+  .prow--figure { grid-template-columns: 52px minmax(0, 1fr) auto; }
+  .prow--figure .prow-figure { grid-column: 1 / -1; grid-row: 2; }
+  .proj-thumb.prow-thumb { width: 52px; }
+  .prow--compact .proj-thumb.prow-thumb { width: 40px; }
+  .prow-arrow, .prow--compact .prow-arrow { width: 30px; height: 30px; }
+  .prow-title { font-size: 22px; }
+  .prow-head { flex-wrap: wrap; gap: 2px 12px; }
+}
+@media (pointer: coarse) {
+  .prow-ext { min-height: 44px; }
+}
 
 /* ============================================================
    Section heading + dividers
@@ -157,17 +278,22 @@
 /* ============================================================
    Page transition + scroll reveal
    ============================================================ */
-.fade-up {
+/* Hidden only once script has run (the head script sets .js), so content is
+   still there if the reveal never gets the chance to fire. */
+.js .fade-up {
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
 }
-.fade-up.in {
+.js .fade-up.in {
   opacity: 1;
   transform: none;
 }
+/* Focus must never land on something still waiting to fade in. */
+.js .fade-up:focus-visible,
+.js .fade-up:focus-within { opacity: 1; transform: none; transition: none; }
 @media (prefers-reduced-motion: reduce) {
-  .fade-up { opacity: 1; transform: none; transition: none; }
+  .js .fade-up { opacity: 1; transform: none; transition: none; }
 }
 
 .page {

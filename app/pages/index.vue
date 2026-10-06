@@ -4,18 +4,24 @@
     <section class="hero">
       <div class="wrap">
         <div class="hero-grid">
-          <div>
-            <span class="hero-codeline">
-              <span class="caret">$</span>
-              <span>cd ~/codertheory </span>
-              <span class="blink" />
-            </span>
+          <div class="hero-copy">
+            <!-- TODO(lucas): placeholder status label, replace with your own wording. -->
+            <div class="hero-id">
+              <span class="hero-name">Lucas</span>
+              <NuxtLink class="hero-status" to="/contact?topic=role">
+                <span class="dot dot--active" aria-hidden="true" />
+                Open to roles
+                <ArrowRight :size="13" />
+              </NuxtLink>
+              <a class="hero-github" href="https://github.com/codertheory/">GitHub <ExternalIcon :size="12" /></a>
+            </div>
             <h1 class="hero-title">
-              Think first.<br>
+              Think first. <br>
               <span class="accented">Type</span> second.
             </h1>
+            <!-- TODO(lucas): lifted word for word from the About bio as a stand-in. Write the real line. -->
             <p class="hero-sub">
-              I build small software, mentor newer engineers, and write about the why behind the code rather than just the keystrokes. This is where all of it lives.
+              I'm Lucas, a self-taught full-stack developer who'd rather teach you the <em>why</em> than hand you the answer. Over 7 years building web applications, mostly Python (Django, FastAPI) on the back and Vue/Nuxt or React on the front, with the AWS underneath it.
             </p>
             <div class="hero-ctas">
               <NuxtLink class="btn btn--primary" to="/projects">
@@ -27,17 +33,41 @@
             </div>
           </div>
 
-          <div class="hero-art">
-            <div class="bulb-stage">
-              <BrandLogo size="100%" />
-            </div>
+          <div v-if="featured.length" class="hero-work">
+            <!-- The one project with a live URL and real screenshots, shown as itself and named. -->
+            <figure v-if="showcase" class="showcase-shot">
+              <NuxtImg
+                :src="showcase.heroSrc"
+                :alt="showcase.shot.alt || `${showcase.project.title} screenshot`"
+                width="1440"
+                height="900"
+                sizes="100vw md:540px"
+                loading="eager"
+              />
+              <figcaption>
+                <NuxtLink class="showcase-name" :to="showcase.href">{{ showcase.project.title }}</NuxtLink>
+                <span v-if="showcase.live" class="showcase-domain">{{ showcase.domain }}</span>
+                <a v-if="showcase.live" class="prow-ext" :href="showcase.live.href">
+                  {{ showcase.live.label }} <ExternalIcon :size="12" />
+                </a>
+              </figcaption>
+            </figure>
+            <ul class="prow-list" aria-label="Featured projects">
+              <li v-for="p in featured" :key="p.path">
+                <ProjectRow :project="p" compact />
+              </li>
+            </ul>
+            <!-- TODO(lucas): placeholder link label. -->
+            <NuxtLink class="arrow-link featured-all" to="/projects">
+              All {{ (projects || []).length }} projects <ArrowRight :size="14" />
+            </NuxtLink>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Now strip -->
-    <section v-if="now" class="wrap" style="margin-top: 24px;">
+    <section v-if="now && nowIsFresh" class="wrap now-wrap">
       <a v-if="now.href" :href="now.href" class="now-strip fade-up">
         <span class="pulse" aria-hidden="true" />
         <div>
@@ -70,103 +100,65 @@
       </div>
     </section>
 
-    <!-- Mixed feed -->
-    <section class="section wrap">
-      <div class="section-head">
-        <div class="lead">
-          <span class="eyebrow">Latest from the workshop</span>
-          <h2 class="h-section" style="margin-top: 14px;">
-            What I've been <span class="scribble">making<ScribbleUnder /></span><br>
-            and thinking about.
-          </h2>
-        </div>
-        <NuxtLink class="arrow-link" to="/projects">
-          Everything in chronological order <ArrowRight :size="14" />
+    <!-- Dates and roles only; the About page has the detail. Words are from there. -->
+    <section class="wrap path">
+      <div>
+        <h2 class="path-h">The path so far</h2>
+        <NuxtLink class="arrow-link" to="/about">
+          About <ArrowRight :size="14" />
         </NuxtLink>
       </div>
+      <ol class="path-list">
+        <li v-for="t in timeline" :key="t.when">
+          <span class="when">{{ t.when }}</span>
+          <span class="what">{{ t.what }}</span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section wrap more">
+      <h2 class="h-section">
+        What I've been <span class="scribble">making<ScribbleUnder /></span><br>
+        and thinking about.
+      </h2>
 
       <HomeFeedEmpty v-if="feedItems.length === 0" />
-      <div v-else class="feed">
-        <NuxtLink
-          v-for="item in feedItems"
-          :key="item.href"
-          :to="item.href"
-          class="card feed-item fade-up"
-        >
-          <div class="meta">
-            <span :class="['kind', `kind--${item.kind}`]">
-              {{ item.kind === 'project' ? 'Project' : 'Post' }}
-            </span>
-            <span>{{ item.meta }}</span>
-          </div>
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.sub }}</p>
-          <div class="meta-bottom">
-            <span class="arrow-link">Read more <ArrowRight :size="14" /></span>
-          </div>
-        </NuxtLink>
-      </div>
+      <ul v-else class="prow-list">
+        <li v-for="item in feedItems" :key="item.href">
+          <ProjectRow v-if="item.project" :project="item.project" heading="h3">
+            <!-- A peek at the real diagram; the full one is on the project page. -->
+            <template v-if="item.href === '/projects/job-pipeline'" #figure>
+              <PipelineFlow preview />
+            </template>
+          </ProjectRow>
+          <article v-else class="prow prow--post">
+            <div class="prow-body">
+              <div class="prow-head">
+                <h3 class="prow-title">
+                  <NuxtLink class="prow-link" :to="item.href">{{ item.title }}</NuxtLink>
+                </h3>
+                <span class="prow-status">{{ item.meta }}</span>
+              </div>
+              <p class="prow-tag">{{ item.sub }}</p>
+            </div>
+            <span class="prow-arrow" aria-hidden="true"><ArrowRight :size="18" /></span>
+          </article>
+        </li>
+      </ul>
     </section>
 
-    <!-- Quote -->
-    <section class="wrap section" style="padding-top: 0;">
-      <div class="quote-block fade-up">
-        <span class="marks">“</span>
-        <div class="q">
-          The best engineers I know don't write more code, they work out the <em>shape</em> of the problem first and then write very little of it.
-        </div>
-        <div class="who">a thing I tell every mentee, eventually</div>
-      </div>
-    </section>
-
-    <!-- Github card -->
-    <section class="wrap section" style="padding-top: 0;">
-      <div class="card github-card fade-up">
-        <div>
-          <div class="title">Six months of contributions</div>
-          <p class="sub">Mostly mine, across indie work, the day job, and the occasional OSS drop-in.</p>
-          <div class="stats">
-            <div class="stat"><div class="n">{{ contributions }}</div><div class="l">contributions</div></div>
-            <div class="stat"><div class="n">{{ reposTouched }}</div><div class="l">repos touched</div></div>
-            <div class="stat"><div class="n">{{ pullRequests }}</div><div class="l">PRs opened</div></div>
-          </div>
-        </div>
-        <div class="heatmap">
-          <span
-            v-for="(c, i) in heatmapCells"
-            :key="i"
-            class="cell-wrap"
-            :data-tip="tipFor(c) || undefined"
-          >
-            <span :class="['cell', c.level > 0 ? `l${c.level}` : '']" />
-          </span>
-        </div>
-      </div>
+    <section class="wrap closing">
+      <!-- TODO(lucas): borrowed from the contact page heading as a stand-in. -->
+      <p class="closing-line">Send me a note. I read everything.</p>
+      <NuxtLink class="btn btn--primary" to="/contact">
+        Get in touch <ArrowRight />
+      </NuxtLink>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-    import githubFixture from '~/data/github.json'
-
-    type HeatmapCell = { date: string | null, count: number, level: number }
-    type GithubStats = {
-        contributions?: number
-        commits: number
-        pullRequests: number
-        reposTouched: number
-        heatmap: Array<HeatmapCell | number>
-    }
-    type StatsEnvelope<T> = { key: string, generatedAt: string, data: T, stale?: boolean }
-
-    type FeedItem = {
-        kind: 'project' | 'post'
-        title: string
-        sub: string
-        meta: string
-        date: string
-        href: string
-    }
+    import { timeline } from '~/data/timeline'
 
     const formatDate = (s: string) => {
         const d = new Date(s)
@@ -185,6 +177,43 @@
         queryCollection('now').first()
     )
 
+    // Shown beside the hero, in this order. They are left out of the feed below
+    // so the same three projects are not listed twice on one page.
+    const FEATURED = ['mangasteen', 'shiritori', 'cresthold']
+    const featured = computed(() =>
+        FEATURED
+            .map(slug => (projects.value || []).find(p => slugFromPath(p.path) === slug))
+            .filter((p): p is NonNullable<typeof p> => !!p)
+    )
+
+    // The project shown large under the hero. Only one has both a live URL and
+    // real screenshots, and nothing stands in for a screenshot that is missing.
+    const SHOWCASE = 'shiritori'
+    const showcase = computed(() => {
+        const project = (projects.value || []).find(p => slugFromPath(p.path) === SHOWCASE)
+        const shot = project?.screenshots?.[0]
+        if (!project || !shot) return null
+        const live = (project.links || []).find(l => l.kind === 'site') || null
+        return {
+            project,
+            shot,
+            // The same capture with its empty left margin and footer trimmed, so the
+            // interface reads a little larger at hero size.
+            heroSrc: '/shots/shiritori-lobby-hero.webp',
+            live,
+            domain: live ? live.href.replace(/^https?:\/\//, '').replace(/\/$/, '') : '',
+            href: `/projects/${SHOWCASE}`
+        }
+    })
+
+    // A "now" that is months old says the opposite of what it is for, so the
+    // strip steps aside until content/now.md is updated.
+    const NOW_MAX_AGE_DAYS = 60
+    const nowIsFresh = computed(() => {
+        const then = new Date(now.value?.updatedAt || '').getTime()
+        return !Number.isNaN(then) && Date.now() - then < NOW_MAX_AGE_DAYS * 86_400_000
+    })
+
     const relativeTime = (iso: string | undefined | null) => {
         if (!iso) return ''
         const then = new Date(iso).getTime()
@@ -199,17 +228,21 @@
         return `${Math.round(diffSec / (365 * day))}y ago`
     }
 
-    const feedItems = computed<FeedItem[]>(() => {
-        const projectItems: FeedItem[] = (projects.value || []).map(p => ({
-            kind: 'project',
-            title: p.title,
-            sub: p.tag,
-            meta: `${(p.platforms || []).join(' · ')} · ${p.statusLabel || ''}`,
-            date: p.date,
-            href: `/projects/${slugFromPath(p.path)}`
-        }))
-        const postItems: FeedItem[] = (posts.value || []).map(p => ({
-            kind: 'post',
+    // Everything not already beside the hero, newest first: the remaining
+    // projects, plus posts once there are any.
+    const feedItems = computed(() => {
+        const projectItems = (projects.value || [])
+            .filter(p => !FEATURED.includes(slugFromPath(p.path)))
+            .map(p => ({
+                project: p,
+                title: p.title,
+                sub: p.tag,
+                meta: '',
+                date: p.date,
+                href: `/projects/${slugFromPath(p.path)}`
+            }))
+        const postItems = (posts.value || []).map(p => ({
+            project: null,
             title: p.title,
             sub: p.excerpt,
             meta: `${p.cat} · ${formatDate(p.date)}`,
@@ -220,30 +253,6 @@
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
             .slice(0, 6)
     })
-
-    const fixture = githubFixture as unknown as GithubStats
-    const { data: github } = await useFetch<StatsEnvelope<GithubStats>>('/api/stats/github', {
-        key: 'stats-github',
-        default: () => ({ key: 'github', generatedAt: new Date(0).toISOString(), data: fixture })
-    })
-
-    const stats = computed<GithubStats>(() => github.value?.data ?? fixture)
-    const contributions = computed(() => stats.value.contributions ?? stats.value.commits)
-    const pullRequests = computed(() => stats.value.pullRequests)
-    const reposTouched = computed(() => stats.value.reposTouched)
-
-    const tipDate = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
-    const heatmapCells = computed<HeatmapCell[]>(() =>
-        (stats.value.heatmap as Array<number | HeatmapCell>).map(c =>
-            typeof c === 'number' ? { date: null, count: 0, level: c } : c
-        )
-    )
-    const tipFor = (c: HeatmapCell) => {
-        if (!c.date) return null
-        const when = tipDate.format(new Date(`${c.date}T00:00:00Z`))
-        const what = c.count === 0 ? 'No contributions' : `${c.count} contribution${c.count === 1 ? '' : 's'}`
-        return `${what} on ${when}`
-    }
 
     useSiteSeo({
         description: "Lucas builds small software, mentors newer engineers, and writes about the why behind the code. Projects, posts, and the workshop in one place."

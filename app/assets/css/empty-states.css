@@ -85,7 +85,7 @@
   font-size: clamp(28px, 3.4vw, 40px); letter-spacing: -0.018em;
   line-height: 1.08; margin: 0 auto 12px; max-width: 580px;
 }
-.es-v5 h2 em { font-style: italic; color: var(--bulb-deep); }
+.es-v5 h2 em { font-style: italic; color: var(--bulb-text); }
 .es-v5 p.body {
   color: var(--ink-soft); font-size: 16px; max-width: 480px;
   margin: 0 auto 22px;

@@ -1,41 +1,63 @@
 <template>
   <div v-if="project" class="page">
-    <section class="wrap detail-hero">
-      <div class="crumb">
-        <NuxtLink to="/projects">Projects</NuxtLink>
-        <span>/</span>
-        <span>{{ project.title }}</span>
-      </div>
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
-        <span class="spin-tag">
-          <span :class="['dot', `dot--${project.status}`]" /> {{ project.statusLabel }}
-        </span>
-        <span class="chip">{{ project.type }}</span>
-      </div>
-      <h1 class="h-display" style="font-size: clamp(48px, 6vw, 80px);">{{ project.title }}</h1>
-      <p style="font-size: 22px; color: var(--ink-soft); max-width: 700px; margin-top: 14px; font-family: var(--f-display); font-weight: 400; line-height: 1.4;">
-        {{ project.tag }}
-      </p>
-    </section>
-
-    <section class="wrap" style="padding-bottom: 60px;">
+    <section class="wrap detail-body">
       <div class="detail-grid">
-        <div>
-          <div class="detail-mock">
-            <div class="deviceish">
-              <div class="notch" />
-              <div :class="['device-icon', { 'device-icon--img': project.iconImage && !project.iconImageTile, 'device-icon--tile': project.iconImage && project.iconImageTile }]">
-                <ProjectIcon :image="project.iconImage" :image-dark="project.iconImageDark" :glyph="project.icon" :alt="`${project.title} icon`" />
-              </div>
+        <header class="detail-hero">
+          <div class="crumb">
+            <NuxtLink to="/projects">Projects</NuxtLink>
+            <span>/</span>
+            <span>{{ project.title }}</span>
+          </div>
+          <div class="detail-status">
+            <span class="spin-tag">
+              <span :class="['dot', `dot--${project.status}`]" /> {{ project.statusLabel }}
+            </span>
+            <span class="chip">{{ project.type }}</span>
+          </div>
+          <h1 class="h-display detail-title">{{ project.title }}</h1>
+          <p class="detail-tag">{{ project.tag }}</p>
+          <div v-if="heroLinks.length" class="detail-ctas">
+            <a
+              v-for="(l, i) in heroLinks"
+              :key="l.href"
+              :class="['btn', i === 0 ? 'btn--primary' : 'btn--ghost']"
+              :href="l.href"
+            >
+              {{ l.label }} <ExternalIcon />
+            </a>
+          </div>
+        </header>
+
+        <!-- Real evidence leads: screenshots when a project has them, otherwise a
+             figure it names. With neither, the page goes straight to the writing. -->
+        <div v-if="project.screenshots?.length" class="detail-shots">
+          <div class="shots-strip">
+            <div v-for="(shot, i) in project.screenshots" :key="i" class="shot">
+              <NuxtImg :src="shot.src" :alt="shot.alt || `${project.title} screenshot ${i + 1}`" />
             </div>
           </div>
+        </div>
+        <div v-else-if="project.leadFigure === 'pipeline-flow'" class="detail-lead">
+          <PipelineFlow />
+        </div>
 
-          <h2 style="font-family: var(--f-display); font-size: 30px; margin-top: 40px; margin-bottom: 6px; font-weight: 600; letter-spacing: -0.015em;">
-            What's inside
-          </h2>
-          <p style="color: var(--ink-soft); margin: 0;">The features I'd actually point a friend to.</p>
+        <div v-if="project.why" class="story-block">
+          <span class="eyebrow">Why I built it</span>
+          <div class="body">
+            <p>
+              <template v-for="(seg, i) in whySegments" :key="i">
+                <em v-if="seg.em">{{ seg.text }}</em>
+                <template v-else>{{ seg.text }}</template>
+              </template>
+            </p>
+          </div>
+        </div>
+
+        <div v-if="project.features?.length" class="detail-inside">
+          <h2 class="detail-h2">What's inside</h2>
+          <p class="detail-lede">The features I'd actually point a friend to.</p>
           <ul class="detail-features">
-            <li v-for="(f, i) in (project.features || [])" :key="i" class="fade-up">
+            <li v-for="(f, i) in project.features" :key="i">
               <span class="num">{{ padNum(i + 1) }}</span>
               <div>
                 <b>{{ f.t }}</b>
@@ -45,60 +67,34 @@
           </ul>
         </div>
 
-        <div class="card detail-side">
-          <h3 class="detail-side-h">At a glance</h3>
+        <aside class="card detail-side" aria-label="At a glance">
+          <h2 class="detail-side-h">At a glance</h2>
           <div class="row"><span class="k">platform</span><span class="v">{{ (project.platforms || []).join(', ') }}</span></div>
-          <div class="row"><span class="k">type</span><span class="v">{{ project.type }}</span></div>
           <div class="row"><span class="k">started</span><span class="v">{{ project.started }}</span></div>
-          <div class="row"><span class="k">status</span><span class="v">{{ project.statusLabel }}</span></div>
 
-          <h3 class="detail-side-h" style="margin-top: 24px;">Stack</h3>
+          <h2 class="detail-side-h">Stack</h2>
           <div class="stack-chips">
             <span v-for="s in (project.stack || [])" :key="s" class="chip">{{ s }}</span>
           </div>
 
-          <h3 class="detail-side-h" style="margin-top: 24px;">Links</h3>
-          <div class="detail-links">
-            <a v-for="(l, i) in (project.links || [])" :key="i" :href="l.href">
-              <span>{{ l.label }}</span>
-              <ExternalIcon />
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="wrap story-block">
-      <span class="eyebrow">Why I built it</span>
-      <div class="body" style="margin-top: 18px;">
-        <p>
-          <template v-for="(seg, i) in whySegments" :key="i">
-            <em v-if="seg.em">{{ seg.text }}</em>
-            <template v-else>{{ seg.text }}</template>
+          <template v-if="sideLinks.length">
+            <h2 class="detail-side-h">Links</h2>
+            <div class="detail-links">
+              <a v-for="(l, i) in sideLinks" :key="i" :href="l.href">
+                <span>{{ l.label }}</span>
+                <ExternalIcon />
+              </a>
+            </div>
           </template>
-        </p>
-      </div>
-    </section>
+        </aside>
 
-    <section v-if="project.screenshots?.length" class="wrap" style="padding-bottom: 80px;">
-      <h2 style="font-family: var(--f-display); font-size: 30px; font-weight: 600; letter-spacing: -0.015em; margin: 0;">
-        Screenshots
-      </h2>
-      <p style="color: var(--ink-soft); margin: 6px 0 0;">A few favourite views.</p>
-      <div class="shots-strip">
-        <div v-for="(shot, i) in project.screenshots" :key="i" class="shot fade-up">
-          <NuxtImg :src="shot.src" :alt="shot.alt || `${project.title} screenshot ${i + 1}`" />
+        <div v-if="hasWriteup" class="project-writeup">
+          <span class="eyebrow">In depth</span>
+          <article class="prose">
+            <ContentRenderer :value="project" />
+          </article>
         </div>
       </div>
-    </section>
-
-    <section v-if="hasWriteup" class="project-writeup">
-      <div class="wrap-narrow">
-        <span class="eyebrow">In depth</span>
-      </div>
-      <article class="prose">
-        <ContentRenderer :value="project" />
-      </article>
     </section>
 
     <nav v-if="prevProject && nextProject" class="wrap project-nav" aria-label="More projects">
@@ -134,6 +130,19 @@
         const why = project.value?.why || ''
         return why.split('*').map((text, i) => ({ text, em: i % 2 === 1 }))
     })
+
+    // Every way to use the thing (play it, install it) sits in the header, where
+    // a visitor who came for the product sees it first. A project with no such
+    // link shows its first link instead, which is usually the code.
+    const heroLinks = computed(() => {
+        const links = project.value?.links || []
+        const ways = links.filter(l => l.kind === 'site' || l.kind === 'store')
+        return ways.length ? ways : links.slice(0, 1)
+    })
+    // The side card lists only what the header has not already offered.
+    const sideLinks = computed(() =>
+        (project.value?.links || []).filter(l => !heroLinks.value.some(h => h.href === l.href))
+    )
 
     const padNum = (n: number) => String(n).padStart(2, '0')
 

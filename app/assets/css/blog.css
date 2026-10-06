@@ -53,7 +53,7 @@
   color: rgba(255, 255, 255, 0.95);
 }
 .post-card .post-cat {
-  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bulb-deep);
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bulb-text);
 }
 .post-card h3 {
   font-family: var(--f-display);
@@ -138,10 +138,10 @@
   text-underline-offset: 3px;
   text-decoration-thickness: 2px;
 }
-.prose a:hover { color: var(--bulb-deep); }
+.prose a:hover { color: var(--bulb-text); }
 /* Nuxt Content wraps every heading in a self-anchor; keep those looking like headings. */
 .prose h2 a, .prose h3 a { color: inherit; text-decoration: none; }
-.prose h2 a:hover, .prose h3 a:hover { color: var(--bulb-deep); }
+.prose h2 a:hover, .prose h3 a:hover { color: var(--bulb-text); }
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
 .prose code:not(pre code) {
   font-family: var(--f-mono); font-size: 0.88em;

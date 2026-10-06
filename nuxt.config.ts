@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import type { ThemeRegistrationRaw } from 'shiki'
 
 const codertheoryDark = {
     name: 'codertheory-dark',
@@ -125,7 +126,9 @@ export default defineNuxtConfig({
         build: {
             markdown: {
                 highlight: {
-                    theme: {default: codertheoryDark},
+                    // A VS Code style theme (`tokenColors`); Shiki accepts it but its
+                    // raw type only declares the older `settings` spelling.
+                    theme: {default: codertheoryDark as unknown as ThemeRegistrationRaw},
                     langs: ['ts', 'tsx', 'js', 'jsx', 'vue', 'css', 'html', 'json', 'bash', 'shell', 'swift', 'python', 'go', 'rust', 'yaml', 'md', 'sql']
                 }
             }
@@ -183,7 +186,7 @@ export default defineNuxtConfig({
             ],
             script: [
                 {
-                    innerHTML: "(function(){try{var s=localStorage.getItem('theme');var p=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme', s||(p?'dark':'light'));}catch(e){}})();",
+                    innerHTML: "(function(){document.documentElement.classList.add('js');try{var s=localStorage.getItem('theme');var p=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme', s||(p?'dark':'light'));}catch(e){}})();",
                     tagPosition: 'head'
                 }
             ]
