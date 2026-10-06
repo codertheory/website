@@ -9,12 +9,21 @@
             <span>{{ project.title }}</span>
           </div>
           <div class="detail-status">
+            <!-- Same icon as the project's row, and the element that row's icon travels to. -->
+            <div
+              :class="['proj-thumb', 'prow-thumb', 'detail-icon', `tone-${project.tone || 'blue'}`]"
+              :style="{ viewTransitionName: `proj-icon-${route.params.slug}` }"
+            >
+              <div :class="['icon-mark', { 'icon-mark--img': project.iconImage && !project.iconImageTile, 'icon-mark--tile': project.iconImage && project.iconImageTile }]">
+                <ProjectIcon :image="project.iconImage" :image-dark="project.iconImageDark" :glyph="project.icon" alt="" />
+              </div>
+            </div>
             <span class="spin-tag">
               <span :class="['dot', `dot--${project.status}`]" /> {{ project.statusLabel }}
             </span>
             <span class="chip">{{ project.type }}</span>
           </div>
-          <h1 class="h-display detail-title">{{ project.title }}</h1>
+          <h1 class="h-display detail-title" :style="{ viewTransitionName: `proj-title-${route.params.slug}` }">{{ project.title }}</h1>
           <p class="detail-tag">{{ project.tag }}</p>
           <div v-if="heroLinks.length" class="detail-ctas">
             <a
@@ -100,12 +109,12 @@
     <nav v-if="prevProject && nextProject" class="wrap project-nav" aria-label="More projects">
       <NuxtLink class="project-nav__item" :to="`/projects/${slugFromPath(prevProject.path)}`">
         <span class="dir">// previous</span>
-        <span class="title">{{ prevProject.title }}</span>
+        <span class="title" :style="{ viewTransitionName: `proj-title-${slugFromPath(prevProject.path)}` }">{{ prevProject.title }}</span>
         <span class="tag">{{ prevProject.tag }}</span>
       </NuxtLink>
       <NuxtLink class="project-nav__item project-nav__item--next" :to="`/projects/${slugFromPath(nextProject.path)}`">
         <span class="dir">// next</span>
-        <span class="title">{{ nextProject.title }}</span>
+        <span class="title" :style="{ viewTransitionName: `proj-title-${slugFromPath(nextProject.path)}` }">{{ nextProject.title }}</span>
         <span class="tag">{{ nextProject.tag }}</span>
       </NuxtLink>
     </nav>

@@ -27,6 +27,11 @@ const codertheoryDark = {
 
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
+
+    // Native view transitions between pages. `true` (not 'always') means Nuxt
+    // skips them for visitors who prefer reduced motion; browsers without the
+    // API just navigate as before.
+    experimental: {viewTransition: true},
     devtools: {enabled: true},
 
     runtimeConfig: {

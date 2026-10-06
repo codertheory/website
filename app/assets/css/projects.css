@@ -84,7 +84,9 @@
 }
 .crumb a:hover { color: var(--bulb-text); }
 
-.detail-status { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.detail-status { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.proj-thumb.prow-thumb.detail-icon { width: 48px; margin-right: 4px; }
+.proj-thumb.prow-thumb.detail-icon .icon-mark { font-size: 22px; }
 .detail-title { font-size: clamp(40px, 6vw, 80px); text-wrap: balance; }
 .detail-tag {
   font-family: var(--f-display); font-weight: 400;

@@ -8,10 +8,27 @@ export const useTheme = () => {
     localStorage.setItem('theme', value)
   }
 
-  const toggle = () => {
+  const toggle = (event?: Event) => {
     const next: Theme = theme.value === 'dark' ? 'light' : 'dark'
-    theme.value = next
-    apply(next)
+    const root = document.documentElement
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (!document.startViewTransition || reduced) {
+      theme.value = next
+      apply(next)
+      return
+    }
+
+    // Open the new theme from wherever the toggle was pressed.
+    const target = event?.currentTarget instanceof Element ? event.currentTarget.getBoundingClientRect() : null
+    root.style.setProperty('--vt-x', `${target ? target.left + target.width / 2 : window.innerWidth}px`)
+    root.style.setProperty('--vt-y', `${target ? target.top + target.height / 2 : 0}px`)
+    root.classList.add('theme-vt')
+    const transition = document.startViewTransition(() => {
+      theme.value = next
+      apply(next)
+    })
+    transition.finished.finally(() => root.classList.remove('theme-vt'))
   }
 
   if (import.meta.client) {

@@ -118,7 +118,7 @@
 
     <section class="section wrap more">
       <h2 class="h-section">
-        What I've been <span class="scribble">making<ScribbleUnder /></span><br>
+        What I've been <span class="scribble scribble--scroll">making<ScribbleUnder /></span><br>
         and thinking about.
       </h2>
 

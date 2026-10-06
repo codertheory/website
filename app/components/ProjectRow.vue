@@ -1,13 +1,13 @@
 <template>
   <article :class="['prow', { 'prow--compact': compact, 'prow--figure': $slots.figure }]">
-    <div :class="['proj-thumb', 'prow-thumb', `tone-${project.tone || 'blue'}`]">
+    <div :class="['proj-thumb', 'prow-thumb', `tone-${project.tone || 'blue'}`]" :style="{ viewTransitionName: `proj-icon-${slug}` }">
       <div :class="['icon-mark', { 'icon-mark--img': project.iconImage && !project.iconImageTile, 'icon-mark--tile': project.iconImage && project.iconImageTile }]">
         <ProjectIcon :image="project.iconImage" :image-dark="project.iconImageDark" :glyph="project.icon" alt="" />
       </div>
     </div>
     <div class="prow-body">
       <div class="prow-head">
-        <component :is="heading" class="prow-title">
+        <component :is="heading" class="prow-title" :style="{ viewTransitionName: `proj-title-${slug}` }">
           <NuxtLink class="prow-link" :to="`/projects/${slug}`">{{ project.title }}</NuxtLink>
         </component>
         <span class="prow-status">

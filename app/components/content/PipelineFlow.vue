@@ -18,12 +18,16 @@
       </defs>
 
       <!-- lane headings -->
+      <g class="pf-seq" style="--i: 0">
       <text class="pf-lane" x="104" y="20" text-anchor="middle">career-ops · Mac</text>
       <text class="pf-lane" x="360" y="20" text-anchor="middle">Worker + KV</text>
       <text class="pf-lane" x="616" y="20" text-anchor="middle">phone</text>
       <line class="pf-rule" x1="16" y1="30" x2="704" y2="30" />
 
+      </g>
+
       <!-- 1. found -->
+      <g class="pf-seq" style="--i: 1">
       <text class="pf-step" x="16" y="62">01 · found</text>
       <rect class="pf-box" x="24" y="72" width="160" height="40" rx="8" />
       <text class="pf-t" x="104" y="90" text-anchor="middle">07:00 standup</text>
@@ -41,7 +45,10 @@
       <text class="pf-e" x="223" y="85" text-anchor="middle">PUT :id</text>
       <line class="pf-line" x1="460" y1="92" x2="530" y2="92" marker-end="url(#pf-arrow)" />
 
+      </g>
+
       <!-- 2. reviewed -->
+      <g class="pf-seq" style="--i: 2">
       <text class="pf-step" x="16" y="154">02 · reviewed</text>
       <rect class="pf-box" x="24" y="164" width="160" height="40" rx="8" />
       <text class="pf-t" x="104" y="182" text-anchor="middle">claude -p</text>
@@ -61,7 +68,10 @@
       <text class="pf-e" x="223" y="206" text-anchor="middle">upgrade</text>
       <line class="pf-line" x1="460" y1="184" x2="530" y2="184" marker-end="url(#pf-arrow)" />
 
+      </g>
+
       <!-- 3. decided -->
+      <g class="pf-seq" style="--i: 3">
       <text class="pf-step" x="16" y="246">03 · decided</text>
       <rect class="pf-box pf-box--rec" x="264" y="256" width="192" height="40" rx="8" />
       <text class="pf-t" x="360" y="274" text-anchor="middle">pack: requested</text>
@@ -73,7 +83,10 @@
 
       <line class="pf-line" x1="530" y1="276" x2="460" y2="276" marker-end="url(#pf-arrow)" />
 
+      </g>
+
       <!-- 4. pack built -->
+      <g class="pf-seq" style="--i: 4">
       <text class="pf-step" x="16" y="338">04 · pack built</text>
       <rect class="pf-box" x="24" y="348" width="160" height="40" rx="8" />
       <text class="pf-t" x="104" y="366" text-anchor="middle">CV chain</text>
@@ -93,7 +106,10 @@
       <text class="pf-e" x="223" y="390" text-anchor="middle">PUT pdf</text>
       <line class="pf-line" x1="460" y1="368" x2="530" y2="368" marker-end="url(#pf-arrow)" />
 
+      </g>
+
       <!-- 5. applied -->
+      <g class="pf-seq" style="--i: 5">
       <text class="pf-step" x="16" y="430">05 · applied</text>
       <rect class="pf-box pf-box--rec" x="264" y="440" width="192" height="40" rx="8" />
       <text class="pf-t" x="360" y="458" text-anchor="middle">Notion row created</text>
@@ -105,7 +121,10 @@
 
       <line class="pf-line" x1="530" y1="460" x2="460" y2="460" marker-end="url(#pf-arrow)" />
 
+      </g>
+
       <!-- 6. tracked -->
+      <g class="pf-seq" style="--i: 6">
       <text class="pf-step" x="16" y="522">06 · tracked</text>
       <rect class="pf-box pf-box--rec" x="264" y="532" width="192" height="40" rx="8" />
       <text class="pf-t" x="360" y="550" text-anchor="middle">Notion is the record</text>
@@ -122,8 +141,12 @@
       <line class="pf-line" x1="460" y1="552" x2="530" y2="552" marker-end="url(#pf-arrow)" />
       <line class="pf-line" x1="258" y1="552" x2="188" y2="552" marker-end="url(#pf-arrow)" />
 
+      </g>
+
+      <g class="pf-seq" style="--i: 7">
       <line class="pf-rule" x1="16" y1="596" x2="704" y2="596" />
       <text class="pf-s" x="16" y="616">Notion mutates statuses in place, so the cron is the only history there is.</text>
+      </g>
     </svg>
     </div>
     <figcaption v-if="!preview">
@@ -158,6 +181,20 @@
     linear-gradient(var(--bg), var(--bg)) right / 28px 100% no-repeat local,
     linear-gradient(to right, color-mix(in oklab, var(--ink) 22%, transparent), transparent) left / 14px 100% no-repeat scroll,
     linear-gradient(to left, color-mix(in oklab, var(--ink) 22%, transparent), transparent) right / 14px 100% no-repeat scroll;
+}
+/* The diagram reads top to bottom, so it arrives that way: each step in turn.
+   Then the amber "pull" arrows run toward the Mac for a few seconds, because
+   the direction of those arrows is the point the diagram is making. */
+.pf-seq {
+  animation: pf-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: calc(var(--i) * 150ms + 250ms);
+}
+@keyframes pf-in { from { opacity: 0; transform: translateY(8px); } }
+.pf-pull { animation: pf-pull 0.7s linear 1.6s 9; }
+@keyframes pf-pull { to { stroke-dashoffset: -7; } }
+.pipe--preview .pf-seq, .pipe--preview .pf-pull { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .pf-seq, .pf-pull { animation: none; }
 }
 .pipe--preview { margin: 0; }
 .pipe--preview .pipe-scroll { overflow: hidden; background: none; }
