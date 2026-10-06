@@ -1,0 +1,26 @@
+# Cloudflare applies every rule that matches a path and joins repeated headers
+# with a comma. Left to itself the build generates overlapping rules: /_nuxt/*
+# (cache for a year) also matches /_nuxt/builds/*, so latest.json went out as
+#   cache-control: public, max-age=31536000, immutable, public, max-age=1, immutable
+# and a browser that honours the first value never notices a new deploy.
+#
+# This file replaces the generated one. Nitro skips its own rules when it finds
+# a line that starts with "/* " (slash, star, space), so the trailing space on
+# the first rule below is load-bearing. Keep it.
+#
+# Order matters too: broad rules first, then the narrower ones detach the
+# inherited header (the leading "!") before setting their own.
+/* 
+  x-content-type-options: nosniff
+/_nuxt/*
+  cache-control: public, max-age=31536000, immutable
+/_fonts/*
+  cache-control: public, max-age=31536000, immutable
+/_scripts/assets/*
+  cache-control: public, max-age=31536000, immutable
+/_nuxt/builds/*
+  ! cache-control
+  cache-control: public, max-age=0, must-revalidate
+/_nuxt/builds/meta/*
+  ! cache-control
+  cache-control: public, max-age=31536000, immutable
