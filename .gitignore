@@ -29,3 +29,10 @@ logs
 
 # Playwright MCP scratch output (page snapshots, console logs, screenshots)
 .playwright-mcp/
+
+# Impeccable: critique snapshots and live-mode sessions are run history that
+# records absolute local paths; per-machine settings stay local too. A shared
+# .impeccable/config.json, if one is ever added, is meant to be committed.
+.impeccable/critique/
+.impeccable/live/
+.impeccable/config.local.json

@@ -5,9 +5,9 @@
       <h1 class="h-section" style="margin-top: 14px; max-width: 720px;">
         Send me a <span class="scribble">note<ScribbleUnder /></span>. I read everything.
       </h1>
-      <!-- TODO(lucas): stand-in for visitors who arrive from "Open to roles". Write your own. -->
+      <!-- Shown to visitors who arrive from the "Looking for work" status on the homepage. -->
       <p v-if="isRole" class="contact-lede">
-        Tell me about the role. I usually reply within a day or two.
+        If you have a role in mind, tell me a bit about it and the stack. I usually reply within a day or two.
       </p>
       <p v-else class="contact-lede">
         Mentoring questions, project feedback, bug reports, or just hello. All welcome, and I usually reply within a day or two.
@@ -35,7 +35,6 @@
             What's this about?
             <select v-model="form.topic" name="topic" required>
               <option value="" disabled>Pick one…</option>
-              <!-- TODO(lucas): placeholder label for hiring enquiries. -->
               <option>{{ ROLE_TOPIC }}</option>
               <option>Mentoring / pairing</option>
               <option>A project of yours</option>

@@ -5,12 +5,11 @@
       <div class="wrap">
         <div class="hero-grid">
           <div class="hero-copy">
-            <!-- TODO(lucas): placeholder status label, replace with your own wording. -->
             <div class="hero-id">
               <span class="hero-name">Lucas</span>
               <NuxtLink class="hero-status" to="/contact?topic=role">
                 <span class="dot dot--active" aria-hidden="true" />
-                Open to roles
+                Looking for work
                 <ArrowRight :size="13" />
               </NuxtLink>
               <a class="hero-github" href="https://github.com/codertheory/">GitHub <ExternalIcon :size="12" /></a>
@@ -19,9 +18,8 @@
               Think first. <br>
               <span class="accented">Type</span> second.
             </h1>
-            <!-- TODO(lucas): lifted word for word from the About bio as a stand-in. Write the real line. -->
             <p class="hero-sub">
-              I'm Lucas, a self-taught full-stack developer who'd rather teach you the <em>why</em> than hand you the answer. Over 7 years building web applications, mostly Python (Django, FastAPI) on the back and Vue/Nuxt or React on the front, with the AWS underneath it.
+              I'm a self-taught full-stack developer in Edmonton. Over 7 years of Python on the back and Vue or React on the front, and lately a lot of Kotlin and Swift for my own apps.
             </p>
             <div class="hero-ctas">
               <NuxtLink class="btn btn--primary" to="/projects">
@@ -57,7 +55,6 @@
                 <ProjectRow :project="p" compact />
               </li>
             </ul>
-            <!-- TODO(lucas): placeholder link label. -->
             <NuxtLink class="arrow-link featured-all" to="/projects">
               All {{ (projects || []).length }} projects <ArrowRight :size="14" />
             </NuxtLink>
@@ -148,8 +145,7 @@
     </section>
 
     <section class="wrap closing">
-      <!-- TODO(lucas): borrowed from the contact page heading as a stand-in. -->
-      <p class="closing-line">Send me a note. I read everything.</p>
+      <p class="closing-line">Got a role, or a question about one of these? Send me a note.</p>
       <NuxtLink class="btn btn--primary" to="/contact">
         Get in touch <ArrowRight />
       </NuxtLink>
