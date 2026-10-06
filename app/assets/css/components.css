@@ -285,60 +285,9 @@ a.card:hover {
 /* ============================================================
    Page transition + scroll reveal
    ============================================================ */
-/* Hidden only once script has run (the head script sets .js), so content is
-   still there if the reveal never gets the chance to fire. */
-.js .fade-up {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
-}
-.js .fade-up.in {
-  opacity: 1;
-  transform: none;
-}
-/* Focus must never land on something still waiting to fade in. */
-.js .fade-up:focus-visible,
-.js .fade-up:focus-within { opacity: 1; transform: none; transition: none; }
-@media (prefers-reduced-motion: reduce) {
-  .js .fade-up { opacity: 1; transform: none; transition: none; }
-}
-
-.page {
-  animation: pageIn 0.5s var(--ease) both;
-}
-/* Where the browser can cross-fade pages itself, it does, and the shared
-   pieces (a project's icon and title) travel between them. The header holds
-   still. The fallback rise above is switched off so the two don't stack. */
-@supports (view-transition-name: none) {
-  .page { animation: none; }
-  .nav { view-transition-name: site-header; }
-}
-::view-transition-group(*) { animation-duration: 0.38s; animation-timing-function: var(--ease); }
-::view-transition-old(root) { animation-duration: 0.16s; }
-::view-transition-new(root) { animation-duration: 0.3s; }
-/* A title changes size between a row and a page; let it keep its own shape
-   while it moves instead of being stretched to the group's box. */
-::view-transition-old(*), ::view-transition-new(*) { height: 100%; object-fit: contain; object-position: left center; }
-::view-transition-old(root), ::view-transition-new(root) { object-fit: fill; }
-
-/* Theme switch: the new theme opens from the toggle like an aperture. */
-.theme-vt *, .theme-vt *::before, .theme-vt *::after { transition: none !important; }
-.theme-vt .nav { view-transition-name: none; }
-.theme-vt::view-transition-old(root) { animation: none; }
-.theme-vt::view-transition-new(root) {
-  animation: theme-open 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes theme-open {
-  from { clip-path: circle(0 at var(--vt-x, 100%) var(--vt-y, 0)); }
-  to   { clip-path: circle(150vmax at var(--vt-x, 100%) var(--vt-y, 0)); }
-}
-@keyframes pageIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .page { animation: none; }
-}
+/* .fade-up used to hide a block until it scrolled into view. With pages
+   cross-fading on navigation that became a second fade straight after the
+   first, so the class is now inert: content is simply there. */
 
 /* ============================================================
    Responsive — shared component overrides

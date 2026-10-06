@@ -1,13 +1,13 @@
 <template>
   <article :class="['prow', { 'prow--compact': compact, 'prow--figure': $slots.figure }]">
-    <div :class="['proj-thumb', 'prow-thumb', `tone-${project.tone || 'blue'}`]" :style="{ viewTransitionName: `proj-icon-${slug}` }">
+    <div :class="['proj-thumb', 'prow-thumb', `tone-${project.tone || 'blue'}`]" :style="inTransit ? { viewTransitionName: 'proj-icon' } : undefined">
       <div :class="['icon-mark', { 'icon-mark--img': project.iconImage && !project.iconImageTile, 'icon-mark--tile': project.iconImage && project.iconImageTile }]">
         <ProjectIcon :image="project.iconImage" :image-dark="project.iconImageDark" :glyph="project.icon" alt="" />
       </div>
     </div>
     <div class="prow-body">
       <div class="prow-head">
-        <component :is="heading" class="prow-title" :style="{ viewTransitionName: `proj-title-${slug}` }">
+        <component :is="heading" class="prow-title" :style="inTransit ? { viewTransitionName: 'proj-title' } : undefined">
           <NuxtLink class="prow-link" :to="`/projects/${slug}`">{{ project.title }}</NuxtLink>
         </component>
         <span class="prow-status">
@@ -57,6 +57,12 @@
     }>(), { compact: false, showStack: false, heading: 'h2' })
 
     const slug = computed(() => (props.project.path || '').split('/').filter(Boolean).pop() || '')
+
+    // Only the row for the project being opened (or just left) shares its icon
+    // and title with the project page. Naming every row made each one fade as
+    // its own layer on every navigation, out of step with the page.
+    const transitProject = useState<string | null>('transit-project', () => null)
+    const inTransit = computed(() => transitProject.value === slug.value)
 
     // The whole row opens the project page. The one link that leaves the site
     // (play it, get it) sits on top as its own target, so someone who came for
