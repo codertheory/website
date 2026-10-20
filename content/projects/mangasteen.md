@@ -2,8 +2,8 @@
 title: Mangasteen
 tag: An extensible manga reader for iOS and Android. One Kotlin Multiplatform codebase underneath, with a public extension system so anyone can add a source.
 date: 2026-03-08
-status: wip
-statusLabel: Beta
+status: active
+statusLabel: Active
 platforms:
   - iOS
   - Android
@@ -24,8 +24,8 @@ links:
   - label: Website
     href: 'https://mangasteen.codertheory.dev'
     kind: site
-  - label: TestFlight
-    href: 'https://testflight.apple.com/join/qGVquvur'
+  - label: App Store
+    href: 'https://apps.apple.com/us/app/mangasteen/id6752508510'
     kind: store
   - label: Google Play
     href: 'https://play.google.com/store/apps/details?id=dev.codertheory.mangasteen'

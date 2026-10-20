@@ -50,7 +50,7 @@ What a neighbouring portfolio could not copy is the project writing: each projec
 - The Job Pipeline system diagram, `app/components/content/PipelineFlow.vue`.
 - App icons and social images for every project in `public/`.
 - Screenshots exist for Shiritori only. The other five projects have none, and none may be invented or mocked up as if real.
-- Shiritori is live at shiritoriwithfriends.com. Mangasteen is in closed beta. Cresthold is in development.
+- Shiritori is live at shiritoriwithfriends.com. Mangasteen is on the App Store (published October 2026); the Google Play listing is not public yet. Cresthold is in development.
 - No blog posts exist yet. No testimonials, client logos or usage numbers exist, and none may be fabricated.
 
 ## Product Principles
