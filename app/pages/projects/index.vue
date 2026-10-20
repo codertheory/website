@@ -19,7 +19,7 @@
           :aria-pressed="platform === f"
           @click="platform = f"
         >
-          {{ f }}
+          <TechIcon :icon="FILTER_ICONS[f]" />{{ f }}
         </button>
         <span class="proj-filter-spacer" />
         <span class="proj-filter-count">
@@ -45,6 +45,8 @@
 </template>
 
 <script setup lang="ts">
+    import { FILTER_ICONS } from '~/data/icons'
+
     const { data: projects } = await useAsyncData('projects-index', () =>
         queryCollection('projects').order('date', 'DESC').all()
     )

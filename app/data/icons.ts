@@ -68,6 +68,17 @@ export const UI_ICONS = {
     android: 'simple-icons:android'
 } as const
 
+// The platform filter on /projects. These are kinds of project, not brands,
+// so Desktop and Bot use generic marks.
+export const FILTER_ICONS: Record<string, string> = {
+    'All': 'lucide:layout-grid',
+    'iOS': 'simple-icons:apple',
+    'Web': 'lucide:globe',
+    'Desktop': 'lucide:monitor',
+    'CLI': 'lucide:terminal',
+    'Bot': 'lucide:bot'
+}
+
 type Link = { label: string, href: string, kind?: string }
 
 // Picks an icon for a project link from where it goes, then what it says.
@@ -85,4 +96,4 @@ export const linkIcon = (link: Link): string => {
 
 // Every icon the site can show, so the build bundles exactly these and no
 // icon is ever fetched from a third party at runtime.
-export const ALL_ICONS = [...new Set([...Object.values(TECH_ICONS), ...Object.values(UI_ICONS)])]
+export const ALL_ICONS = [...new Set([...Object.values(TECH_ICONS), ...Object.values(UI_ICONS), ...Object.values(FILTER_ICONS)])]
