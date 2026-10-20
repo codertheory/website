@@ -12,7 +12,7 @@
                 Looking for work
                 <ArrowRight :size="13" />
               </NuxtLink>
-              <a class="hero-github" href="https://github.com/codertheory/">GitHub <ExternalIcon :size="12" /></a>
+              <a class="hero-github" href="https://github.com/codertheory/"><TechIcon :icon="UI_ICONS.github" /> GitHub</a>
             </div>
             <h1 class="hero-title">
               Think first. <br>
@@ -46,7 +46,7 @@
                 <NuxtLink class="showcase-name" :to="showcase.href">{{ showcase.project.title }}</NuxtLink>
                 <span v-if="showcase.live" class="showcase-domain">{{ showcase.domain }}</span>
                 <a v-if="showcase.live" class="prow-ext" :href="showcase.live.href">
-                  {{ showcase.live.label }} <ExternalIcon :size="12" />
+                  <TechIcon :icon="UI_ICONS.play" /> {{ showcase.live.label }} <ExternalIcon :size="12" />
                 </a>
               </figcaption>
             </figure>
@@ -155,6 +155,7 @@
 
 <script setup lang="ts">
     import { timeline } from '~/data/timeline'
+    import { UI_ICONS } from '~/data/icons'
 
     const formatDate = (s: string) => {
         const d = new Date(s)

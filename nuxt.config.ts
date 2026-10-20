@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import type { ThemeRegistrationRaw } from 'shiki'
+import { ALL_ICONS } from './app/data/icons'
 
 const codertheoryDark = {
     name: 'codertheory-dark',
@@ -124,6 +125,20 @@ export default defineNuxtConfig({
         turnstile: {siteKey: '1x00000000000000000000AA'},
         runtimeConfig: {
             turnstile: {secretKey: '1x0000000000000000000000000000000AA'}
+        }
+    },
+
+    // Icons are bundled at build time from the two @iconify-json sets in
+    // devDependencies. The server bundle is off so the full sets never ship
+    // inside the Worker; the client bundle carries exactly ALL_ICONS, which
+    // also serves server rendering, and the remote provider is never asked.
+    icon: {
+        serverBundle: false,
+        provider: 'none',
+        clientBundle: {
+            icons: ALL_ICONS,
+            scan: false,
+            sizeLimitKb: 64
         }
     },
 

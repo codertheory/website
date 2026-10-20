@@ -10,12 +10,14 @@
     </section>
 
     <article class="prose uses-body">
-      <ContentRenderer :value="doc" />
+      <ContentRenderer :value="doc" :components="{ strong: UsesStrong }" />
     </article>
   </div>
 </template>
 
 <script setup lang="ts">
+    import UsesStrong from '~/components/UsesStrong.vue'
+
     const { data: doc } = await useAsyncData('uses-page', () => queryCollection('uses').first())
 
     if (!doc.value) {

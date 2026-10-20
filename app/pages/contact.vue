@@ -75,7 +75,7 @@
           <p>Email is fastest. Everything else I check, but slower.</p>
           <div class="channels">
             <a class="ch" href="mailto:support@codertheory.dev">
-              <span class="ic">@</span>
+              <span class="ic"><TechIcon :icon="UI_ICONS.mail" /></span>
               <div class="body">
                 <div class="t">support@codertheory.dev</div>
                 <div class="s">usually replies within 48h</div>
@@ -83,7 +83,7 @@
               <ExternalIcon />
             </a>
             <a class="ch" href="https://github.com/codertheory">
-              <span class="ic">&lt;/&gt;</span>
+              <span class="ic"><TechIcon :icon="UI_ICONS.github" /></span>
               <div class="body">
                 <div class="t">github.com/codertheory</div>
                 <div class="s">code, issues, discussions</div>
@@ -98,6 +98,8 @@
 </template>
 
 <script setup lang="ts">
+    import { UI_ICONS } from '~/data/icons'
+
     // The contact API rejects any submission without a Turnstile token, so with no
     // site key configured the form can only ever return a 400 that blames the
     // sender. Better to say so and point at the inbox that still works.

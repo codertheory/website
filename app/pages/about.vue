@@ -43,7 +43,7 @@
           <h2 class="about-meta">What I work in</h2>
           <p class="about-meta-sub">// not a checklist, just honest</p>
           <div class="skills">
-            <span v-for="s in skills" :key="s" class="chip">{{ s }}</span>
+            <span v-for="s in skills" :key="s" class="chip"><TechIcon :name="s" />{{ s }}</span>
           </div>
 
           <div style="margin-top: 36px;">

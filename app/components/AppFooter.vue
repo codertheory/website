@@ -13,7 +13,7 @@
         <ul>
           <li v-for="l in c.links" :key="l.label">
             <NuxtLink v-if="'to' in l" :to="l.to">{{ l.label }}</NuxtLink>
-            <a v-else :href="l.href">{{ l.label }}</a>
+            <a v-else :href="l.href"><TechIcon v-if="'icon' in l" :icon="l.icon" />{{ l.label }}</a>
           </li>
         </ul>
       </div>
@@ -26,6 +26,8 @@
 </template>
 
 <script setup lang="ts">
+    import { UI_ICONS } from '~/data/icons'
+
     const cols = [
         {
             h: 'Site',
@@ -44,7 +46,7 @@
             links: [
                 { label: 'Get in touch', to: '/contact' },
                 { label: 'Latest writing', to: '/blog' },
-                { label: 'GitHub', href: 'https://github.com/codertheory/' }
+                { label: 'GitHub', href: 'https://github.com/codertheory/', icon: UI_ICONS.github }
             ]
         },
         {

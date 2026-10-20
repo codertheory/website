@@ -259,6 +259,15 @@ a.card:hover {
   .prow-ext { min-height: 44px; }
 }
 
+/* Icons beside names. Drawn in the text colour, sized to the text. */
+.ti { width: 1.1em; height: 1.1em; flex-shrink: 0; vertical-align: -0.18em; }
+.icon-item { display: inline-flex; align-items: center; gap: 0.4em; }
+.icon-list { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 2px 14px; }
+.chip .ti { width: 1.05em; height: 1.05em; opacity: 0.85; }
+.btn .ti { width: 1.05em; height: 1.05em; }
+.prose strong .ti { margin-right: 0.35em; }
+.footer-col a .ti { margin-right: 0.4em; }
+
 /* ============================================================
    Section heading + dividers
    ============================================================ */

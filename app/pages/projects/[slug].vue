@@ -32,7 +32,7 @@
               :class="['btn', i === 0 ? 'btn--primary' : 'btn--ghost']"
               :to="l.href"
             >
-              {{ l.label }} <ExternalIcon v-if="isExternal(l.href)" />
+              <TechIcon :icon="linkIcon(l)" /> {{ l.label }} <ExternalIcon v-if="isExternal(l.href)" />
             </NuxtLink>
           </div>
         </header>
@@ -78,19 +78,19 @@
 
         <aside class="card detail-side" aria-label="At a glance">
           <h2 class="detail-side-h">At a glance</h2>
-          <div class="row"><span class="k">platform</span><span class="v">{{ (project.platforms || []).join(', ') }}</span></div>
+          <div class="row"><span class="k">platform</span><span class="v icon-list"><span v-for="pl in (project.platforms || [])" :key="pl" class="icon-item"><TechIcon :name="pl" />{{ pl }}</span></span></div>
           <div class="row"><span class="k">started</span><span class="v">{{ project.started }}</span></div>
 
           <h2 class="detail-side-h">Stack</h2>
           <div class="stack-chips">
-            <span v-for="s in (project.stack || [])" :key="s" class="chip">{{ s }}</span>
+            <span v-for="s in (project.stack || [])" :key="s" class="chip"><TechIcon :name="s" />{{ s }}</span>
           </div>
 
           <template v-if="sideLinks.length">
             <h2 class="detail-side-h">Links</h2>
             <div class="detail-links">
               <NuxtLink v-for="(l, i) in sideLinks" :key="i" :to="l.href">
-                <span>{{ l.label }}</span>
+                <span class="icon-item"><TechIcon :icon="linkIcon(l)" />{{ l.label }}</span>
                 <ExternalIcon v-if="isExternal(l.href)" />
               </NuxtLink>
             </div>
@@ -122,6 +122,8 @@
 </template>
 
 <script setup lang="ts">
+    import { linkIcon } from '~/data/icons'
+
     const route = useRoute()
     // Set per navigation by plugins/project-transition.ts.
     const transitDetail = useState<boolean>('transit-detail', () => false)

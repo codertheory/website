@@ -17,12 +17,16 @@
       </div>
       <p v-if="!compact" class="prow-tag">{{ project.tag }}</p>
       <p class="prow-meta">
-        <span>{{ (project.platforms || []).join(' · ') }}</span>
+        <span class="icon-list">
+          <span v-for="pl in (project.platforms || [])" :key="pl" class="icon-item"><TechIcon :name="pl" />{{ pl }}</span>
+        </span>
         <a v-if="external" class="prow-ext" :href="external.href">
-          {{ external.label }} <ExternalIcon :size="12" />
+          <TechIcon :icon="linkIcon(external)" /> {{ external.label }} <ExternalIcon :size="12" />
         </a>
       </p>
-      <p v-if="showStack && project.stack?.length" class="prow-stack">{{ project.stack.join(' · ') }}</p>
+      <p v-if="showStack && project.stack?.length" class="prow-stack icon-list">
+        <span v-for="s in project.stack" :key="s" class="icon-item"><TechIcon :name="s" />{{ s }}</span>
+      </p>
     </div>
     <div v-if="$slots.figure" class="prow-figure" aria-hidden="true">
       <slot name="figure" />
@@ -32,6 +36,8 @@
 </template>
 
 <script setup lang="ts">
+    import { linkIcon } from '~/data/icons'
+
     type ProjectLink = { label: string, href: string, kind?: string }
     type Project = {
         path?: string
