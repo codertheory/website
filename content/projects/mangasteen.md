@@ -27,8 +27,12 @@ links:
   - label: App Store
     href: 'https://apps.apple.com/us/app/mangasteen/id6752508510'
     kind: store
-  - label: Google Play
-    href: 'https://play.google.com/store/apps/details?id=dev.codertheory.mangasteen'
+  # Android is a closed test on Google Play, so the listing 404s for anyone not
+  # on the testers list. This asks to be added instead. When the listing goes
+  # public, swap it back to:
+  #   https://play.google.com/store/apps/details?id=dev.codertheory.mangasteen
+  - label: Android beta
+    href: /contact?topic=android
     kind: store
   - label: Extension SDK
     href: 'https://github.com/codertheory/Mangasteen-extension-template'

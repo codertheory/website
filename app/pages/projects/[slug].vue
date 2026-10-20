@@ -26,14 +26,14 @@
           <h1 class="h-display detail-title" :style="transitDetail ? { viewTransitionName: 'proj-title' } : undefined">{{ project.title }}</h1>
           <p class="detail-tag">{{ project.tag }}</p>
           <div v-if="heroLinks.length" class="detail-ctas">
-            <a
+            <NuxtLink
               v-for="(l, i) in heroLinks"
               :key="l.href"
               :class="['btn', i === 0 ? 'btn--primary' : 'btn--ghost']"
-              :href="l.href"
+              :to="l.href"
             >
-              {{ l.label }} <ExternalIcon />
-            </a>
+              {{ l.label }} <ExternalIcon v-if="isExternal(l.href)" />
+            </NuxtLink>
           </div>
         </header>
 
@@ -89,10 +89,10 @@
           <template v-if="sideLinks.length">
             <h2 class="detail-side-h">Links</h2>
             <div class="detail-links">
-              <a v-for="(l, i) in sideLinks" :key="i" :href="l.href">
+              <NuxtLink v-for="(l, i) in sideLinks" :key="i" :to="l.href">
                 <span>{{ l.label }}</span>
-                <ExternalIcon />
-              </a>
+                <ExternalIcon v-if="isExternal(l.href)" />
+              </NuxtLink>
             </div>
           </template>
         </aside>
@@ -150,6 +150,10 @@
         const ways = links.filter(l => l.kind === 'site' || l.kind === 'store')
         return ways.length ? ways : links.slice(0, 1)
     })
+    // Most project links leave the site; a few (asking to join a closed beta)
+    // point at a page here, and those get no "opens elsewhere" icon.
+    const isExternal = (href: string) => /^https?:\/\//.test(href)
+
     // The side card lists only what the header has not already offered.
     const sideLinks = computed(() =>
         (project.value?.links || []).filter(l => !heroLinks.value.some(h => h.href === l.href))
@@ -225,7 +229,7 @@
         const resolved = embedImage.value
         const image = resolved ? absoluteUrl(resolved) : `${siteUrl}${config.public.defaultOgImage as string}`
         const url = `${siteUrl}/projects/${route.params.slug}`
-        const sameAs = (p.links || []).map(l => l.href).filter(Boolean)
+        const sameAs = (p.links || []).map(l => l.href).filter(isExternal)
         const ldJson = {
             '@context': 'https://schema.org',
             '@type': 'SoftwareApplication',

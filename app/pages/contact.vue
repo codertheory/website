@@ -6,7 +6,11 @@
         Send me a <span class="scribble">note<ScribbleUnder /></span>. I read everything.
       </h1>
       <!-- Shown to visitors who arrive from the "Looking for work" status on the homepage. -->
-      <p v-if="isRole" class="contact-lede">
+      <!-- Shown to visitors who arrive from the "Android beta" button on Mangasteen. -->
+      <p v-if="isAndroid" class="contact-lede">
+        The Android version is a closed test on Google Play. Send me the email of the Google account on your phone and I'll add you to the testers list.
+      </p>
+      <p v-else-if="isRole" class="contact-lede">
         If you have a role in mind, tell me a bit about it and the stack. I usually reply within a day or two.
       </p>
       <p v-else class="contact-lede">
@@ -36,6 +40,7 @@
             <select v-model="form.topic" name="topic" required>
               <option value="" disabled>Pick one…</option>
               <option>{{ ROLE_TOPIC }}</option>
+              <option>{{ ANDROID_TOPIC }}</option>
               <option>Mentoring / pairing</option>
               <option>A project of yours</option>
               <option>Bug or feature request</option>
@@ -102,8 +107,12 @@
     // The homepage status link arrives as /contact?topic=role.
     const ROLE_TOPIC = 'A job or role'
     const route = useRoute()
+    // Mangasteen's "Android beta" button arrives as /contact?topic=android.
+    const ANDROID_TOPIC = 'Joining the Mangasteen Android beta'
     const isRole = computed(() => route.query.topic === 'role')
-    const form = reactive({name: '', email: '', topic: isRole.value ? ROLE_TOPIC : '', message: ''})
+    const isAndroid = computed(() => route.query.topic === 'android')
+    const initialTopic = isRole.value ? ROLE_TOPIC : isAndroid.value ? ANDROID_TOPIC : ''
+    const form = reactive({name: '', email: '', topic: initialTopic, message: ''})
     const token = ref('')
     const turnstile = ref<{reset: () => void}>()
     const status = ref<'idle' | 'sending' | 'sent' | 'error'>('idle')

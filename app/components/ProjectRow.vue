@@ -68,6 +68,6 @@
     // (play it, get it) sits on top as its own target, so someone who came for
     // the product does not need the detail page to find the door.
     const external = computed(() =>
-        (props.project.links || []).find(l => l.kind === 'site' || l.kind === 'store') || null
+        (props.project.links || []).find(l => (l.kind === 'site' || l.kind === 'store') && /^https?:\/\//.test(l.href)) || null
     )
 </script>
