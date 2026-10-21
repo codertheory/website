@@ -122,12 +122,7 @@
       <HomeFeedEmpty v-if="feedItems.length === 0" />
       <ul v-else class="prow-list">
         <li v-for="item in feedItems" :key="item.href">
-          <ProjectRow v-if="item.project" :project="item.project" heading="h3">
-            <!-- A peek at the real diagram; the full one is on the project page. -->
-            <template v-if="item.href === '/projects/job-pipeline'" #figure>
-              <PipelineFlow preview />
-            </template>
-          </ProjectRow>
+          <ProjectRow v-if="item.project" :project="item.project" heading="h3" />
           <article v-else class="prow prow--post">
             <div class="prow-body">
               <div class="prow-head">

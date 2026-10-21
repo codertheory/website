@@ -100,7 +100,7 @@
 .detail-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 
 /* One reading column with the facts pinned beside it, from the title down.
-   The blocks are siblings in reading order (header, lead figure, story,
+   The blocks are siblings in reading order (header, screenshots, story,
    features, facts, writeup) so a phone gets that order for free; on a wide
    screen the facts lift out into their own column beside the title. */
 .detail-body { padding-bottom: 96px; }
@@ -114,7 +114,6 @@
 .detail-grid > * { grid-column: 1; min-width: 0; }
 .detail-grid > .detail-side { grid-column: 2; grid-row: 1 / span 6; margin-top: 60px; }
 .detail-shots .shots-strip { margin-top: 0; grid-template-columns: minmax(0, 1fr); }
-.detail-lead figure.pipe { margin: 0; }
 .detail-h2 {
   font-family: var(--f-display); font-size: 30px; font-weight: 600; letter-spacing: -0.015em;
   margin: 0 0 6px;

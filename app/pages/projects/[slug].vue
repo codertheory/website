@@ -37,17 +37,14 @@
           </div>
         </header>
 
-        <!-- Real evidence leads: screenshots when a project has them, otherwise a
-             figure it names. With neither, the page goes straight to the writing. -->
+        <!-- Real evidence leads: screenshots when a project has them. Without
+             any, the page goes straight to the writing. -->
         <div v-if="project.screenshots?.length" class="detail-shots">
           <div class="shots-strip">
             <div v-for="(shot, i) in project.screenshots" :key="i" class="shot">
               <NuxtImg :src="shot.src" :alt="shot.alt || `${project.title} screenshot ${i + 1}`" />
             </div>
           </div>
-        </div>
-        <div v-else-if="project.leadFigure === 'pipeline-flow'" class="detail-lead">
-          <PipelineFlow />
         </div>
 
         <div v-if="project.why" class="story-block">

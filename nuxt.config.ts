@@ -35,6 +35,12 @@ export default defineNuxtConfig({
     experimental: {viewTransition: true},
     devtools: {enabled: true},
 
+    // Rolesmith took over both of these projects, so old links land on it.
+    routeRules: {
+        '/projects/job-pipeline': {redirect: {to: '/projects/rolesmith', statusCode: 301}},
+        '/projects/interview-helper': {redirect: {to: '/projects/rolesmith', statusCode: 301}}
+    },
+
     runtimeConfig: {
         githubToken: '', // NUXT_GITHUB_TOKEN
         contact: {

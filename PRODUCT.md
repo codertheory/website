@@ -32,7 +32,7 @@ What a neighbouring portfolio could not copy is the project writing: each projec
 ## Capabilities and Constraints
 
 - Nuxt 4 with `@nuxt/content`; pages in `app/pages/`, styles in `app/assets/css/`.
-- Six projects: Job Pipeline, InterviewHelper, Cresthold, Shiritori, Mangasteen, Iceteabot.
+- Five projects: Rolesmith, Cresthold, Shiritori, Mangasteen, Iceteabot. Rolesmith replaced the Job Pipeline and InterviewHelper pages in October 2026; their old URLs redirect to it.
 - The homepage first viewport features Mangasteen, Shiritori and Cresthold (confirmed 2026-10-05).
 - The blog route stays in the primary navigation and the hero while it has no posts (confirmed 2026-10-05).
 - Lucas writes all replacement copy himself. Design work may restructure pages and flag copy that needs changing, but does not reword it for him.
@@ -47,9 +47,8 @@ What a neighbouring portfolio could not copy is the project writing: each projec
 ## Evidence on Hand
 
 - Project writeups in `content/projects/*.md`.
-- The Job Pipeline system diagram, `app/components/content/PipelineFlow.vue`.
 - App icons and social images for every project in `public/`.
-- Screenshots exist for Shiritori only. The other five projects have none, and none may be invented or mocked up as if real.
+- Screenshots exist for Shiritori only. The other four projects have none, and none may be invented or mocked up as if real.
 - Shiritori is live at shiritoriwithfriends.com. Mangasteen is on the App Store (published October 2026); the Google Play listing is not public yet. Cresthold is in development.
 - No blog posts exist yet. No testimonials, client logos or usage numbers exist, and none may be fabricated.
 
