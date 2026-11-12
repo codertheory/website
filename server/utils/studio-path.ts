@@ -57,6 +57,16 @@ export function isBlockedStudioAuthPath(rawPath: string): boolean {
     return !AUTH_OPEN.has(path)
 }
 
+// Studio's server routes (auth, session, meta, API, image proxy). On the
+// admin host each response from them is Cache-Control: no-store, except the
+// image proxy's own `private, max-age=300`.
+const SERVER_PREFIX = '/__nuxt_studio'
+
+export function isStudioServerPath(rawPath: string): boolean {
+    const path = normaliseStudioPath(rawPath)
+    return path === SERVER_PREFIX || path.startsWith(`${SERVER_PREFIX}/`)
+}
+
 // Studio's editor entry (`studio.route` in nuxt.config.ts). On the admin
 // host it leads to the Access sign-in instead of Studio's provider picker.
 const ENTRY = '/_studio'

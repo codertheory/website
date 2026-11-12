@@ -16,12 +16,14 @@
 // Then run:     node scripts/check-studio-e2e.mjs
 //
 // Adapted from the reviewer's harness on PR #7.
+import { createHash } from 'node:crypto'
 import { readFile, readdir } from 'node:fs/promises'
 import { request } from 'node:http'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Miniflare, Response as MfResponse } from 'miniflare'
 import { SignJWT, exportJWK, generateKeyPair } from 'jose'
+import { sealSession } from 'h3'
 import { IPX_ALLOWED, IPX_MISSING, IPX_REFUSED } from './studio-ipx-cases.mjs'
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../..')
@@ -38,6 +40,14 @@ const EDITOR_CONFIG = '  Editor@Example.INVALID '
 const OTHER = 'other@example.invalid'
 const GH_TOKEN = 'github_pat_E2E_FAKE_TOKEN'
 const SESSION_SECRET = 'dummy-session-secret-0123456789abcdef'
+// The secret nuxt-studio's studio-env middleware derives when
+// NUXT_STUDIO_AUTH_SESSION_SECRET is unset: md5 of its credentials joined,
+// which here is just the GitHub token.
+const MD5_FALLBACK_SECRET = createHash('md5').update(GH_TOKEN).digest('hex')
+// The commit identity Studio writes as the author (#12). Dummy values; the
+// real ones are in wrangler.jsonc and checked by check-studio-guard.mjs.
+const COMMIT_NAME = 'E2E Commit Name'
+const COMMIT_EMAIL = '1+e2e-commit@users.noreply.github.com'
 const SIGN_IN = '/__nuxt_studio/auth/access'
 const ATTACKER_BODY = '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(document.domain)"><script>/*attacker*/</script></svg>'
 const IPX_CSP = "default-src 'none'; sandbox"
@@ -72,7 +82,9 @@ function claims(team, overrides = {}) {
 const STUDIO_BINDINGS = {
     NUXT_STUDIO_GIT_GITHUB_TOKEN: GH_TOKEN,
     NUXT_STUDIO_EDITOR_EMAIL: EDITOR_CONFIG,
-    NUXT_STUDIO_AUTH_SESSION_SECRET: SESSION_SECRET
+    NUXT_STUDIO_AUTH_SESSION_SECRET: SESSION_SECRET,
+    NUXT_STUDIO_COMMIT_NAME: COMMIT_NAME,
+    NUXT_STUDIO_COMMIT_EMAIL: COMMIT_EMAIL
 }
 
 async function startWorker(team, overrides = {}) {
@@ -124,6 +136,16 @@ const setCookieCount = res => [res.headers['set-cookie'] ?? []].flat().length
 const sessionCookieFrom = res => cookiesFrom(res).find(c => /^studio-session=./.test(c))
 const sessionCleared = res => cookiesFrom(res).includes('studio-session=')
 const leaksToken = res => res.body.includes(GH_TOKEN)
+const noStore = res => /no-store/.test(String(res.headers['cache-control']))
+
+// A sealed h3 session made the way h3 makes one, with a password of our
+// choosing, to stand in for a forged, stale or differently sealed session.
+async function sealStudioSession(data, password = SESSION_SECRET) {
+    const event = {context: {sessions: {'studio-session': {id: `forged-${Math.random().toString(36).slice(2)}`, createdAt: Date.now(), data}}}}
+    return sealSession(event, {name: 'studio-session', password})
+}
+// The user a session from the sign-in route holds, bound by accessEmail.
+const studioUser = accessEmail => ({name: COMMIT_NAME, email: COMMIT_EMAIL, accessEmail, provider: 'github', accessToken: GH_TOKEN})
 function parseJson(res) {
     try {
         return JSON.parse(res.body.toString('utf8'))
@@ -162,7 +184,37 @@ const OAUTH_PATHS = [
     '/__nuxt_studio/auth%2Fgithub',
     '/__nuxt_studio//auth/github',
     '/__nuxt_studio/auth',
-    '/__nuxt_studio/auth/'
+    '/__nuxt_studio/auth/',
+    '/__nuxt_studio/auth\\github',
+    '/__nuxt_studio\\auth\\github',
+    '/__nuxt_studio/auth/%2567ithub',
+    '/__nuxt_studio/auth%252Fgithub',
+    '/__nuxt_studio/auth/./github',
+    '/__nuxt_studio/auth/%2e/github',
+    '/__nuxt_studio/auth/session/../github',
+    '/__nuxt_studio/auth/access/../github',
+    '/__nuxt_studio/x/../auth/github',
+    '/__nuxt_studio/auth/%2e%2e/auth/github'
+]
+
+// Public-host spellings of the sign-in route. Each must 404 with no
+// Set-Cookie, even with a valid Access token.
+const PUBLIC_SIGN_IN_PATHS = [
+    SIGN_IN,
+    `${SIGN_IN}/`,
+    `${SIGN_IN}?redirect=/about`,
+    '/__NUXT_STUDIO/auth/access',
+    '/__nuxt_studio/AUTH/ACCESS',
+    '/__nuxt_studio/auth/%61ccess',
+    '/__nuxt_studio/auth/%2561ccess',
+    '/__nuxt_studio/auth%2Faccess',
+    '/__nuxt_studio%2Fauth%2Faccess',
+    '/%5F%5Fnuxt_studio/auth/access',
+    '//__nuxt_studio//auth//access',
+    '/__nuxt_studio\\auth\\access',
+    '/__nuxt_studio/auth/access;x',
+    '/__nuxt_studio/auth/./access',
+    '/__nuxt_studio/x/../auth/access'
 ]
 
 async function mainInstance() {
@@ -188,13 +240,25 @@ async function mainInstance() {
         check('sign-in with the editor\'s Access token -> 302 to /', signedIn.status === 302 && signedIn.headers.location === '/', `got ${signedIn.status} ${signedIn.headers.location}`)
         check('sign-in sets a studio-session cookie', Boolean(session), cookiesFrom(signedIn).join(' '))
         check('sign-in sets studio-session-check=true (what the page reads)', cookiesFrom(signedIn).includes('studio-session-check=true'), cookiesFrom(signedIn).join(' '))
-        check('sign-in response is not cached', /no-store/.test(String(signedIn.headers['cache-control'])), `cache-control=${signedIn.headers['cache-control']}`)
+        check('sign-in response is not cached', noStore(signedIn), `cache-control=${signedIn.headers['cache-control']}`)
         const withSession = {...jwt, cookie: session ?? ''}
         const me = await call(ADMIN, '/__nuxt_studio/auth/session', withSession)
         const meBody = parseJson(me)
-        check('/__nuxt_studio/auth/session then returns the editor', me.status === 200 && meBody?.user?.email === EDITOR, `got ${me.status} email=${meBody?.user?.email}`)
+        check('/__nuxt_studio/auth/session then returns a user bound to the editor (accessEmail)', me.status === 200 && meBody?.user?.accessEmail === EDITOR, `got ${me.status} accessEmail=${meBody?.user?.accessEmail}`)
         check('the session holds the token from NUXT_STUDIO_GIT_GITHUB_TOKEN, provider github', meBody?.user?.accessToken === GH_TOKEN && meBody?.user?.provider === 'github', `provider=${meBody?.user?.provider}`)
-        check('the session name falls back to the email (Access sends no name)', meBody?.user?.name === EDITOR, `name=${meBody?.user?.name}`)
+        check('session response is Cache-Control: no-store', noStore(me), `cache-control=${me.headers['cache-control']}`)
+
+        console.log('\n-- Commit identity: the session name and email are the configured commit author')
+        check('session name is NUXT_STUDIO_COMMIT_NAME', meBody?.user?.name === COMMIT_NAME, `name=${JSON.stringify(meBody?.user?.name)}`)
+        check('session email is NUXT_STUDIO_COMMIT_EMAIL', meBody?.user?.email === COMMIT_EMAIL, `email=${JSON.stringify(meBody?.user?.email)}`)
+        check('session JSON has no Access email in name or email', Boolean(meBody?.user) && ![meBody.user.name, meBody.user.email].some(v => String(v).toLowerCase().includes(EDITOR)), `name=${JSON.stringify(meBody?.user?.name)} email=${JSON.stringify(meBody?.user?.email)}`)
+        check('session JSON carries the Access email once, in accessEmail only', me.body.toString('utf8').toLowerCase().split(EDITOR).length - 1 === 1, me.body.toString('utf8').replace(GH_TOKEN, '<token>').slice(0, 300))
+        const named = await signIn(call, {'cf-access-jwt-assertion': await sign(claims(TEAM, {name: 'Access Display Name'}))})
+        const namedMe = parseJson(await call(ADMIN, '/__nuxt_studio/auth/session', {...jwt, cookie: named.session ?? ''}))
+        check('a JWT name claim does not reach the session name', named.res.status === 302 && namedMe?.user?.name === COMMIT_NAME, `got ${named.res.status} name=${JSON.stringify(namedMe?.user?.name)}`)
+        const oldFormat = await sealStudioSession({user: {name: EDITOR, email: EDITOR, provider: 'github', accessToken: GH_TOKEN}})
+        const oldRes = await call(ADMIN, '/__nuxt_studio/auth/session', {...jwt, cookie: `studio-session=${oldFormat}`})
+        check('a session with the Access email in email but no accessEmail (old format) -> 403, cleared, no token', oldRes.status === 403 && sessionCleared(oldRes) && !leaksToken(oldRes), `got ${oldRes.status}; ${cookiesFrom(oldRes).join(' ') || 'no Set-Cookie'}`)
         const upper = await signIn(call, {'cf-access-jwt-assertion': await sign(claims(TEAM, {email: ' EDITOR@example.INVALID '}))})
         check('sign-in with the editor email in other case and with spaces -> 302 and a session', upper.res.status === 302 && Boolean(upper.session), `got ${upper.res.status}`)
 
@@ -212,8 +276,16 @@ async function mainInstance() {
             const res = await call(ADMIN, SIGN_IN, {'cf-access-jwt-assertion': await sign(claims(TEAM, {email}))})
             check(`sign-in with ${name} -> 403, no Set-Cookie`, res.status === 403 && setCookieCount(res) === 0, `got ${res.status}, cookies: ${cookiesFrom(res).join(' ')}`)
         }
-        const pubSignIn = await call(PUBLIC, SIGN_IN, jwt)
-        check('public sign-in route with a valid token -> 404, no Set-Cookie', pubSignIn.status === 404 && setCookieCount(pubSignIn) === 0, `got ${pubSignIn.status}`)
+        for (const path of PUBLIC_SIGN_IN_PATHS) {
+            const res = await call(PUBLIC, path, jwt)
+            check(`public ${path} with a valid token -> 404, no Set-Cookie`, res.status === 404 && setCookieCount(res) === 0, `got ${res.status}, cookies: ${cookiesFrom(res).join(' ')}`)
+        }
+        for (const method of ['HEAD', 'POST']) {
+            const res = await call(PUBLIC, SIGN_IN, jwt, method)
+            check(`public ${method} ${SIGN_IN} with a valid token -> 404, no Set-Cookie`, res.status === 404 && setCookieCount(res) === 0, `got ${res.status}`)
+            const admin = await call(ADMIN, SIGN_IN, jwt, method)
+            check(`admin ${method} ${SIGN_IN} with the editor's token -> 404, no session cookie`, admin.status === 404 && !sessionCookieFrom(admin), `got ${admin.status}, cookies: ${cookiesFrom(admin).join(' ')}`)
+        }
 
         console.log('\n-- /_studio leads to the Access sign-in')
         const entry = await call(ADMIN, '/_studio', jwt)
@@ -256,7 +328,7 @@ async function mainInstance() {
 
         console.log('\n-- Studio session bound to the Access identity')
         const sameEmail = await call(ADMIN, '/__nuxt_studio/auth/session', withSession)
-        check('session with the same Access email is kept (no clearing cookie)', sameEmail.status === 200 && !sessionCleared(sameEmail) && parseJson(sameEmail)?.user?.email === EDITOR, `got ${sameEmail.status}`)
+        check('session with the same Access email is kept (no clearing cookie)', sameEmail.status === 200 && !sessionCleared(sameEmail) && parseJson(sameEmail)?.user?.accessEmail === EDITOR, `got ${sameEmail.status}`)
         const otherJwt = {'cf-access-jwt-assertion': await sign(claims(TEAM, {email: OTHER}))}
         const mismatch = await call(ADMIN, '/__nuxt_studio/auth/session', {...otherJwt, cookie: session ?? ''})
         check('session with another Access email -> session cleared (studio-session deleted)', sessionCleared(mismatch), cookiesFrom(mismatch).join(' ') || 'no Set-Cookie')
@@ -272,6 +344,23 @@ async function mainInstance() {
         const metaMismatch = await call(ADMIN, '/__nuxt_studio/meta', {...otherJwt, cookie: session ?? ''})
         check('Studio API with another Access email and the old session -> not 200', Boolean(session) && metaMismatch.status !== 200, `got ${metaMismatch.status}`)
 
+        console.log('\n-- Session header versus cookie (h3 reads the header first)')
+        const sessionValue = (session ?? '').replace(/^studio-session=/, '')
+        const otherBound = await sealStudioSession({user: studioUser(OTHER)})
+        const headerOther = await call(ADMIN, '/__nuxt_studio/auth/session', {...jwt, 'x-studio-session-session': otherBound, cookie: session ?? ''})
+        check('header session bound to another email + the editor\'s cookie -> 403, cleared, no token', headerOther.status === 403 && sessionCleared(headerOther) && !leaksToken(headerOther), `got ${headerOther.status}; ${cookiesFrom(headerOther).join(' ') || 'no Set-Cookie'}`)
+        const headerEditor = await call(ADMIN, '/__nuxt_studio/auth/session', {...jwt, 'x-studio-session-session': sessionValue, cookie: `studio-session=${otherBound}`})
+        check('the editor\'s header session + a cookie bound to another email -> 200, the header wins', Boolean(session) && headerEditor.status === 200 && parseJson(headerEditor)?.user?.accessEmail === EDITOR && !sessionCleared(headerEditor), `got ${headerEditor.status}`)
+        const emptyHeader = await call(ADMIN, '/__nuxt_studio/auth/session', {...jwt, 'x-studio-session-session': '', cookie: `studio-session=${otherBound}`})
+        check('an empty header falls back to the cookie: cookie bound to another email -> 403, cleared, no token', emptyHeader.status === 403 && sessionCleared(emptyHeader) && !leaksToken(emptyHeader), `got ${emptyHeader.status}`)
+
+        console.log('\n-- A session sealed with the md5 fallback secret')
+        const md5Sealed = await sealStudioSession({user: studioUser(EDITOR)}, MD5_FALLBACK_SECRET)
+        const md5Res = await call(ADMIN, '/__nuxt_studio/auth/session', {...jwt, cookie: `studio-session=${md5Sealed}`})
+        check('md5-fallback-sealed session, secret configured -> no user, no token', !parseJson(md5Res)?.user && !leaksToken(md5Res), `got ${md5Res.status}`)
+        const md5Meta = await call(ADMIN, '/__nuxt_studio/meta', {...jwt, 'x-studio-session-session': md5Sealed})
+        check('md5-fallback-sealed session in the header -> no token in the response', !leaksToken(md5Meta), `got ${md5Meta.status}`)
+
         console.log('\n-- Studio OAuth routes are gone')
         for (const path of OAUTH_PATHS) {
             const before = outbound.length
@@ -281,11 +370,20 @@ async function mainInstance() {
             const pub = await call(PUBLIC, path)
             check(`public ${path} -> 404`, pub.status === 404, `got ${pub.status}`)
         }
+        for (const method of ['POST', 'HEAD', 'PUT', 'DELETE', 'OPTIONS']) {
+            for (const path of ['/__nuxt_studio/auth/github', '/__nuxt_studio/auth/github?code=c&state=s', '/__nuxt_studio/auth/google']) {
+                const before = outbound.length
+                const res = await call(ADMIN, path, withSession, method)
+                const out = outbound.slice(before).filter(u => u.pathname !== '/cdn-cgi/access/certs')
+                check(`admin ${method} ${path} with token and session -> 404, no outbound fetch`, res.status === 404 && out.length === 0, `got ${res.status}; ${out.map(u => u.href).join(' ')}`)
+            }
+        }
 
         console.log('\n-- Studio sign-out still works')
         const {session: toSignOut} = await signIn(call, jwt)
         const signOut = await call(ADMIN, '/__nuxt_studio/auth/session', {...jwt, cookie: toSignOut ?? ''}, 'DELETE')
         check('DELETE /__nuxt_studio/auth/session -> loggedOut, session cleared', signOut.status === 200 && parseJson(signOut)?.loggedOut === true && sessionCleared(signOut), `got ${signOut.status}`)
+        check('sign-out response is Cache-Control: no-store', noStore(signOut), `cache-control=${signOut.headers['cache-control']}`)
 
         // Outbound fetches made while one request was answered, leaving out the
         // Access key set (jose may refresh it at any time; it is not Studio).
@@ -353,6 +451,7 @@ async function mainInstance() {
         }
         const studioMeta = await call(ADMIN, '/__nuxt_studio/meta', withSession)
         check('admin /__nuxt_studio/meta with token and session -> 200 (what the editor reads)', studioMeta.status === 200, `got ${studioMeta.status}`)
+        check('admin /__nuxt_studio/meta is Cache-Control: no-store', noStore(studioMeta), `cache-control=${studioMeta.headers['cache-control']}`)
         keptSession = session
     } finally {
         await mf.dispose()
@@ -360,19 +459,26 @@ async function mainInstance() {
     return keptSession
 }
 
-// Each Studio secret missing in turn: sign-in gives a 403 and no session. An
-// existing session (sealed by the main instance with the same session
-// secret) is cleared where the config no longer allows it.
+// Each Studio setting missing in turn: sign-in gives a 403 and no session.
+// An existing session (sealed by the main instance with the same session
+// secret) is cleared with a 403 where the config no longer allows it
+// (`existing: true`). Without a usable session secret, a session sealed
+// with nuxt-studio's md5 fallback secret is refused too (`md5: true`).
 async function missingConfigInstances(existingSession) {
     const variants = {
-        'NUXT_STUDIO_EDITOR_EMAIL unset': {NUXT_STUDIO_EDITOR_EMAIL: undefined},
-        'NUXT_STUDIO_EDITOR_EMAIL blank': {NUXT_STUDIO_EDITOR_EMAIL: '   '},
-        'NUXT_STUDIO_GIT_GITHUB_TOKEN unset': {NUXT_STUDIO_GIT_GITHUB_TOKEN: undefined},
-        'NUXT_STUDIO_GIT_GITHUB_TOKEN unset, STUDIO_GITHUB_TOKEN set': {NUXT_STUDIO_GIT_GITHUB_TOKEN: undefined, STUDIO_GITHUB_TOKEN: GH_TOKEN},
-        'NUXT_STUDIO_AUTH_SESSION_SECRET unset': {NUXT_STUDIO_AUTH_SESSION_SECRET: undefined},
-        'NUXT_STUDIO_AUTH_SESSION_SECRET shorter than 32 characters': {NUXT_STUDIO_AUTH_SESSION_SECRET: 'too-short'}
+        'NUXT_STUDIO_EDITOR_EMAIL unset': {overrides: {NUXT_STUDIO_EDITOR_EMAIL: undefined}, existing: true},
+        'NUXT_STUDIO_EDITOR_EMAIL blank': {overrides: {NUXT_STUDIO_EDITOR_EMAIL: '   '}, existing: true},
+        'NUXT_STUDIO_GIT_GITHUB_TOKEN unset': {overrides: {NUXT_STUDIO_GIT_GITHUB_TOKEN: undefined}, existing: true},
+        'NUXT_STUDIO_GIT_GITHUB_TOKEN blank': {overrides: {NUXT_STUDIO_GIT_GITHUB_TOKEN: '   '}, existing: true},
+        'NUXT_STUDIO_GIT_GITHUB_TOKEN unset, STUDIO_GITHUB_TOKEN set': {overrides: {NUXT_STUDIO_GIT_GITHUB_TOKEN: undefined, STUDIO_GITHUB_TOKEN: GH_TOKEN}, existing: true},
+        'NUXT_STUDIO_AUTH_SESSION_SECRET unset': {overrides: {NUXT_STUDIO_AUTH_SESSION_SECRET: undefined}, existing: true, md5: true},
+        'NUXT_STUDIO_AUTH_SESSION_SECRET shorter than 32 characters': {overrides: {NUXT_STUDIO_AUTH_SESSION_SECRET: 'too-short'}, existing: true},
+        'NUXT_STUDIO_COMMIT_NAME unset': {overrides: {NUXT_STUDIO_COMMIT_NAME: undefined}},
+        'NUXT_STUDIO_COMMIT_NAME blank': {overrides: {NUXT_STUDIO_COMMIT_NAME: '   '}},
+        'NUXT_STUDIO_COMMIT_EMAIL unset': {overrides: {NUXT_STUDIO_COMMIT_EMAIL: undefined}},
+        'NUXT_STUDIO_COMMIT_EMAIL blank': {overrides: {NUXT_STUDIO_COMMIT_EMAIL: '   '}}
     }
-    for (const [name, overrides] of Object.entries(variants)) {
+    for (const [name, {overrides, existing, md5}] of Object.entries(variants)) {
         console.log(`\n-- Miniflare, ${name}`)
         const {mf, call} = await startWorker(TEAM, overrides)
         try {
@@ -381,13 +487,40 @@ async function missingConfigInstances(existingSession) {
             check(`${name}: sign-in with the editor's token -> 403, no Set-Cookie`, res.status === 403 && setCookieCount(res) === 0, `got ${res.status}, cookies: ${cookiesFrom(res).join(' ')}`)
             const entry = await call(ADMIN, '/_studio', jwt)
             check(`${name}: /_studio still leads to the sign-in route, not an OAuth provider`, entry.status === 302 && entry.headers.location === SIGN_IN, `got ${entry.status} ${entry.headers.location}`)
-            if (!('NUXT_STUDIO_GIT_GITHUB_TOKEN' in overrides)) {
+            if (existing) {
                 const old = await call(ADMIN, '/__nuxt_studio/auth/session', {...jwt, cookie: existingSession ?? ''})
-                check(`${name}: an existing session is cleared and returns no token`, Boolean(existingSession) && sessionCleared(old) && !leaksToken(old), `got ${old.status}; ${cookiesFrom(old).join(' ') || 'no Set-Cookie'}`)
+                check(`${name}: an existing session -> 403, cleared, no token`, Boolean(existingSession) && old.status === 403 && sessionCleared(old) && !leaksToken(old), `got ${old.status}; ${cookiesFrom(old).join(' ') || 'no Set-Cookie'}`)
+            }
+            if (md5) {
+                const md5Sealed = await sealStudioSession({user: studioUser(EDITOR)}, MD5_FALLBACK_SECRET)
+                const old = await call(ADMIN, '/__nuxt_studio/auth/session', {...jwt, cookie: `studio-session=${md5Sealed}`})
+                check(`${name}: a session sealed with the md5 fallback secret -> 403, cleared, no token`, old.status === 403 && sessionCleared(old) && !leaksToken(old), `got ${old.status}; ${cookiesFrom(old).join(' ') || 'no Set-Cookie'}`)
             }
         } finally {
             await mf.dispose()
         }
+    }
+}
+
+// The editor email compare is ASCII only: a Unicode character that lower-
+// cases to an ASCII one (Kelvin sign U+212A -> k) must not match.
+async function asciiEmailInstance() {
+    console.log('\n-- Miniflare, editor email luke@example.invalid (ASCII-only compare)')
+    const {mf, call} = await startWorker(TEAM, {NUXT_STUDIO_EDITOR_EMAIL: 'luke@example.invalid'})
+    try {
+        const cases = [
+            ['lu\u212Ae@example.invalid (Kelvin sign)', 'lu\u212Ae@example.invalid', false],
+            ['LU\u212AE@EXAMPLE.INVALID (Kelvin sign, upper case)', 'LU\u212AE@EXAMPLE.INVALID', false],
+            ['NBSP padding', '\u00a0luke@example.invalid\u00a0', false],
+            ['LUKE@Example.INVALID (ASCII case only)', 'LUKE@Example.INVALID', true]
+        ]
+        for (const [name, email, allowed] of cases) {
+            const res = await call(ADMIN, SIGN_IN, {'cf-access-jwt-assertion': await sign(claims(TEAM, {email}))})
+            if (allowed) check(`sign-in with ${name} -> 302 and a session`, res.status === 302 && Boolean(sessionCookieFrom(res)), `got ${res.status}`)
+            else check(`sign-in with ${name} -> 403, no Set-Cookie`, res.status === 403 && setCookieCount(res) === 0, `got ${res.status}, cookies: ${cookiesFrom(res).join(' ')}`)
+        }
+    } finally {
+        await mf.dispose()
     }
 }
 
@@ -438,6 +571,7 @@ try {
 }
 const editorSession = await mainInstance()
 await missingConfigInstances(editorSession)
+await asciiEmailInstance()
 await leftoverOAuthInstance()
 await evilTeamInstance()
 console.log(`\n${failures === 0 ? 'All checks passed.' : `${failures} check(s) failed.`}`)

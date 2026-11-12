@@ -116,6 +116,17 @@ const PUBLIC_STUDIO_PATHS = [
     '/__nuxt_studio/auth/session',
     '/__nuxt_studio/auth/access',
     '/__nuxt_studio/auth/access?redirect=/about',
+    '/__nuxt_studio/auth/access/',
+    '/__NUXT_STUDIO/auth/access',
+    '/__nuxt_studio/AUTH/ACCESS',
+    '/__nuxt_studio/auth/%61ccess',
+    '/__nuxt_studio/auth/%2561ccess',
+    '/__nuxt_studio/auth%2Faccess',
+    '/__nuxt_studio%2Fauth%2Faccess',
+    '/%5F%5Fnuxt_studio/auth/access',
+    '//__nuxt_studio//auth//access',
+    '/__nuxt_studio\\auth\\access',
+    '/__nuxt_studio/auth/access;x',
     '/__nuxt_studio/auth/github',
     '/__nuxt_studio/auth/gitlab',
     '/__nuxt_studio/auth/google',
@@ -306,7 +317,9 @@ async function pathChecks() {
     // Studio's auth routes (#12): only the Access sign-in and the session
     // route stay open; GitHub, GitLab, Google, SSO and anything else under
     // /__nuxt_studio/auth is closed.
-    const blockedAuth = ['/__nuxt_studio/auth/github', '/__nuxt_studio/auth/github/', '/__nuxt_studio/auth/github?code=c', '/__nuxt_studio/auth/gitlab', '/__nuxt_studio/auth/google', '/__nuxt_studio/auth/sso', '/__nuxt_studio/auth/GitHub', '/__nuxt_studio/auth/%67ithub', '/__nuxt_studio/auth%2Fgithub', '/__nuxt_studio//auth/github', '/__NUXT_STUDIO/AUTH/GITHUB', '/__nuxt_studio/auth', '/__nuxt_studio/auth/', '/__nuxt_studio/auth/session/../github', '/__nuxt_studio/auth/session;x', '/__nuxt_studio/auth/access/x', '/__nuxt_studio/auth/other']
+    const blockedAuth = ['/__nuxt_studio/auth/github', '/__nuxt_studio/auth/github/', '/__nuxt_studio/auth/github?code=c', '/__nuxt_studio/auth/gitlab', '/__nuxt_studio/auth/google', '/__nuxt_studio/auth/sso', '/__nuxt_studio/auth/GitHub', '/__nuxt_studio/auth/%67ithub', '/__nuxt_studio/auth%2Fgithub', '/__nuxt_studio//auth/github', '/__NUXT_STUDIO/AUTH/GITHUB', '/__nuxt_studio/auth', '/__nuxt_studio/auth/', '/__nuxt_studio/auth/session/../github', '/__nuxt_studio/auth/session;x', '/__nuxt_studio/auth/access/x', '/__nuxt_studio/auth/other',
+        '/__nuxt_studio/auth\\github', '/__nuxt_studio\\auth\\github', '/__nuxt_studio/auth/%2567ithub', '/__nuxt_studio/auth%252Fgithub', '/__nuxt_studio/auth/./github',
+        '/__nuxt_studio/auth/%2e/github', '/__nuxt_studio/auth/%2e%2e/github', '/__nuxt_studio/auth/access/../github', '/__nuxt_studio/auth/session/%2e%2e/github']
     for (const path of blockedAuth) check(`isBlockedStudioAuthPath(${JSON.stringify(path)}) -> true`, mod.isBlockedStudioAuthPath?.(path) === true)
     const openAuth = ['/__nuxt_studio/auth/session', '/__nuxt_studio/auth/session?x=1', '/__nuxt_studio/auth/access', '/__nuxt_studio/auth/access?redirect=/about', '/__nuxt_studio/meta', '/_studio', '/', '/about', '/auth/github']
     for (const path of openAuth) check(`isBlockedStudioAuthPath(${JSON.stringify(path)}) -> false`, mod.isBlockedStudioAuthPath?.(path) === false)
@@ -314,6 +327,11 @@ async function pathChecks() {
     // Studio's entry, which the admin host sends to the Access sign-in.
     for (const path of ['/_studio', '/_studio/', '/_studio?redirect=/about', '/_STUDIO', '/%5Fstudio', '//_studio', '/_studio/x']) check(`isStudioEntryPath(${JSON.stringify(path)}) -> true`, mod.isStudioEntryPath?.(path) === true)
     for (const path of ['/', '/studio', '/_studio-app/1.8.1/main.js', '/_studiox', '/__nuxt_studio/auth/access']) check(`isStudioEntryPath(${JSON.stringify(path)}) -> false`, mod.isStudioEntryPath?.(path) === false)
+
+    // Studio's server routes, which the admin host answers with
+    // Cache-Control: no-store (the image proxy sets its own).
+    for (const path of ['/__nuxt_studio', '/__nuxt_studio/auth/session', '/__nuxt_studio/meta', '/__NUXT_STUDIO/meta', '/%5F%5Fnuxt_studio/meta', '//__nuxt_studio//meta', '/__nuxt_studio/ipx/_/favicon.svg']) check(`isStudioServerPath(${JSON.stringify(path)}) -> true`, mod.isStudioServerPath?.(path) === true)
+    for (const path of ['/', '/about', '/_studio', '/sw.js', '/__nuxt', '/__nuxt_studiox', '/api/component-meta']) check(`isStudioServerPath(${JSON.stringify(path)}) -> false`, mod.isStudioServerPath?.(path) === false)
 
     // Where sign-in sends the browser: a same-origin path, or `/`.
     const redirects = [
@@ -412,9 +430,36 @@ async function unitChecks() {
         [undefined, undefined, false],
         [undefined, 'guard@example.invalid', false],
         [['guard@example.invalid'], 'guard@example.invalid', false],
-        ['guard@example.invalid', 'guard@example.invalid,other@example.invalid', false]
+        ['guard@example.invalid', 'guard@example.invalid,other@example.invalid', false],
+        // ASCII only: no Unicode case folding, no Unicode trimming.
+        ['lu\u212Ae@example.invalid', 'luke@example.invalid', false],
+        ['LU\u212AE@EXAMPLE.INVALID', 'luke@example.invalid', false],
+        ['luke@example.invalid', 'lu\u212Ae@example.invalid', false],
+        ['lu\u212Ae@example.invalid', 'lu\u212Ae@example.invalid', false],
+        ['\u00a0guard@example.invalid\u00a0', 'guard@example.invalid', false],
+        ['guard@example.invalid\u200b', 'guard@example.invalid', false],
+        ['guard@example.invalid\u0000', 'guard@example.invalid', false],
+        ['gu ard@example.invalid', 'gu ard@example.invalid', false],
+        ['g\u00fcard@example.invalid', 'g\u00fcard@example.invalid', false],
+        ['\tGUARD@EXAMPLE.INVALID\r\n', 'guard@example.invalid', true]
     ]
     for (const [email, editor, want] of editorCases) check(`isEditorEmail(${JSON.stringify(email)}, ${JSON.stringify(editor)}) -> ${want}`, auth.isEditorEmail?.(email, editor) === want)
+    const normaliseCases = [[' Guard@Example.INVALID ', 'guard@example.invalid'], ['lu\u212Ae@example.invalid', ''], ['\u00a0guard@example.invalid', ''], ['', ''], [42, '']]
+    for (const [value, want] of normaliseCases) check(`normaliseEmail(${JSON.stringify(value)}) -> ${JSON.stringify(want)}`, auth.normaliseEmail?.(value) === want, `got ${JSON.stringify(auth.normaliseEmail?.(value))}`)
+
+    // The commit author Studio writes (#12): both set and not blank, or null.
+    const noreply = '13612932+LucasCoderT@users.noreply.github.com'
+    const identityCases = [
+        [['Lucas', noreply], {name: 'Lucas', email: noreply}],
+        [[' Lucas ', ` ${noreply} `], {name: 'Lucas', email: noreply}],
+        [['Lucas', 'someone@example.invalid'], {name: 'Lucas', email: 'someone@example.invalid'}],
+        [['', noreply], null], [['   ', noreply], null], [[undefined, noreply], null], [[42, noreply], null],
+        [['Lucas', ''], null], [['Lucas', '   '], null], [['Lucas', undefined], null], [['Lucas', 42], null]
+    ]
+    for (const [[name, email], want] of identityCases) {
+        const got = auth.resolveStudioCommitIdentity?.(name, email)
+        check(`resolveStudioCommitIdentity(${JSON.stringify(name)}, ${JSON.stringify(email)}) -> ${JSON.stringify(want)}`, JSON.stringify(got) === JSON.stringify(want), `got ${JSON.stringify(got)}`)
+    }
     const secretCases = [['dummy-session-secret-0123456789abcdef', true], ['a'.repeat(32), true], ['a'.repeat(31), false], [`  ${'a'.repeat(30)}  `, false], ['', false], [undefined, false], [42, false]]
     for (const [secret, want] of secretCases) check(`isUsableSessionSecret(${JSON.stringify(secret)}) -> ${want}`, auth.isUsableSessionSecret?.(secret) === want)
 
@@ -459,6 +504,16 @@ async function main() {
         console.error('No .output/server/wrangler.json. Build first: NITRO_PRESET=cloudflare_module npm run build')
         process.exit(2)
     }
+
+    // The Studio commit author (#12) is committed in wrangler.jsonc: the
+    // owner's public GitHub noreply identity, and no other email address.
+    console.log('\n-- Studio commit identity in the built wrangler config')
+    const vars = built.vars ?? {}
+    check('wrangler vars NUXT_STUDIO_COMMIT_NAME is Lucas', vars.NUXT_STUDIO_COMMIT_NAME === 'Lucas', `got ${JSON.stringify(vars.NUXT_STUDIO_COMMIT_NAME)}`)
+    check('wrangler vars NUXT_STUDIO_COMMIT_EMAIL is the GitHub noreply address', vars.NUXT_STUDIO_COMMIT_EMAIL === '13612932+LucasCoderT@users.noreply.github.com', `got ${JSON.stringify(vars.NUXT_STUDIO_COMMIT_EMAIL)}`)
+    const emails = Object.entries(vars).filter(([, value]) => String(value).includes('@'))
+    check('no other wrangler var holds an email address', emails.length === 1 && emails[0][0] === 'NUXT_STUDIO_COMMIT_EMAIL', emails.map(([key]) => key).join(' '))
+    check('no wrangler var sets NUXT_STUDIO_EDITOR_EMAIL (a secret)', !('NUXT_STUDIO_EDITOR_EMAIL' in vars))
     // Never touch the real D1 database from a local check.
     for (const db of built.d1_databases || []) delete db.remote
     for (const kv of built.kv_namespaces || []) delete kv.remote

@@ -11,11 +11,13 @@
 //   server/routes/__nuxt_studio/auth/access.get.ts. This middleware runs
 //   before nuxt-studio's own, so it sees the config before Studio fills in
 //   its fallbacks (see server/utils/studio-auth.ts).
-// - A Studio session must belong to the current Access identity, and that
+// - A Studio session must belong to the current Access identity (its
+//   `accessEmail`; `name` and `email` are the commit author), and that
 //   identity must be the configured editor. If not, or if the session
-//   secret is not configured so the session cannot be read, the session is
-//   cleared and the request gets a 403. The request stops there because
-//   Studio's handlers would otherwise read the old cookie again.
+//   secret or the GitHub token is not configured, the session is cleared
+//   and the request gets a 403. The request stops there because Studio's
+//   handlers would otherwise read the old cookie again.
+// - Every other /__nuxt_studio/* response is Cache-Control: no-store.
 // - /_studio goes to the sign-in route, never to Studio's provider picker.
 // - Studio's GitHub, GitLab, Google and SSO login routes answer 404.
 //
@@ -66,7 +68,6 @@ export default defineEventHandler(async (event) => {
         const githubToken = studio?.git?.githubToken
         const studioAccess: StudioAccess = {
             email: normaliseEmail(claims.email),
-            name: typeof claims.name === 'string' ? claims.name.trim() : '',
             sessionSecretSet: isUsableSessionSecret(studio?.auth?.sessionSecret),
             githubTokenSet: typeof githubToken === 'string' && githubToken.trim() !== ''
         }
@@ -94,6 +95,9 @@ export default defineEventHandler(async (event) => {
         }
         if (isComponentMetaPath(event.path) || isComponentMetaPath(rawUrl)) {
             return notFound(event)
+        }
+        if (isStudioServerPath(event.path) || isStudioServerPath(rawUrl)) {
+            setResponseHeader(event, 'cache-control', 'no-store')
         }
         return
     }
@@ -133,17 +137,21 @@ function hasStudioSession(event: H3Event): boolean {
 // Reads the session the way nuxt-studio does (runtime/server/routes/auth/
 // session.get.js): same name, secret and cookie options. A session with no
 // user is signed out as far as Studio is concerned, so it is left alone.
+// Without a usable secret or without the GitHub token, no session is kept.
+// The binding is on `accessEmail` only; a session without one (such as one
+// from before #12's commit identity change) is refused.
 async function studioSessionAllowed(event: H3Event, studioAccess: StudioAccess, editorEmail: unknown): Promise<boolean> {
+    if (!studioAccess.githubTokenSet) return false
     const secret = useRuntimeConfig(event).studio?.auth?.sessionSecret
     if (!isUsableSessionSecret(secret)) return false
-    const session = await useSession<{user?: {email?: unknown}}>(event, {
+    const session = await useSession<{user?: {accessEmail?: unknown}}>(event, {
         name: STUDIO_SESSION_COOKIE,
         password: secret,
         cookie: {secure: getRequestProtocol(event) === 'https', path: '/'}
     })
     const user = session.data.user
     if (!user) return true
-    return isEditorEmail(studioAccess.email, editorEmail) && normaliseEmail(user.email) === studioAccess.email
+    return isEditorEmail(studioAccess.email, editorEmail) && normaliseEmail(user.accessEmail) === studioAccess.email
 }
 
 // Clears with nuxt-studio's own helper when the secret is set. Without a

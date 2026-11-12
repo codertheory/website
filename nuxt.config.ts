@@ -48,6 +48,11 @@ export default defineNuxtConfig({
         // The one Cloudflare Access email allowed to start a Studio session
         // (#12). Set as a Worker secret, never committed. Empty means no one.
         studioEditorEmail: '', // NUXT_STUDIO_EDITOR_EMAIL
+        // The author Studio writes on its commits (#12), set in wrangler.jsonc
+        // vars. Never the Access email. Either one empty means sign-in fails
+        // closed with a 403.
+        studioCommitName: '', // NUXT_STUDIO_COMMIT_NAME
+        studioCommitEmail: '', // NUXT_STUDIO_COMMIT_EMAIL
         // Cloudflare Access in front of studioHost. Both empty means every
         // request to the admin host gets a 403 (fail closed).
         access: {
