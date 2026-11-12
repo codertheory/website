@@ -114,7 +114,23 @@ const PUBLIC_STUDIO_PATHS = [
     '/_studio/',
     '/_studio?redirect=/about',
     '/__nuxt_studio/auth/session',
+    '/__nuxt_studio/auth/access',
+    '/__nuxt_studio/auth/access?redirect=/about',
+    '/__nuxt_studio/auth/access/',
+    '/__NUXT_STUDIO/auth/access',
+    '/__nuxt_studio/AUTH/ACCESS',
+    '/__nuxt_studio/auth/%61ccess',
+    '/__nuxt_studio/auth/%2561ccess',
+    '/__nuxt_studio/auth%2Faccess',
+    '/__nuxt_studio%2Fauth%2Faccess',
+    '/%5F%5Fnuxt_studio/auth/access',
+    '//__nuxt_studio//auth//access',
+    '/__nuxt_studio\\auth\\access',
+    '/__nuxt_studio/auth/access;x',
     '/__nuxt_studio/auth/github',
+    '/__nuxt_studio/auth/gitlab',
+    '/__nuxt_studio/auth/google',
+    '/__nuxt_studio/auth/sso',
     '/__nuxt_studio/meta',
     '/sw.js',
     '/_STUDIO',
@@ -143,10 +159,10 @@ const PUBLIC_STUDIO_PATHS = [
 async function liveChecks(tmp, wranglerConfig) {
     const fullEnv = join(tmp, 'full.env')
     const noAccessEnv = join(tmp, 'no-access.env')
+    // The Studio secrets from #12, all dummies.
     const studioVars = [
-        'NUXT_STUDIO_AUTH_GITHUB_CLIENT_ID=dummy-client-id',
-        'NUXT_STUDIO_AUTH_GITHUB_CLIENT_SECRET=dummy-client-secret',
-        'NUXT_STUDIO_AUTH_GITHUB_MODERATORS=nobody@example.invalid',
+        'NUXT_STUDIO_GIT_GITHUB_TOKEN=github_pat_GUARD_FAKE_TOKEN',
+        'NUXT_STUDIO_EDITOR_EMAIL=guard@example.invalid',
         'NUXT_STUDIO_AUTH_SESSION_SECRET=dummy-session-secret-0123456789abcdef'
     ]
     await writeFile(fullEnv, [...studioVars, `NUXT_ACCESS_TEAM_DOMAIN=${TEAM_DOMAIN}`, `NUXT_ACCESS_AUD=${AUD}`].join('\n') + '\n')
@@ -164,7 +180,7 @@ async function liveChecks(tmp, wranglerConfig) {
         check('admin / with no token -> 403', noToken.status === 403, `got ${noToken.status}`)
         check('admin 403 response carries X-Robots-Tag noindex', isNoindex(noToken), `x-robots-tag=${noToken.headers['x-robots-tag']}`)
 
-        for (const path of ['/_studio', '/__nuxt_studio/auth/session', '/sw.js', '/api/component-meta', '/api/component-meta.json', '/about', '/projects/rolesmith', '/sitemap.xml', '/api/__sitemap__/urls']) {
+        for (const path of ['/_studio', '/__nuxt_studio/auth/session', '/__nuxt_studio/auth/access', '/__nuxt_studio/auth/github', '/sw.js', '/api/component-meta', '/api/component-meta.json', '/about', '/projects/rolesmith', '/sitemap.xml', '/api/__sitemap__/urls']) {
             const res = await get(path, {host: ADMIN_HOST})
             check(`admin ${path} with no token -> 403`, res.status === 403, `got ${res.status}`)
         }
@@ -220,7 +236,7 @@ async function liveChecks(tmp, wranglerConfig) {
     console.log('\n-- wrangler dev, Access config unset')
     child = await startWrangler(wranglerConfig, noAccessEnv)
     try {
-        for (const path of ['/', '/_studio', '/__nuxt_studio/auth/session']) {
+        for (const path of ['/', '/_studio', '/__nuxt_studio/auth/session', '/__nuxt_studio/auth/access']) {
             const res = await get(path, {host: ADMIN_HOST})
             check(`admin ${path} with Access config unset -> 403`, res.status === 403, `got ${res.status}`)
         }
@@ -297,6 +313,41 @@ async function pathChecks() {
     const meta = ['/api/component-meta', '/api/component-meta.json', '/api/component-meta/ProseA', '/API/Component-Meta', '/api/component-meta%2FProseA', '//api//component-meta', '/api/component-meta?x=1', '/api/%63omponent-meta']
     for (const path of meta) check(`isComponentMetaPath(${JSON.stringify(path)}) -> true`, mod.isComponentMetaPath?.(path) === true)
     for (const path of ['/api/component', '/api/contact', '/component-meta', '/__nuxt_studio/meta']) check(`isComponentMetaPath(${JSON.stringify(path)}) -> false`, mod.isComponentMetaPath?.(path) === false)
+
+    // Studio's auth routes (#12): only the Access sign-in and the session
+    // route stay open; GitHub, GitLab, Google, SSO and anything else under
+    // /__nuxt_studio/auth is closed.
+    const blockedAuth = ['/__nuxt_studio/auth/github', '/__nuxt_studio/auth/github/', '/__nuxt_studio/auth/github?code=c', '/__nuxt_studio/auth/gitlab', '/__nuxt_studio/auth/google', '/__nuxt_studio/auth/sso', '/__nuxt_studio/auth/GitHub', '/__nuxt_studio/auth/%67ithub', '/__nuxt_studio/auth%2Fgithub', '/__nuxt_studio//auth/github', '/__NUXT_STUDIO/AUTH/GITHUB', '/__nuxt_studio/auth', '/__nuxt_studio/auth/', '/__nuxt_studio/auth/session/../github', '/__nuxt_studio/auth/session;x', '/__nuxt_studio/auth/access/x', '/__nuxt_studio/auth/other',
+        '/__nuxt_studio/auth\\github', '/__nuxt_studio\\auth\\github', '/__nuxt_studio/auth/%2567ithub', '/__nuxt_studio/auth%252Fgithub', '/__nuxt_studio/auth/./github',
+        '/__nuxt_studio/auth/%2e/github', '/__nuxt_studio/auth/%2e%2e/github', '/__nuxt_studio/auth/access/../github', '/__nuxt_studio/auth/session/%2e%2e/github']
+    for (const path of blockedAuth) check(`isBlockedStudioAuthPath(${JSON.stringify(path)}) -> true`, mod.isBlockedStudioAuthPath?.(path) === true)
+    const openAuth = ['/__nuxt_studio/auth/session', '/__nuxt_studio/auth/session?x=1', '/__nuxt_studio/auth/access', '/__nuxt_studio/auth/access?redirect=/about', '/__nuxt_studio/meta', '/_studio', '/', '/about', '/auth/github']
+    for (const path of openAuth) check(`isBlockedStudioAuthPath(${JSON.stringify(path)}) -> false`, mod.isBlockedStudioAuthPath?.(path) === false)
+
+    // Studio's entry, which the admin host sends to the Access sign-in.
+    for (const path of ['/_studio', '/_studio/', '/_studio?redirect=/about', '/_STUDIO', '/%5Fstudio', '//_studio', '/_studio/x']) check(`isStudioEntryPath(${JSON.stringify(path)}) -> true`, mod.isStudioEntryPath?.(path) === true)
+    for (const path of ['/', '/studio', '/_studio-app/1.8.1/main.js', '/_studiox', '/__nuxt_studio/auth/access']) check(`isStudioEntryPath(${JSON.stringify(path)}) -> false`, mod.isStudioEntryPath?.(path) === false)
+
+    // Studio's server routes, which the admin host answers with
+    // Cache-Control: no-store (the image proxy sets its own).
+    for (const path of ['/__nuxt_studio', '/__nuxt_studio/auth/session', '/__nuxt_studio/meta', '/__NUXT_STUDIO/meta', '/%5F%5Fnuxt_studio/meta', '//__nuxt_studio//meta', '/__nuxt_studio/ipx/_/favicon.svg']) check(`isStudioServerPath(${JSON.stringify(path)}) -> true`, mod.isStudioServerPath?.(path) === true)
+    for (const path of ['/', '/about', '/_studio', '/sw.js', '/__nuxt', '/__nuxt_studiox', '/api/component-meta']) check(`isStudioServerPath(${JSON.stringify(path)}) -> false`, mod.isStudioServerPath?.(path) === false)
+
+    // Where sign-in sends the browser: a same-origin path, or `/`.
+    const redirects = [
+        ['/about', '/about'], ['/blog/hello?x=1', '/blog/hello?x=1'], ['/projects/rolesmith', '/projects/rolesmith'],
+        ['//evil.example', '/'], ['//evil.example/about', '/'], ['/\\evil.example', '/'], ['\\\\evil.example', '/'],
+        ['/\t/evil.example', '/'], ['/\n/evil.example', '/'], ['/\r/evil.example', '/'], [' //evil.example', '/'],
+        ['https://evil.example/', '/'], ['http:evil.example', '/'], ['javascript:alert(1)', '/'], ['evil.example', '/'],
+        ['/_studio', '/'], ['/_studio?redirect=/about', '/'], ['/__nuxt_studio/auth/access', '/'], ['/__nuxt_studio/auth/github', '/'],
+        ['', '/'], [undefined, '/'], [null, '/'], [42, '/'], [['/about'], '/'], [`/${'a'.repeat(3000)}`, '/']
+    ]
+    for (const [value, want] of redirects) check(`safeStudioRedirect(${JSON.stringify(value)?.slice(0, 40)}) -> ${want}`, mod.safeStudioRedirect?.(value) === want, `got ${JSON.stringify(mod.safeStudioRedirect?.(value))}`)
+    for (const value of ['/%2F/evil.example', '/%5Cevil.example', '/%2e%2e//evil.example', '/.//evil.example', '/..//evil.example', '/./\\evil.example']) {
+        const out = mod.safeStudioRedirect?.(value)
+        const sameOrigin = typeof out === 'string' && out.startsWith('/') && !out.startsWith('//') && !out.startsWith('/\\') && new URL(out, 'https://admin.example.invalid').origin === 'https://admin.example.invalid'
+        check(`safeStudioRedirect(${JSON.stringify(value)}) stays on the origin`, sameOrigin, `got ${JSON.stringify(out)}`)
+    }
     const hosts = [['admin.codertheory.dev', 'admin.codertheory.dev'], ['ADMIN.codertheory.dev:443', 'admin.codertheory.dev'], ['admin.codertheory.dev.', 'admin.codertheory.dev'], ['', ''], [undefined, '']]
     for (const [raw, want] of hosts) check(`normaliseHost(${JSON.stringify(raw)}) -> ${JSON.stringify(want)}`, mod.normaliseHost(raw) === want)
 }
@@ -348,10 +399,69 @@ async function unitChecks() {
         ['garbage', 'not-a-jwt', false],
         ['empty', '', false]
     ]
+    // verifyAccessJwt returns the verified claims, or null (#12).
     for (const [name, token, expected] of cases) {
-        const ok = await mod.verifyAccessJwt(token, config, jwks)
-        check(`verifyAccessJwt: ${name} -> ${expected ? 'accepted' : 'rejected'}`, ok === expected, `got ${ok}`)
+        const payload = await mod.verifyAccessJwt(token, config, jwks)
+        const shapeOk = expected ? (payload !== null && typeof payload === 'object') : payload === null
+        check(`verifyAccessJwt: ${name} -> ${expected ? 'claims' : 'null'}`, shapeOk, `got ${JSON.stringify(payload)}`)
     }
+    const verified = await mod.verifyAccessJwt(await sign(claims({email: 'Guard@Example.invalid'})), config, jwks)
+    check('verifyAccessJwt returns the token\'s email claim as signed', verified?.email === 'Guard@Example.invalid', `got ${JSON.stringify(verified?.email)}`)
+
+    // Editor match and session secret checks (#12), in Node.
+    let auth
+    try {
+        auth = await import(pathToFileURL(join(ROOT, 'server/utils/studio-auth.ts')).href)
+    } catch (error) {
+        check('server/utils/studio-auth.ts loads', false, error.code || error.message)
+        return
+    }
+    const editorCases = [
+        ['guard@example.invalid', 'guard@example.invalid', true],
+        ['Guard@Example.INVALID', ' guard@example.invalid ', true],
+        [' guard@example.invalid\n', 'GUARD@example.invalid', true],
+        ['other@example.invalid', 'guard@example.invalid', false],
+        ['guard@example.invalid.evil.example', 'guard@example.invalid', false],
+        ['xguard@example.invalid', 'guard@example.invalid', false],
+        ['guard@example.invalid', '', false],
+        ['guard@example.invalid', '   ', false],
+        ['guard@example.invalid', undefined, false],
+        ['', '', false],
+        [undefined, undefined, false],
+        [undefined, 'guard@example.invalid', false],
+        [['guard@example.invalid'], 'guard@example.invalid', false],
+        ['guard@example.invalid', 'guard@example.invalid,other@example.invalid', false],
+        // ASCII only: no Unicode case folding, no Unicode trimming.
+        ['lu\u212Ae@example.invalid', 'luke@example.invalid', false],
+        ['LU\u212AE@EXAMPLE.INVALID', 'luke@example.invalid', false],
+        ['luke@example.invalid', 'lu\u212Ae@example.invalid', false],
+        ['lu\u212Ae@example.invalid', 'lu\u212Ae@example.invalid', false],
+        ['\u00a0guard@example.invalid\u00a0', 'guard@example.invalid', false],
+        ['guard@example.invalid\u200b', 'guard@example.invalid', false],
+        ['guard@example.invalid\u0000', 'guard@example.invalid', false],
+        ['gu ard@example.invalid', 'gu ard@example.invalid', false],
+        ['g\u00fcard@example.invalid', 'g\u00fcard@example.invalid', false],
+        ['\tGUARD@EXAMPLE.INVALID\r\n', 'guard@example.invalid', true]
+    ]
+    for (const [email, editor, want] of editorCases) check(`isEditorEmail(${JSON.stringify(email)}, ${JSON.stringify(editor)}) -> ${want}`, auth.isEditorEmail?.(email, editor) === want)
+    const normaliseCases = [[' Guard@Example.INVALID ', 'guard@example.invalid'], ['lu\u212Ae@example.invalid', ''], ['\u00a0guard@example.invalid', ''], ['', ''], [42, '']]
+    for (const [value, want] of normaliseCases) check(`normaliseEmail(${JSON.stringify(value)}) -> ${JSON.stringify(want)}`, auth.normaliseEmail?.(value) === want, `got ${JSON.stringify(auth.normaliseEmail?.(value))}`)
+
+    // The commit author Studio writes (#12): both set and not blank, or null.
+    const noreply = '13612932+LucasCoderT@users.noreply.github.com'
+    const identityCases = [
+        [['Lucas', noreply], {name: 'Lucas', email: noreply}],
+        [[' Lucas ', ` ${noreply} `], {name: 'Lucas', email: noreply}],
+        [['Lucas', 'someone@example.invalid'], {name: 'Lucas', email: 'someone@example.invalid'}],
+        [['', noreply], null], [['   ', noreply], null], [[undefined, noreply], null], [[42, noreply], null],
+        [['Lucas', ''], null], [['Lucas', '   '], null], [['Lucas', undefined], null], [['Lucas', 42], null]
+    ]
+    for (const [[name, email], want] of identityCases) {
+        const got = auth.resolveStudioCommitIdentity?.(name, email)
+        check(`resolveStudioCommitIdentity(${JSON.stringify(name)}, ${JSON.stringify(email)}) -> ${JSON.stringify(want)}`, JSON.stringify(got) === JSON.stringify(want), `got ${JSON.stringify(got)}`)
+    }
+    const secretCases = [['dummy-session-secret-0123456789abcdef', true], ['a'.repeat(32), true], ['a'.repeat(31), false], [`  ${'a'.repeat(30)}  `, false], ['', false], [undefined, false], [42, false]]
+    for (const [secret, want] of secretCases) check(`isUsableSessionSecret(${JSON.stringify(secret)}) -> ${want}`, auth.isUsableSessionSecret?.(secret) === want)
 
     // Failure reasons go to console.warn, once per reason per isolate, with
     // no token in them. A fresh copy of the module stands in for a new isolate.
@@ -394,6 +504,16 @@ async function main() {
         console.error('No .output/server/wrangler.json. Build first: NITRO_PRESET=cloudflare_module npm run build')
         process.exit(2)
     }
+
+    // The Studio commit author (#12) is committed in wrangler.jsonc: the
+    // owner's public GitHub noreply identity, and no other email address.
+    console.log('\n-- Studio commit identity in the built wrangler config')
+    const vars = built.vars ?? {}
+    check('wrangler vars NUXT_STUDIO_COMMIT_NAME is Lucas', vars.NUXT_STUDIO_COMMIT_NAME === 'Lucas', `got ${JSON.stringify(vars.NUXT_STUDIO_COMMIT_NAME)}`)
+    check('wrangler vars NUXT_STUDIO_COMMIT_EMAIL is the GitHub noreply address', vars.NUXT_STUDIO_COMMIT_EMAIL === '13612932+LucasCoderT@users.noreply.github.com', `got ${JSON.stringify(vars.NUXT_STUDIO_COMMIT_EMAIL)}`)
+    const emails = Object.entries(vars).filter(([, value]) => String(value).includes('@'))
+    check('no other wrangler var holds an email address', emails.length === 1 && emails[0][0] === 'NUXT_STUDIO_COMMIT_EMAIL', emails.map(([key]) => key).join(' '))
+    check('no wrangler var sets NUXT_STUDIO_EDITOR_EMAIL (a secret)', !('NUXT_STUDIO_EDITOR_EMAIL' in vars))
     // Never touch the real D1 database from a local check.
     for (const db of built.d1_databases || []) delete db.remote
     for (const kv of built.kv_namespaces || []) delete kv.remote

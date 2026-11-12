@@ -23,11 +23,17 @@
 	// The Cloudflare Access team domain and application AUD tag are read by
 	// server/utils/access-jwt.ts to verify the Access JWT on the admin host.
 	// Neither is secret: the AUD is carried inside every Access token.
+	//
+	// The commit name and email are the author Nuxt Studio writes on its
+	// commits (#12): the GitHub noreply identity already on every commit in
+	// this repository. Studio sign-in fails closed if either is missing.
 	"vars": {
 		"NUXT_PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAADjfnMcMVv_b_aNI",
 		"NUXT_PUBLIC_POSTHOG_KEY": "phc_BGjJ2x7icbv3KQvyE27CLNXvriiE8dafsQZaDwQAdzx3",
 		"NUXT_ACCESS_TEAM_DOMAIN": "red-morning-447d.cloudflareaccess.com",
-		"NUXT_ACCESS_AUD": "ddd118339e52fd300fe45c8d8f8f9c0c1cc79cbc6df3a5510e294062f9e42bf8"
+		"NUXT_ACCESS_AUD": "ddd118339e52fd300fe45c8d8f8f9c0c1cc79cbc6df3a5510e294062f9e42bf8",
+		"NUXT_STUDIO_COMMIT_NAME": "Lucas",
+		"NUXT_STUDIO_COMMIT_EMAIL": "13612932+LucasCoderT@users.noreply.github.com"
 	},
 	"kv_namespaces": [
 		{
