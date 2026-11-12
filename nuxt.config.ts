@@ -43,6 +43,14 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         githubToken: '', // NUXT_GITHUB_TOKEN
+        // Nuxt Studio is served only on this host; see server/middleware/studio-host.ts.
+        studioHost: 'admin.codertheory.dev', // NUXT_STUDIO_HOST
+        // Cloudflare Access in front of studioHost. Both empty means every
+        // request to the admin host gets a 403 (fail closed).
+        access: {
+            teamDomain: '', // NUXT_ACCESS_TEAM_DOMAIN, e.g. <team>.cloudflareaccess.com
+            aud: '' // NUXT_ACCESS_AUD, the Access application's AUD tag
+        },
         contact: {
             resendApiKey: '', // NUXT_CONTACT_RESEND_API_KEY
             toEmail: 'lucascluk@icloud.com', // NUXT_CONTACT_TO_EMAIL
@@ -104,8 +112,28 @@ export default defineNuxtConfig({
         '@nuxt/icon',
         '@nuxt/image',
         '@nuxtjs/turnstile',
-        '@nuxtjs/sitemap'
+        '@nuxtjs/sitemap',
+        'nuxt-studio',
+        // nuxt-studio sets the app-manifest build check to every 30 s for
+        // every visitor. Put back Nuxt's hourly default; this runs after it.
+        (_options, nuxt) => {
+            nuxt.options.experimental.checkOutdatedBuildInterval = 1000 * 60 * 60
+        }
     ],
+
+    // Nuxt Studio (#3), on the admin host only. Secrets come from Worker
+    // secrets at runtime: NUXT_STUDIO_AUTH_GITHUB_CLIENT_ID / _CLIENT_SECRET /
+    // _MODERATORS and NUXT_STUDIO_AUTH_SESSION_SECRET.
+    studio: {
+        route: '/_studio',
+        repository: {
+            provider: 'github',
+            owner: 'codertheory',
+            repo: 'website',
+            branch: 'main',
+            private: false
+        }
+    },
 
     site: {
         // Read by @nuxtjs/sitemap for absolute URLs. Kept in step with

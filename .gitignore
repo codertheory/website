@@ -6,8 +6,9 @@
 .cache
 dist
 
-# Cloudflare wrangler build cache
+# Cloudflare wrangler build cache, and local Worker secrets
 .wrangler
+.dev.vars*
 
 # Node dependencies
 node_modules
