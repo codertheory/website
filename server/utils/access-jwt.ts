@@ -1,0 +1,55 @@
+// Cloudflare Access JWT verification for the admin host.
+//
+// Access puts a signed JWT on every request it lets through, in the
+// `Cf-Access-Jwt-Assertion` header and the `CF_Authorization` cookie.
+// Checking it here means the admin host stays closed even if a request
+// reaches the Worker without passing Access (a workers.dev or preview URL,
+// a misconfigured policy, a spoofed Host header).
+//
+// Kept free of Nitro auto-imports so scripts/check-studio-guard.mjs can load
+// it directly in Node.
+import { createRemoteJWKSet, jwtVerify, type JWTVerifyGetKey } from 'jose'
+
+export interface AccessConfig {
+    teamDomain: string // e.g. codertheory.cloudflareaccess.com
+    aud: string // the Access application's AUD tag
+}
+
+const HOSTNAME = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/
+
+// Returns null for anything incomplete or malformed, so callers fail closed.
+export function resolveAccessConfig(raw: { teamDomain?: unknown, aud?: unknown } | undefined | null): AccessConfig | null {
+    if (!raw || typeof raw.teamDomain !== 'string' || typeof raw.aud !== 'string') return null
+    const teamDomain = raw.teamDomain.trim().toLowerCase().replace(/^https:\/\//, '').replace(/\/$/, '')
+    const aud = raw.aud.trim()
+    if (!aud || !HOSTNAME.test(teamDomain)) return null
+    return {teamDomain, aud}
+}
+
+// One key set per isolate. jose caches the fetched keys and refetches when it
+// sees an unknown `kid`, so Access key rotation is picked up on its own.
+let remote: { teamDomain: string, jwks: JWTVerifyGetKey } | undefined
+
+function accessJwks(teamDomain: string): JWTVerifyGetKey {
+    if (remote?.teamDomain !== teamDomain) {
+        remote = {teamDomain, jwks: createRemoteJWKSet(new URL(`https://${teamDomain}/cdn-cgi/access/certs`))}
+    }
+    return remote.jwks
+}
+
+// True only for a token signed by the team's Access keys, for this
+// application, and not expired. Never throws.
+export async function verifyAccessJwt(token: string, config: AccessConfig, getKey?: JWTVerifyGetKey): Promise<boolean> {
+    if (!token) return false
+    try {
+        await jwtVerify(token, getKey ?? accessJwks(config.teamDomain), {
+            issuer: `https://${config.teamDomain}`,
+            audience: config.aud,
+            algorithms: ['RS256'],
+            requiredClaims: ['exp']
+        })
+        return true
+    } catch {
+        return false
+    }
+}

@@ -5,6 +5,12 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "codertheory-website",
+	// The Worker is reached only through its custom domains. A workers.dev URL
+	// or a per-version preview URL would serve it without Cloudflare Access in
+	// front, so both are off. (The admin host also checks the Access JWT
+	// itself, so it stays closed either way.)
+	"workers_dev": false,
+	"preview_urls": false,
 	// Plain runtime variables have to live here, not in the dashboard. Every
 	// Workers Build deploys the `vars` bindings from this file, so anything set
 	// through the UI is wiped by the next push. Secrets are stored separately
