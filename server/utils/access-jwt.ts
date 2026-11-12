@@ -15,14 +15,36 @@ export interface AccessConfig {
     aud: string // the Access application's AUD tag
 }
 
-const HOSTNAME = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/
+// The key set is fetched from the team domain, so only a Cloudflare Access
+// team domain is trusted. Anything else counts as missing config.
+const TEAM_DOMAIN = /^[a-z0-9-]+\.cloudflareaccess\.com$/
+
+// Logs a failure reason once per isolate, so a bad config or a stream of bad
+// tokens shows in Workers logs without flooding them. Only fixed reason
+// codes are logged, never a token or a claim value.
+const warned = new Set<string>()
+function warnOnce(reason: string): void {
+    if (warned.has(reason)) return
+    warned.add(reason)
+    console.warn(`[access-jwt] refusing admin-host request: ${reason}`)
+}
 
 // Returns null for anything incomplete or malformed, so callers fail closed.
 export function resolveAccessConfig(raw: { teamDomain?: unknown, aud?: unknown } | undefined | null): AccessConfig | null {
-    if (!raw || typeof raw.teamDomain !== 'string' || typeof raw.aud !== 'string') return null
+    if (!raw || typeof raw.teamDomain !== 'string' || typeof raw.aud !== 'string' || (!raw.teamDomain.trim() && !raw.aud.trim())) {
+        warnOnce('config-missing')
+        return null
+    }
     const teamDomain = raw.teamDomain.trim().toLowerCase().replace(/^https:\/\//, '').replace(/\/$/, '')
     const aud = raw.aud.trim()
-    if (!aud || !HOSTNAME.test(teamDomain)) return null
+    if (!TEAM_DOMAIN.test(teamDomain)) {
+        warnOnce('team-domain-invalid')
+        return null
+    }
+    if (!aud) {
+        warnOnce('aud-missing')
+        return null
+    }
     return {teamDomain, aud}
 }
 
@@ -38,18 +60,34 @@ function accessJwks(teamDomain: string): JWTVerifyGetKey {
 }
 
 // True only for a token signed by the team's Access keys, for this
-// application, and not expired. Never throws.
+// application, and not expired. Allows 30 s of clock skew on exp and nbf.
+// Never throws.
 export async function verifyAccessJwt(token: string, config: AccessConfig, getKey?: JWTVerifyGetKey): Promise<boolean> {
-    if (!token) return false
+    if (!token) {
+        warnOnce('no-token')
+        return false
+    }
     try {
         await jwtVerify(token, getKey ?? accessJwks(config.teamDomain), {
             issuer: `https://${config.teamDomain}`,
             audience: config.aud,
             algorithms: ['RS256'],
-            requiredClaims: ['exp']
+            requiredClaims: ['exp'],
+            clockTolerance: 30
         })
         return true
-    } catch {
+    } catch (error) {
+        warnOnce(failureReason(error))
         return false
     }
+}
+
+// A jose error code, plus the claim name for a claim check, such as
+// `ERR_JWT_CLAIM_VALIDATION_FAILED:aud`. Other errors (a failed key set
+// fetch) give only their class name.
+function failureReason(error: unknown): string {
+    const {code, claim, name} = (error ?? {}) as { code?: unknown, claim?: unknown, name?: unknown }
+    const safe = (value: unknown) => typeof value === 'string' && /^[\w-]{1,64}$/.test(value) ? value : ''
+    if (safe(code)) return safe(claim) ? `${code}:${claim}` : String(code)
+    return safe(name) || 'unknown-error'
 }

@@ -6,9 +6,15 @@
 // Build first:  NITRO_PRESET=cloudflare_module npm run build
 // Then run:     node scripts/check-studio-guard.mjs
 //
-// Everything here is local and uses dummy values only. The wrangler config is
-// copied with D1 `remote: true` stripped and run with --local, and the env
-// files are written to a temp directory, never into the repo.
+// Everything here uses dummy values only. The wrangler config is copied with
+// D1 `remote: true` stripped and run with --local, and the env files are
+// written to a temp directory, never into the repo. The one request that
+// leaves the machine is a JWKS fetch to the made-up team
+// guard-test.cloudflareaccess.com, made when an RS256 token from an unknown
+// key is checked; it finds no key and the token is refused.
+//
+// The image proxy and Studio-session checks need outbound fetches mocked, so
+// they live in scripts/check-studio-e2e.mjs (Miniflare).
 //
 // Not covered: a real Cloudflare Access JWT fetched against the live team
 // JWKS. That cannot be produced locally, so the admin-host happy path is
@@ -25,7 +31,7 @@ const ROOT = resolve(fileURLToPath(import.meta.url), '../..')
 const SERVER_DIR = join(ROOT, '.output/server')
 const ADMIN_HOST = 'admin.codertheory.dev'
 const PUBLIC_HOST = 'codertheory.dev'
-const TEAM_DOMAIN = 'guard-test.invalid'
+const TEAM_DOMAIN = 'guard-test.cloudflareaccess.com'
 const AUD = 'guard-test-aud'
 const PORT = 8799
 
@@ -122,7 +128,15 @@ const PUBLIC_STUDIO_PATHS = [
     '/__nuxt%5Fstudio/auth/session',
     '//__nuxt_studio//auth//session',
     '/__nuxt_studio%2Fauth%2Fsession',
-    '/SW.JS'
+    '/SW.JS',
+    // nuxt-component-meta's routes, added by @nuxt/content when nuxt-studio is
+    // installed. Studio's editor reads /__nuxt_studio/meta instead.
+    '/api/component-meta',
+    '/api/component-meta.json',
+    '/api/component-meta/ProseA',
+    '/API/Component-Meta',
+    '/api/component-meta%2FProseA',
+    '//api//component-meta'
 ]
 
 async function liveChecks(tmp, wranglerConfig) {
@@ -149,7 +163,7 @@ async function liveChecks(tmp, wranglerConfig) {
         check('admin / with no token -> 403', noToken.status === 403, `got ${noToken.status}`)
         check('admin 403 response carries X-Robots-Tag noindex', isNoindex(noToken), `x-robots-tag=${noToken.headers['x-robots-tag']}`)
 
-        for (const path of ['/_studio', '/__nuxt_studio/auth/session', '/sw.js', '/about', '/projects/rolesmith', '/sitemap.xml', '/api/__sitemap__/urls']) {
+        for (const path of ['/_studio', '/__nuxt_studio/auth/session', '/sw.js', '/api/component-meta', '/api/component-meta.json', '/about', '/projects/rolesmith', '/sitemap.xml', '/api/__sitemap__/urls']) {
             const res = await get(path, {host: ADMIN_HOST})
             check(`admin ${path} with no token -> 403`, res.status === 403, `got ${res.status}`)
         }
@@ -231,8 +245,39 @@ async function pathChecks() {
     }
     const studio = [...PUBLIC_STUDIO_PATHS, '/_studio-app/1.8.1/main.js', '/%5C_studio', '\\_studio', '/__nuxt_studio', '/%25255Fstudio']
     for (const path of studio) check(`isStudioPath(${JSON.stringify(path)}) -> true`, mod.isStudioPath(path) === true)
-    const notStudio = ['/', '/about', '/studio', '/blog/_studio-notes', '/projects/rolesmith', '/sw.json', '/%E0%A4%A', '/_nuxt/builds/latest.json', '/api/__sitemap__/urls']
+    const notStudio = ['/', '/about', '/studio', '/blog/_studio-notes', '/projects/rolesmith', '/sw.json', '/%E0%A4%A', '/_nuxt/builds/latest.json', '/api/__sitemap__/urls', '/api/contact', '/api/stats/github', '/api/component']
     for (const path of notStudio) check(`isStudioPath(${JSON.stringify(path)}) -> false`, mod.isStudioPath(path) === false)
+
+    // Studio's image proxy fetches any id that has a scheme. Only same-origin
+    // ids may pass the guard.
+    const ipxPaths = ['/__nuxt_studio/ipx/_/favicon.svg', '/__NUXT_STUDIO/IPX/_/favicon.svg', '/__nuxt_studio/ipx', '/__nuxt_studio/ipx/s_200x200,fit_cover/shots/x.png']
+    for (const path of ipxPaths) check(`isStudioIpxPath(${JSON.stringify(path)}) -> true`, mod.isStudioIpxPath?.(path) === true)
+    for (const path of ['/_studio', '/__nuxt_studio/meta', '/favicon.svg']) check(`isStudioIpxPath(${JSON.stringify(path)}) -> false`, mod.isStudioIpxPath?.(path) === false)
+    const safeIpx = ['/__nuxt_studio/ipx/_/favicon.svg', '/__nuxt_studio/ipx/s_200x200,fit_cover/shots/rolesmith/home.png', '/__nuxt_studio/ipx/w:100/icon-192.png', '/__nuxt_studio/ipx/_/my%20image.png', '/__nuxt_studio/ipx/_//favicon.svg']
+    for (const path of safeIpx) check(`isSafeStudioIpxPath(${JSON.stringify(path)}) -> true`, mod.isSafeStudioIpxPath?.(path) === true)
+    const unsafeIpx = [
+        '/__nuxt_studio/ipx/_/https://evil.example/x.svg',
+        '/__nuxt_studio/ipx/_/https:/evil.example/x.svg',
+        '/__nuxt_studio/ipx/_/HTTPS://evil.example/x.svg',
+        '/__nuxt_studio/ipx/_/https%3A%2F%2Fevil.example%2Fx.svg',
+        '/__nuxt_studio/ipx/_/https%253A%252F%252Fevil.example%252Fx.svg',
+        '/__nuxt_studio/ipx/_/https%25253A%25252F%25252Fevil.example%25252Fx.svg',
+        '/__nuxt_studio/ipx/_%2Fhttps:%2F%2Fevil.example%2Fx.svg',
+        '/__nuxt_studio/ipx/_/%20https://evil.example/x.svg',
+        '/__nuxt_studio/ipx/_/data:image/svg+xml,<svg>',
+        '/__nuxt_studio/ipx/_/javascript:alert(1)',
+        '/__nuxt_studio/ipx/_/x/https://evil.example/x.svg',
+        '/__nuxt_studio/ipx/_///evil.example/x.svg',
+        '/__nuxt_studio/ipx/_/%2F%2Fevil.example/x.svg',
+        '/__nuxt_studio/ipx/_/\\\\evil.example/x.svg',
+        '/__nuxt_studio/ipx/_/%5C%5Cevil.example/x.svg',
+        '/__nuxt_studio/ipx/_/%5C/evil.example/x.svg',
+        '/__nuxt_studio/ipx/_/https:%2F%2Fevil.example%3F.svg',
+        '/__nuxt_studio/ipx/_/x.svg%E0%A4%A',
+        '/__nuxt_studio//ipx/_/https://evil.example/x.svg',
+        '/__nuxt_studio/ipxfoo'
+    ]
+    for (const path of unsafeIpx) check(`isSafeStudioIpxPath(${JSON.stringify(path)}) -> false`, mod.isSafeStudioIpxPath?.(path) === false)
     const hosts = [['admin.codertheory.dev', 'admin.codertheory.dev'], ['ADMIN.codertheory.dev:443', 'admin.codertheory.dev'], ['admin.codertheory.dev.', 'admin.codertheory.dev'], ['', ''], [undefined, '']]
     for (const [raw, want] of hosts) check(`normaliseHost(${JSON.stringify(raw)}) -> ${JSON.stringify(want)}`, mod.normaliseHost(raw) === want)
 }
@@ -259,6 +304,10 @@ async function unitChecks() {
     check('resolveAccessConfig rejects a missing team domain', mod.resolveAccessConfig({teamDomain: '', aud: AUD}) === null)
     check('resolveAccessConfig rejects a team domain with a path', mod.resolveAccessConfig({teamDomain: `${TEAM_DOMAIN}/x`, aud: AUD}) === null)
     check('resolveAccessConfig rejects undefined', mod.resolveAccessConfig(undefined) === null)
+    // Only a Cloudflare Access team domain is trusted to serve the key set.
+    const badTeams = ['evil.example', 'guard-test.invalid', `${TEAM_DOMAIN}.evil.example`, `a.${TEAM_DOMAIN}`, `${TEAM_DOMAIN}:443`, 'cloudflareaccess.com', '.cloudflareaccess.com', 'evil.example/.cloudflareaccess.com', 'user@x.cloudflareaccess.com']
+    for (const teamDomain of badTeams) check(`resolveAccessConfig rejects team domain ${JSON.stringify(teamDomain)}`, mod.resolveAccessConfig({teamDomain, aud: AUD}) === null)
+    check('resolveAccessConfig accepts an upper-case team domain', mod.resolveAccessConfig({teamDomain: ` HTTPS://${TEAM_DOMAIN.toUpperCase()}/ `, aud: AUD})?.teamDomain === TEAM_DOMAIN)
 
     const sign = (payload, key = privateKey, kid = 'k1') => new SignJWT(payload).setProtectedHeader({alg: 'RS256', kid}).sign(key)
     const now = Math.floor(Date.now() / 1000)
@@ -269,6 +318,10 @@ async function unitChecks() {
         ['wrong iss', await sign(claims({iss: 'https://evil.cloudflareaccess.com'})), false],
         ['iss without https', await sign(claims({iss: TEAM_DOMAIN})), false],
         ['expired', await sign(claims({iat: now - 7200, exp: now - 3600})), false],
+        ['expired 60 s ago (beyond the 30 s tolerance)', await sign(claims({exp: now - 60})), false],
+        ['expired 5 s ago (within the 30 s tolerance)', await sign(claims({exp: now - 5})), true],
+        ['nbf 2 s ahead (clock skew)', await sign(claims({nbf: now + 2})), true],
+        ['nbf 60 s ahead', await sign(claims({nbf: now + 60})), false],
         ['no exp', await sign(claims({exp: undefined})), false],
         ['signed by another key', await sign(claims(), otherKey), false],
         ['alg:none', unsignedJwt(claims()), false],
@@ -280,6 +333,34 @@ async function unitChecks() {
         const ok = await mod.verifyAccessJwt(token, config, jwks)
         check(`verifyAccessJwt: ${name} -> ${expected ? 'accepted' : 'rejected'}`, ok === expected, `got ${ok}`)
     }
+
+    // Failure reasons go to console.warn, once per reason per isolate, with
+    // no token in them. A fresh copy of the module stands in for a new isolate.
+    const fresh = await import(`${pathToFileURL(join(ROOT, 'server/utils/access-jwt.ts')).href}?warn-check`)
+    const warned = []
+    const realWarn = console.warn
+    console.warn = (...args) => warned.push(args.map(String).join(' '))
+    const secretToken = await sign(claims({aud: ['someone-else']}))
+    try {
+        fresh.resolveAccessConfig({teamDomain: 'evil.example', aud: AUD})
+        fresh.resolveAccessConfig({teamDomain: 'evil.example', aud: AUD})
+        fresh.resolveAccessConfig({teamDomain: TEAM_DOMAIN, aud: ''})
+        await fresh.verifyAccessJwt(secretToken, config, jwks)
+        await fresh.verifyAccessJwt(secretToken, config, jwks)
+        await fresh.verifyAccessJwt('', config, jwks)
+        await fresh.verifyAccessJwt('', config, jwks)
+        fresh.resolveAccessConfig({teamDomain: TEAM_DOMAIN, aud: AUD})
+        await fresh.verifyAccessJwt(await sign(claims()), config, jwks)
+    } finally {
+        console.warn = realWarn
+    }
+    const count = re => warned.filter(w => re.test(w)).length
+    check('warns once for a team domain outside cloudflareaccess.com', count(/\bteam-domain-invalid\b/) === 1, JSON.stringify(warned))
+    check('warns once for a missing aud', count(/\baud-missing\b/) === 1, JSON.stringify(warned))
+    check('warns once for a token with the wrong aud', count(/\bERR_JWT_CLAIM_VALIDATION_FAILED:aud\b/) === 1, JSON.stringify(warned))
+    check('warns once for a missing token', count(/\bno-token\b/) === 1, JSON.stringify(warned))
+    check('warns nothing for a good config and token', warned.length === 4, `${warned.length} warnings`)
+    check('no warning contains the token', !warned.some(w => w.includes(secretToken) || w.includes(secretToken.split('.')[1])))
 }
 
 async function main() {
