@@ -68,6 +68,28 @@ export default defineContentConfig({
         updatedAt: z.string()
       })
     }),
+    about: defineCollection({
+      type: 'page',
+      source: 'about.md',
+      schema: z.object({
+        title: z.string(),
+        description: z.string(),
+        eyebrow: z.string(),
+        headlineBefore: z.string(),
+        headlineName: z.string(),
+        headlineAfter: z.string(),
+        portrait: z.object({
+          src: z.string(),
+          alt: z.string()
+        }),
+        timelineHeading: z.string(),
+        timelineSub: z.string(),
+        skillsHeading: z.string(),
+        skillsSub: z.string(),
+        skills: z.array(z.string()),
+        ctaLabel: z.string()
+      })
+    }),
     legal: defineCollection({
       type: 'page',
       source: 'legal/*.md',
