@@ -45,6 +45,9 @@ export default defineNuxtConfig({
         githubToken: '', // NUXT_GITHUB_TOKEN
         // Nuxt Studio is served only on this host; see server/middleware/studio-host.ts.
         studioHost: 'admin.codertheory.dev', // NUXT_STUDIO_HOST
+        // The one Cloudflare Access email allowed to start a Studio session
+        // (#12). Set as a Worker secret, never committed. Empty means no one.
+        studioEditorEmail: '', // NUXT_STUDIO_EDITOR_EMAIL
         // Cloudflare Access in front of studioHost. Both empty means every
         // request to the admin host gets a 403 (fail closed).
         access: {
@@ -121,9 +124,11 @@ export default defineNuxtConfig({
         }
     ],
 
-    // Nuxt Studio (#3), on the admin host only. Secrets come from Worker
-    // secrets at runtime: NUXT_STUDIO_AUTH_GITHUB_CLIENT_ID / _CLIENT_SECRET /
-    // _MODERATORS and NUXT_STUDIO_AUTH_SESSION_SECRET.
+    // Nuxt Studio (#3), on the admin host only. Sign-in is through Cloudflare
+    // Access, not GitHub OAuth (#12; see server/routes/__nuxt_studio/auth/
+    // access.get.ts). Worker secrets at runtime: NUXT_STUDIO_GIT_GITHUB_TOKEN
+    // (fine-grained, this repository only), NUXT_STUDIO_EDITOR_EMAIL and
+    // NUXT_STUDIO_AUTH_SESSION_SECRET.
     studio: {
         route: '/_studio',
         repository: {

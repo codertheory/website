@@ -42,6 +42,56 @@ export function normaliseHost(rawHost: string | undefined | null): string {
     return (rawHost ?? '').trim().toLowerCase().replace(/:\d+$/, '').replace(/\.$/, '')
 }
 
+// Studio's auth routes (#12). Sign-in is through Cloudflare Access only, so
+// on the admin host just two stay open: our Access sign-in route and Studio's
+// session route (read and sign out). GitHub, GitLab, Google, SSO and any other
+// spelling under /__nuxt_studio/auth answer 404. An allow-list, so a route a
+// later nuxt-studio adds there is closed until someone opens it.
+const AUTH_PREFIX = '/__nuxt_studio/auth'
+export const STUDIO_SIGN_IN_PATH = '/__nuxt_studio/auth/access'
+const AUTH_OPEN = new Set([STUDIO_SIGN_IN_PATH, '/__nuxt_studio/auth/session'])
+
+export function isBlockedStudioAuthPath(rawPath: string): boolean {
+    const path = normaliseStudioPath(rawPath)
+    if (path !== AUTH_PREFIX && !path.startsWith(`${AUTH_PREFIX}/`)) return false
+    return !AUTH_OPEN.has(path)
+}
+
+// Studio's editor entry (`studio.route` in nuxt.config.ts). On the admin
+// host it leads to the Access sign-in instead of Studio's provider picker.
+const ENTRY = '/_studio'
+
+export function isStudioEntryPath(rawPath: string): boolean {
+    const path = normaliseStudioPath(rawPath)
+    return path === ENTRY || path.startsWith(`${ENTRY}/`)
+}
+
+// Where sign-in sends the browser afterwards: a path on the same origin, or
+// `/`. Refused: anything not starting with exactly one `/`, any backslash or
+// control character (browsers read `\` as `/` and drop tab, CR and LF), a
+// path that resolves to `//` (`/.//x`, `/%2e%2e//x`), and Studio's own
+// routes (a redirect back to /_studio would loop).
+const REDIRECT_BASE = 'https://redirect.invalid'
+const MAX_REDIRECT_LENGTH = 2048
+const SINGLE_SLASH = /^\/(?![/\\])/
+// eslint-disable-next-line no-control-regex
+const UNSAFE_CHARACTER = /[\\\u0000-\u001f\u007f]/
+
+export function safeStudioRedirect(value: unknown): string {
+    if (typeof value !== 'string' || value.length > MAX_REDIRECT_LENGTH) return '/'
+    if (!SINGLE_SLASH.test(value) || UNSAFE_CHARACTER.test(value)) return '/'
+    let url: URL
+    try {
+        url = new URL(value, REDIRECT_BASE)
+    } catch {
+        return '/'
+    }
+    if (url.origin !== REDIRECT_BASE) return '/'
+    const target = url.pathname + url.search
+    if (!SINGLE_SLASH.test(target) || UNSAFE_CHARACTER.test(target) || isStudioPath(target)) return '/'
+    return target
+}
+
 // nuxt-component-meta's routes. They answer 404 on every host, the admin
 // host included, since nothing in Studio uses them.
 const COMPONENT_META_PREFIX = '/api/component-meta'

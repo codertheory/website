@@ -8,7 +8,7 @@
 //
 // Kept free of Nitro auto-imports so scripts/check-studio-guard.mjs can load
 // it directly in Node.
-import { createRemoteJWKSet, jwtVerify, type JWTVerifyGetKey } from 'jose'
+import { createRemoteJWKSet, jwtVerify, type JWTPayload, type JWTVerifyGetKey } from 'jose'
 
 export interface AccessConfig {
     teamDomain: string // e.g. codertheory.cloudflareaccess.com
@@ -59,26 +59,27 @@ function accessJwks(teamDomain: string): JWTVerifyGetKey {
     return remote.jwks
 }
 
-// True only for a token signed by the team's Access keys, for this
-// application, and not expired. Allows 30 s of clock skew on exp and nbf.
-// Never throws.
-export async function verifyAccessJwt(token: string, config: AccessConfig, getKey?: JWTVerifyGetKey): Promise<boolean> {
+// The verified claims of a token signed by the team's Access keys, for this
+// application, and not expired; null for anything else. Allows 30 s of clock
+// skew on exp and nbf. Never throws. Claims such as `email` are returned as
+// signed and unchecked; callers check the types they rely on.
+export async function verifyAccessJwt(token: string, config: AccessConfig, getKey?: JWTVerifyGetKey): Promise<JWTPayload | null> {
     if (!token) {
         warnOnce('no-token')
-        return false
+        return null
     }
     try {
-        await jwtVerify(token, getKey ?? accessJwks(config.teamDomain), {
+        const {payload} = await jwtVerify(token, getKey ?? accessJwks(config.teamDomain), {
             issuer: `https://${config.teamDomain}`,
             audience: config.aud,
             algorithms: ['RS256'],
             requiredClaims: ['exp'],
             clockTolerance: 30
         })
-        return true
+        return payload
     } catch (error) {
         warnOnce(failureReason(error))
-        return false
+        return null
     }
 }
 
