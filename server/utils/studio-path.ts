@@ -42,40 +42,51 @@ export function normaliseHost(rawHost: string | undefined | null): string {
     return (rawHost ?? '').trim().toLowerCase().replace(/:\d+$/, '').replace(/\.$/, '')
 }
 
-// Studio's image proxy, /__nuxt_studio/ipx/<modifiers>/<id>. nuxt-studio
-// 1.8.1 fetches any id with a scheme (https://...) and serves the result
-// from the admin origin (runtime/server/utils/media/ipx.js). Only
-// same-origin ids, which is all the editor asks for, may pass.
-const IPX_PREFIX = '/__nuxt_studio/ipx'
-const IPX_HEAD = /^\/*__nuxt_studio\/+ipx(?:\/+|$)/i
-const SCHEME = /[a-z][a-z0-9+.-]*:/i
+// nuxt-component-meta's routes. They answer 404 on every host, the admin
+// host included, since nothing in Studio uses them.
+const COMPONENT_META_PREFIX = '/api/component-meta'
 
+export function isComponentMetaPath(rawPath: string): boolean {
+    return normaliseStudioPath(rawPath).startsWith(COMPONENT_META_PREFIX)
+}
+
+// Studio's image proxy, /__nuxt_studio/ipx/<modifiers>/<id>. nuxt-studio
+// 1.8.1 fetches the id from wherever it points (any scheme, or the admin
+// host itself, which a Worker cannot reach) and serves the result from the
+// admin origin (runtime/server/utils/media/ipx.js). On the admin host the
+// middleware answers every request this matches and never lets one reach
+// Studio's handler; studioIpxAssetId decides what it serves.
+const IPX_PREFIX = '/__nuxt_studio/ipx'
+
+// Permissive on purpose: any spelling that could reach Studio's handler.
 export function isStudioIpxPath(rawPath: string): boolean {
     return normaliseStudioPath(rawPath).startsWith(IPX_PREFIX)
 }
 
-// False when the id, decoded as many times as it takes, holds a scheme
-// anywhere or starts with `//` or `\\`. An id that will not decode cleanly
-// is refused too. The modifiers segment is skipped, since `w:100` is valid
-// there and Studio never fetches it.
-export function isSafeStudioIpxPath(rawPath: string): boolean {
-    let path = rawPath.split('?')[0]?.split('#')[0] ?? ''
-    for (let i = 0; ; i++) {
-        if (i === 10) return false
-        let decoded: string
-        try {
-            decoded = decodeURIComponent(path)
-        } catch {
-            return false
-        }
-        if (decoded === path) break
-        path = decoded
-    }
-    path = path.replace(/\\/g, '/')
-    const head = IPX_HEAD.exec(path)
-    if (!head) return false
-    const rest = path.slice(head[0].length)
-    const slash = rest.indexOf('/')
-    const id = slash === -1 ? '' : rest.slice(slash + 1)
-    return !SCHEME.test(id) && !id.startsWith('//')
+// The only modifiers Studio's client sends are `_` and `s_200x200,fit_cover`.
+// They are checked for shape and then ignored; nothing is resized.
+const IPX_RAW = /^\/__nuxt_studio\/ipx\/(?:_|[a-z0-9_,]+)\/(.+)$/
+// No leading dot, which also rules out `.` and `..` and hidden files.
+const ID_SEGMENT = /^[A-Za-z0-9_-][A-Za-z0-9._-]*$/
+const IMAGE_EXTENSION = /\.(?:png|jpe?g|gif|webp|avif|svg|ico)$/i
+const MAX_URL_LENGTH = 1024
+
+// Takes the raw request URL (event.node.req.originalUrl: not decoded, query
+// included) and returns the public file it names, or null.
+//
+// Allowed: `/`-separated segments of letters, numbers, `.`, `_` and `-`, with
+// no empty segment and none starting with a dot (so no `.` or `..`), ending
+// in an image extension. Each of those
+// characters is unreserved, so a browser never percent-encodes it, and any
+// `%` in the URL is refused. That refuses every encoded `#`, `?`, `/`, `\`,
+// `:` and control character at any depth of encoding, and leaves nothing to
+// decode. A raw `:`, `?`, `#` or `\` anywhere is refused too.
+export function studioIpxAssetId(rawUrl: unknown): string | null {
+    if (typeof rawUrl !== 'string' || rawUrl.length > MAX_URL_LENGTH) return null
+    if (/[%:?#\\]/.test(rawUrl)) return null
+    const id = IPX_RAW.exec(rawUrl)?.[1]
+    if (!id || !IMAGE_EXTENSION.test(id)) return null
+    const segments = id.split('/')
+    if (!segments.every(s => ID_SEGMENT.test(s))) return null
+    return id
 }

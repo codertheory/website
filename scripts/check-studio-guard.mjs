@@ -26,6 +26,7 @@ import { request } from 'node:http'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { IPX_ALLOWED, IPX_MISSING, IPX_REFUSED } from './studio-ipx-cases.mjs'
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../..')
 const SERVER_DIR = join(ROOT, '.output/server')
@@ -232,6 +233,25 @@ async function liveChecks(tmp, wranglerConfig) {
     }
 }
 
+// event.path as h3 1.15 gives it to middleware, for a raw request path. The
+// path goes in on a bare request object, because Request() would normalise it.
+async function h3DecodedPath() {
+    const {createApp, createEvent, eventHandler} = await import('h3')
+    const app = createApp()
+    let seen = ''
+    app.use(eventHandler((event) => {
+        seen = event.path
+        return null
+    }))
+    return async (path) => {
+        seen = ''
+        const req = {url: path, method: 'GET', headers: {}}
+        const res = {statusCode: 200, headersSent: false, writableEnded: false, setHeader() {}, getHeader() {}, removeHeader() {}, end() {}}
+        await Promise.resolve(app.handler(createEvent(req, res))).catch(() => {})
+        return seen
+    }
+}
+
 // Path and host matching in Node, including spellings the router would not
 // route to Studio today, so a router change cannot open a gap.
 async function pathChecks() {
@@ -248,36 +268,35 @@ async function pathChecks() {
     const notStudio = ['/', '/about', '/studio', '/blog/_studio-notes', '/projects/rolesmith', '/sw.json', '/%E0%A4%A', '/_nuxt/builds/latest.json', '/api/__sitemap__/urls', '/api/contact', '/api/stats/github', '/api/component']
     for (const path of notStudio) check(`isStudioPath(${JSON.stringify(path)}) -> false`, mod.isStudioPath(path) === false)
 
-    // Studio's image proxy fetches any id that has a scheme. Only same-origin
-    // ids may pass the guard.
-    const ipxPaths = ['/__nuxt_studio/ipx/_/favicon.svg', '/__NUXT_STUDIO/IPX/_/favicon.svg', '/__nuxt_studio/ipx', '/__nuxt_studio/ipx/s_200x200,fit_cover/shots/x.png']
+    // Studio's image proxy. On the admin host the middleware answers every
+    // /__nuxt_studio/ipx request itself, from the raw URL, and serves only
+    // allow-listed local images. Each case is fed as it arrives on the wire
+    // (event.node.req.originalUrl) and as h3 hands it to middleware
+    // (event.path, decoded once), so a check on the wrong one shows up here.
+    const h3Path = await h3DecodedPath()
+    const ipxPaths = ['/__nuxt_studio/ipx/_/favicon.svg', '/__NUXT_STUDIO/IPX/_/favicon.svg', '/__nuxt_studio/ipx', '/__nuxt_studio/ipx/s_200x200,fit_cover/shots/x.png', '/__nuxt_studio%2Fipx/_/x.png', '//__nuxt_studio//ipx/_/x.png', '/__nuxt_studio/ipx#/x']
     for (const path of ipxPaths) check(`isStudioIpxPath(${JSON.stringify(path)}) -> true`, mod.isStudioIpxPath?.(path) === true)
-    for (const path of ['/_studio', '/__nuxt_studio/meta', '/favicon.svg']) check(`isStudioIpxPath(${JSON.stringify(path)}) -> false`, mod.isStudioIpxPath?.(path) === false)
-    const safeIpx = ['/__nuxt_studio/ipx/_/favicon.svg', '/__nuxt_studio/ipx/s_200x200,fit_cover/shots/rolesmith/home.png', '/__nuxt_studio/ipx/w:100/icon-192.png', '/__nuxt_studio/ipx/_/my%20image.png', '/__nuxt_studio/ipx/_//favicon.svg']
-    for (const path of safeIpx) check(`isSafeStudioIpxPath(${JSON.stringify(path)}) -> true`, mod.isSafeStudioIpxPath?.(path) === true)
-    const unsafeIpx = [
-        '/__nuxt_studio/ipx/_/https://evil.example/x.svg',
-        '/__nuxt_studio/ipx/_/https:/evil.example/x.svg',
-        '/__nuxt_studio/ipx/_/HTTPS://evil.example/x.svg',
-        '/__nuxt_studio/ipx/_/https%3A%2F%2Fevil.example%2Fx.svg',
-        '/__nuxt_studio/ipx/_/https%253A%252F%252Fevil.example%252Fx.svg',
-        '/__nuxt_studio/ipx/_/https%25253A%25252F%25252Fevil.example%25252Fx.svg',
-        '/__nuxt_studio/ipx/_%2Fhttps:%2F%2Fevil.example%2Fx.svg',
-        '/__nuxt_studio/ipx/_/%20https://evil.example/x.svg',
-        '/__nuxt_studio/ipx/_/data:image/svg+xml,<svg>',
-        '/__nuxt_studio/ipx/_/javascript:alert(1)',
-        '/__nuxt_studio/ipx/_/x/https://evil.example/x.svg',
-        '/__nuxt_studio/ipx/_///evil.example/x.svg',
-        '/__nuxt_studio/ipx/_/%2F%2Fevil.example/x.svg',
-        '/__nuxt_studio/ipx/_/\\\\evil.example/x.svg',
-        '/__nuxt_studio/ipx/_/%5C%5Cevil.example/x.svg',
-        '/__nuxt_studio/ipx/_/%5C/evil.example/x.svg',
-        '/__nuxt_studio/ipx/_/https:%2F%2Fevil.example%3F.svg',
-        '/__nuxt_studio/ipx/_/x.svg%E0%A4%A',
-        '/__nuxt_studio//ipx/_/https://evil.example/x.svg',
-        '/__nuxt_studio/ipxfoo'
-    ]
-    for (const path of unsafeIpx) check(`isSafeStudioIpxPath(${JSON.stringify(path)}) -> false`, mod.isSafeStudioIpxPath?.(path) === false)
+    for (const path of ['/_studio', '/__nuxt_studio/meta', '/favicon.svg', '/__nuxt_studio/ip']) check(`isStudioIpxPath(${JSON.stringify(path)}) -> false`, mod.isStudioIpxPath?.(path) === false)
+    for (const [path, id] of [...IPX_ALLOWED, ...IPX_MISSING]) {
+        check(`studioIpxAssetId(raw ${JSON.stringify(path)}) -> ${JSON.stringify(id)}`, mod.studioIpxAssetId?.(path) === id, `got ${JSON.stringify(mod.studioIpxAssetId?.(path))}`)
+    }
+    for (const path of IPX_REFUSED) {
+        const decoded = await h3Path(path)
+        check(`studioIpxAssetId(raw ${JSON.stringify(path)}) -> null`, mod.studioIpxAssetId?.(path) === null, `got ${JSON.stringify(mod.studioIpxAssetId?.(path))}`)
+        // A few decode to a plain allowed path (%66avicon.svg), which is fine
+        // to serve; the rest must still be refused after one decode.
+        const wantDecoded = IPX_ALLOWED.find(([allowed]) => allowed === decoded)?.[1] ?? null
+        check(`studioIpxAssetId(h3-decoded ${JSON.stringify(decoded)}) -> ${JSON.stringify(wantDecoded)}`, mod.studioIpxAssetId?.(decoded) === wantDecoded, `got ${JSON.stringify(mod.studioIpxAssetId?.(decoded))}`)
+        if (path.startsWith('/__nuxt_studio')) {
+            check(`isStudioIpxPath(raw ${JSON.stringify(path)}) or (h3-decoded) -> true`, mod.isStudioIpxPath?.(path) === true || mod.isStudioIpxPath?.(decoded) === true)
+        }
+    }
+    for (const bad of [undefined, null, '', 42]) check(`studioIpxAssetId(${JSON.stringify(bad)}) -> null`, mod.studioIpxAssetId?.(bad) === null)
+
+    // nuxt-component-meta's routes: 404 on every host, admin included.
+    const meta = ['/api/component-meta', '/api/component-meta.json', '/api/component-meta/ProseA', '/API/Component-Meta', '/api/component-meta%2FProseA', '//api//component-meta', '/api/component-meta?x=1', '/api/%63omponent-meta']
+    for (const path of meta) check(`isComponentMetaPath(${JSON.stringify(path)}) -> true`, mod.isComponentMetaPath?.(path) === true)
+    for (const path of ['/api/component', '/api/contact', '/component-meta', '/__nuxt_studio/meta']) check(`isComponentMetaPath(${JSON.stringify(path)}) -> false`, mod.isComponentMetaPath?.(path) === false)
     const hosts = [['admin.codertheory.dev', 'admin.codertheory.dev'], ['ADMIN.codertheory.dev:443', 'admin.codertheory.dev'], ['admin.codertheory.dev.', 'admin.codertheory.dev'], ['', ''], [undefined, '']]
     for (const [raw, want] of hosts) check(`normaliseHost(${JSON.stringify(raw)}) -> ${JSON.stringify(want)}`, mod.normaliseHost(raw) === want)
 }
