@@ -5,6 +5,8 @@ export const useTheme = () => {
 
   const apply = (value: Theme) => {
     document.documentElement.setAttribute('data-theme', value)
+    // Nuxt Studio reads only the `dark` class to pick its own theme.
+    document.documentElement.classList.toggle('dark', value === 'dark')
     localStorage.setItem('theme', value)
   }
 

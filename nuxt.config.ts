@@ -250,7 +250,7 @@ export default defineNuxtConfig({
             ],
             script: [
                 {
-                    innerHTML: "(function(){document.documentElement.classList.add('js');try{var s=localStorage.getItem('theme');var p=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme', s||(p?'dark':'light'));}catch(e){}})();",
+                    innerHTML: "(function(){document.documentElement.classList.add('js');try{var s=localStorage.getItem('theme');var p=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=s||(p?'dark':'light');document.documentElement.setAttribute('data-theme', t);document.documentElement.classList.toggle('dark', t==='dark');}catch(e){}})();",
                     tagPosition: 'head'
                 }
             ]
