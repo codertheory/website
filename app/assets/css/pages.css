@@ -211,16 +211,11 @@ a.form-hint { text-decoration: underline; text-decoration-color: var(--bulb-deep
 /* ============================================================
    404
    ============================================================ */
-.notfound {
-  padding: 120px 32px;
-  text-align: center;
-}
+/* Left-aligned like the other empty states, under the terminal. */
+.notfound { padding-top: var(--s-7); padding-bottom: var(--s-8); }
 .notfound .crumb-eyebrow { font-size: 14px; font-weight: 600; color: var(--ink-mute); }
-.notfound h1 {
-  margin-top: 16px; max-width: 600px;
-  margin-left: auto; margin-right: auto;
-}
-.notfound .cta { margin-top: 28px; }
+.notfound h1 { margin-top: var(--s-3); max-width: 640px; }
+.notfound .cta { margin-top: var(--s-6); }
 
 /* /now — the current-focus page. Reuses .now-strip from the homepage. */
 .now-lede { color: var(--ink-soft); margin-top: 16px; font-size: 18px; max-width: 560px; }
@@ -253,6 +248,7 @@ a.form-hint { text-decoration: underline; text-decoration-color: var(--bulb-deep
 }
 .search-results { margin-top: 28px; padding-bottom: 96px; }
 .search-hint { color: var(--ink-mute); font-size: 15px; margin: 0 0 24px; }
+.search-results .term { margin-bottom: var(--s-4); }
 .search-hit {
   display: block; text-decoration: none; color: inherit;
   padding: 20px 0; border-bottom: 1px solid var(--rule);
