@@ -2,14 +2,14 @@
   <div v-if="doc" class="page">
     <section class="wrap about-hero">
       <span class="eyebrow">{{ doc.eyebrow }}</span>
-      <h1 class="h-section" style="margin-top: 14px; max-width: 800px;">
-        {{ doc.headlineBefore }}<span class="scribble">{{ doc.headlineName }}<ScribbleUnder /></span>{{ doc.headlineAfter }}
+      <h1 class="h-section">
+        {{ doc.headlineBefore }}{{ doc.headlineName }}{{ doc.headlineAfter }}
       </h1>
     </section>
 
-    <section class="wrap section" style="padding-top: 40px;">
+    <section class="wrap section about-body">
       <div class="about-grid">
-        <div class="about-portrait fade-up">
+        <div class="about-portrait">
           <NuxtImg
             :src="doc.portrait.src"
             :alt="doc.portrait.alt"
@@ -21,14 +21,14 @@
         </div>
 
         <div>
-          <div class="about-bio fade-up">
+          <div class="about-bio">
             <ContentRenderer :value="doc" />
           </div>
 
           <h2 class="about-meta">{{ doc.timelineHeading }}</h2>
           <p class="about-meta-sub">{{ doc.timelineSub }}</p>
           <ul class="timeline">
-            <li v-for="(t, i) in timeline" :key="i" class="fade-up">
+            <li v-for="(t, i) in timeline" :key="i">
               <div class="when">{{ t.when }}</div>
               <div class="what">{{ t.what }}</div>
               <div class="where">{{ t.where }}</div>
@@ -41,7 +41,7 @@
             <span v-for="s in doc.skills" :key="s" class="chip"><TechIcon :name="s" />{{ s }}</span>
           </div>
 
-          <div style="margin-top: 36px;">
+          <div class="about-cta">
             <NuxtLink class="btn btn--primary" to="/contact">
               {{ doc.ctaLabel }} <ArrowRight />
             </NuxtLink>
@@ -66,6 +66,4 @@
         description: doc.value.description,
         type: 'profile'
     })
-
-    useScrollReveal()
 </script>

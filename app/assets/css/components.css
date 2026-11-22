@@ -18,25 +18,18 @@
 .btn--primary {
   background: var(--ink);
   color: var(--bg);
-  box-shadow: 0 6px 0 var(--bulb-deep), 0 8px 24px -10px rgba(0,0,0,0.25);
+  /* A flat stamp, no blur under it. --stamp flips per theme. */
+  box-shadow: 0 6px 0 var(--stamp);
 }
-.btn--primary:hover {
-  box-shadow: 0 8px 0 var(--bulb-deep), 0 12px 24px -8px rgba(0,0,0,0.25);
-}
-.btn--primary:active,
-[data-theme="dark"] .btn--primary:active {
+.btn--primary:hover { box-shadow: 0 8px 0 var(--stamp); }
+.btn--primary:active {
   transform: translateY(4px);
   transition-duration: 0.06s;
+  box-shadow: 0 2px 0 var(--stamp);
 }
-.btn--primary:active { box-shadow: 0 2px 0 var(--bulb-deep), 0 3px 8px -6px rgba(0,0,0,0.25); }
-[data-theme="dark"] .btn--primary:active { box-shadow: 0 2px 0 #B6841E, 0 3px 8px -6px rgba(0,0,0,0.6); }
 [data-theme="dark"] .btn--primary {
   background: var(--bulb);
-  color: #14110C;
-  box-shadow: 0 6px 0 #B6841E, 0 8px 24px -10px rgba(0,0,0,0.6);
-}
-[data-theme="dark"] .btn--primary:hover {
-  box-shadow: 0 8px 0 #B6841E, 0 12px 24px -8px rgba(0,0,0,0.6);
+  color: var(--accent-on);
 }
 .btn--ghost {
   border-color: var(--rule);
@@ -49,7 +42,7 @@
 }
 [data-theme="dark"] .btn--ghost:hover {
   background: var(--bulb);
-  color: #14110C;
+  color: var(--accent-on);
   border-color: var(--bulb);
 }
 
@@ -88,7 +81,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--f-mono);
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono);
   font-size: 12px;
   font-weight: 500;
   padding: 4px 10px;
@@ -103,8 +96,8 @@
 .tag-chip {
   display: inline-flex; align-items: center;
   padding: 4px 10px; border-radius: 999px;
-  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.06em;
-  background: var(--bulb-soft); color: #6B4F18;
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 11px; letter-spacing: 0.06em;
+  background: var(--bulb-soft); color: var(--bulb-ink);
   border: 1px solid var(--bulb-deep);
 }
 [data-theme="dark"] .tag-chip { background: rgba(244,198,105,0.16); color: var(--bulb); border-color: rgba(244,198,105,0.4); }
@@ -114,9 +107,9 @@
   border-radius: 50%;
   display: inline-block;
 }
-.dot--active { background: #2EAE6B; box-shadow: 0 0 0 3px rgba(46,174,107,0.18); }
-.dot--wip    { background: #E8A93D; box-shadow: 0 0 0 3px rgba(232,169,61,0.22); }
-.dot--archived { background: #8A7F6E; }
+.dot--active { background: var(--ok); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ok) 18%, transparent); }
+.dot--wip    { background: var(--wip); box-shadow: 0 0 0 3px color-mix(in oklab, var(--wip) 22%, transparent); }
+.dot--archived { background: var(--archived); }
 
 .card {
   background: var(--bg-elev);
@@ -124,17 +117,15 @@
   border-radius: var(--r-lg);
   transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), border-color 0.25s var(--ease);
 }
-/* Only cards that are links lift. A form or a panel of facts stays put. */
-a.card:hover {
-  border-color: var(--ink);
-  box-shadow: 0 4px 0 var(--bulb-deep);
-}
+/* Panels carry no shadow; the stamp is kept for the primary button and the
+   one real screenshot. A card that is a link only darkens its edge. */
+a.card:hover { border-color: var(--ink); }
 
 .spin-tag {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 6px 14px; border-radius: 999px;
-  background: var(--bulb-soft); color: #6B4F18;
-  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+  background: var(--bulb-soft); color: var(--bulb-ink);
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
 }
 [data-theme="dark"] .spin-tag { background: rgba(244,198,105,0.14); color: var(--bulb); }
 
@@ -192,7 +183,7 @@ a.card:hover {
 .prow:has(.prow-link:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: var(--r-sm); }
 .prow-status {
   display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--f-mono); font-size: 12px; color: var(--ink-mute);
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 12px; color: var(--ink-mute);
   letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
 }
 .prow-tag {
@@ -201,7 +192,7 @@ a.card:hover {
 }
 .prow-meta {
   display: flex; flex-wrap: wrap; align-items: center; gap: 2px 16px;
-  font-family: var(--f-mono); font-size: 12px; color: var(--ink-mute);
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 12px; color: var(--ink-mute);
   margin: 2px 0 0;
 }
 .prow-ext {
@@ -214,7 +205,7 @@ a.card:hover {
 }
 .prow-ext:hover { color: var(--bulb-text); }
 .prow-stack {
-  font-family: var(--f-mono); font-size: 12px; color: var(--ink-mute);
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 12px; color: var(--ink-mute);
   margin: 6px 0 0;
 }
 .prow-arrow {
@@ -234,7 +225,7 @@ a.card:hover {
   background: var(--ink);
   color: var(--bg);
   transform: translate(3px, -3px);
-  box-shadow: -3px 3px 0 var(--bulb-deep);
+  box-shadow: -3px 3px 0 var(--stamp);
 }
 .prow:hover:not(:has(.prow-ext:hover)) .prow-title { text-decoration: underline; text-decoration-color: var(--bulb-deep); text-decoration-thickness: 2px; text-underline-offset: 4px; }
 
@@ -271,13 +262,13 @@ a.card:hover {
 /* ============================================================
    Section heading + dividers
    ============================================================ */
-.section { padding-top: 80px; padding-bottom: 80px; position: relative; }
+.section { padding-top: var(--s-8); padding-bottom: var(--s-8); position: relative; }
 .section-head {
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 32px;
-  margin-bottom: 40px;
+  gap: var(--s-5);
+  margin-bottom: var(--s-6);
   flex-wrap: wrap;
 }
 .section-head .lead { max-width: 640px; }
@@ -292,13 +283,6 @@ a.card:hover {
 }
 
 /* ============================================================
-   Page transition + scroll reveal
-   ============================================================ */
-/* .fade-up used to hide a block until it scrolled into view. With pages
-   cross-fading on navigation that became a second fade straight after the
-   first, so the class is now inert: content is simply there. */
-
-/* ============================================================
    Responsive — shared component overrides
    ============================================================ */
 @media (max-width: 700px) {
@@ -306,7 +290,7 @@ a.card:hover {
   .btn--sm { padding: 8px 12px; font-size: 12px; }
   .tag-chip { font-size: 10px; padding: 3px 8px; }
 
-  .section { padding-top: 48px; padding-bottom: 48px; }
+  .section { padding-top: var(--s-7); padding-bottom: var(--s-7); }
   .section-head { flex-direction: column; align-items: flex-start; gap: 16px; }
   .section-head h2 { font-size: 32px !important; }
 }

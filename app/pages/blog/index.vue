@@ -1,9 +1,9 @@
 <template>
   <div class="page">
-    <section class="wrap" style="padding-top: 60px;">
+    <section class="wrap page-head">
       <span class="eyebrow">Writing</span>
-      <h1 class="h-section" style="margin-top: 14px; max-width: 800px;">
-        Notes from the workbench, on <span class="scribble">teaching<ScribbleUnder /></span>, shipping, and the why behind the keystrokes.
+      <h1 class="h-section">
+        Notes from the workbench, on teaching, shipping, and the why behind the keystrokes.
       </h1>
     </section>
 
@@ -13,6 +13,7 @@
           v-for="f in categories"
           :key="f"
           :class="['proj-filter', { 'is-active': filter === f }]"
+          :aria-pressed="filter === f"
           @click="filter = f"
         >
           {{ f }}
@@ -30,40 +31,34 @@
         :filters="categories"
         kind="blog"
       />
-      <div v-else class="blog-grid">
-        <NuxtLink
-          v-for="post in filteredPosts"
-          :key="post.path"
-          :to="`/blog/${slugFromPath(post.path)}`"
-          :class="['card', 'post-card', 'fade-up', { typographic: !post.image }]"
-        >
-          <div :class="['post-thumb', { 'no-img': !post.image }]">
-            <template v-if="post.image">
-              <div :class="['image-fill', post.image === 'stack' ? 'image-stack' : 'image-other']">
-                <span class="image-headword">{{ firstWord(post.title) }}</span>
+      <!-- Same row language as projects. A thumbnail appears only when a post
+           has a real image; nothing stands in for one that is missing. -->
+      <ul v-else class="prow-list">
+        <li v-for="post in filteredPosts" :key="post.path">
+          <article :class="['prow', 'prow--post', { 'prow--post-img': hasImage(post.image) }]">
+            <div class="prow-body">
+              <div class="prow-head">
+                <h2 class="prow-title">
+                  <NuxtLink class="prow-link" :to="`/blog/${slugFromPath(post.path)}`">{{ post.title }}</NuxtLink>
+                </h2>
+                <span class="prow-status">{{ formatDate(post.date) }}</span>
               </div>
-            </template>
-            <template v-else-if="post.quote">
-              <div class="quoteish">
-                “<template v-for="(seg, i) in quoteSegments(post.quote)" :key="i">
-                  <em v-if="seg.em">{{ seg.text }}</em>
-                  <template v-else>{{ seg.text }}</template>
-                </template>”
-              </div>
-            </template>
-            <template v-else>
-              <span class="glyph">¶</span>
-            </template>
-          </div>
-          <span class="post-cat">{{ post.cat }}</span>
-          <h3>{{ post.title }}</h3>
-          <p class="excerpt">{{ post.excerpt }}</p>
-          <div class="post-foot">
-            <span>{{ formatDate(post.date) }}</span>
-            <span>{{ readingTime(post) }} min read</span>
-          </div>
-        </NuxtLink>
-      </div>
+              <p class="prow-tag">{{ post.excerpt }}</p>
+              <p class="prow-meta">{{ post.cat }} · {{ readingTime(post) }} min read</p>
+            </div>
+            <NuxtImg
+              v-if="hasImage(post.image)"
+              class="post-row-img"
+              :src="post.image!"
+              alt=""
+              width="200"
+              height="125"
+              sizes="200px"
+            />
+            <span class="prow-arrow" aria-hidden="true"><ArrowRight :size="18" /></span>
+          </article>
+        </li>
+      </ul>
     </section>
   </div>
 </template>
@@ -94,17 +89,12 @@
         return items.filter(p => p.cat === filter.value)
     })
 
-    const quoteSegments = (quote: string | undefined) => {
-        if (!quote) return []
-        return quote.split('*').map((text, i) => ({ text, em: i % 2 === 1 }))
-    }
-
-    const firstWord = (title: string) => title.split(' ')[0] || ''
+    // Older posts carried a keyword here ("stack") that drew a gradient in place
+    // of a picture. Only an actual image path counts now.
+    const hasImage = (image: string | null | undefined) => !!image && /^(\/|https?:)/.test(image)
 
     useSiteSeo({
         title: 'Blog',
         description: 'Notes from the workbench, on teaching, shipping, and the why behind the keystrokes.'
     })
-
-    useScrollReveal(filter)
 </script>

@@ -1,9 +1,9 @@
 <template>
   <div class="page">
-    <section class="wrap-narrow" style="padding-top: 60px;">
+    <section class="wrap-narrow page-head">
       <span class="eyebrow">Now</span>
-      <h1 class="h-section" style="margin-top: 14px;">
-        What I'm <span class="scribble">working on<ScribbleUnder /></span> at the moment.
+      <h1 class="h-section">
+        What I'm working on at the moment.
       </h1>
       <p class="now-lede">
         A <a href="https://nownownow.com/about" target="_blank" rel="noopener">now page</a>:
@@ -11,11 +11,11 @@
       </p>
     </section>
 
-    <section v-if="now" class="wrap-narrow" style="margin-top: 32px;">
+    <section v-if="now" class="wrap-narrow now-body">
       <div class="now-strip">
-        <span class="pulse" />
+        <span class="now-dot" aria-hidden="true" />
         <div>
-          <div class="label">// now</div>
+          <div class="label">Now</div>
           <div class="what">
             <em>{{ now.focus }}</em> {{ now.what }}
           </div>
@@ -60,6 +60,4 @@
         title: 'Now',
         description: "What Lucas is working on at the moment, the current focus and what's on the workbench."
     })
-
-    useScrollReveal()
 </script>

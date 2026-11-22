@@ -3,7 +3,7 @@
     <div class="page wrap notfound">
       <div class="crumb-eyebrow">{{ error.statusCode || 404 }} / not found</div>
       <h1 class="h-section">
-        That page <span class="scribble">isn't here<ScribbleUnder /></span>, so let's go back.
+        That page isn't here, so let's go back.
       </h1>
       <div class="cta">
         <a class="btn btn--primary" href="/" @click.prevent="handleError">

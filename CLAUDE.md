@@ -18,7 +18,7 @@ This is a **Nuxt 4** (Vue 3) project for **codertheory.dev**, the personal brand
 
 - Source root is `app/` (Nuxt 4 default — components, pages, layouts, composables go here, not at the project root).
 - Entry: `app/app.vue` — currently scaffolded with `<NuxtWelcome />`; replace with the real shell + `<NuxtPage />` when implementing routes.
-- `nuxt.config.ts` enables modules: `@nuxt/content` (markdown-driven content), `@nuxt/eslint`, `@nuxt/fonts` (use this for Fraunces / Inter / JetBrains Mono / Caveat — do not pull from Google Fonts CDN), `@nuxt/hints`, `@nuxt/icon`, `@nuxt/image`.
+- `nuxt.config.ts` enables modules: `@nuxt/content` (markdown-driven content), `@nuxt/eslint`, `@nuxt/fonts` (use this for Fraunces and Recursive — do not pull from Google Fonts CDN), `@nuxt/hints`, `@nuxt/icon`, `@nuxt/image`.
 - TypeScript: `tsconfig.json` is a thin file that delegates to the four configs Nuxt generates under `.nuxt/` — do not add `compilerOptions` here; configure via `nuxt.config.ts` instead.
 - Routing: file-based via `app/pages/`. Project detail and blog post pages will use `[slug].vue` dynamic routes per the design spec.
 - Content: blog posts and project copy are expected in a `content/` directory consumed by `@nuxt/content` (the design handoff explicitly says markdown content drives copy; the design dictates only structure and styling).
@@ -43,7 +43,17 @@ Enforced by ESLint (`eslint.config.mjs`) — `npx eslint . --fix` will reorder/r
 ### Non-obvious design conventions
 
 - **Theming**: light/dark is toggled by setting `data-theme="light"|"dark"` on `<html>`, persisted in `localStorage` under `ct-theme`, with `prefers-color-scheme` as the first-load default.
-- **Signature shadow style**: hard offset "stamp" shadows (e.g. `0 6px 0 var(--bulb-deep)`), not soft blurs. The primary button grows its stamp from `6px → 8px` on hover for a "press up off page" effect.
+- **Signature shadow style**: hard offset "stamp" shadows (`0 6px 0 var(--stamp)`), never with a soft blur stacked under them. The stamp is reserved for the primary button (grows `6px → 8px` on hover) and the one real showcase screenshot; panels and cards carry no shadow.
 - **Hero animations** (gears spinning, 16 halo dots pulsing with 0.16s stagger, dashed loop flow) must be gated behind `prefers-reduced-motion` and an opt-out class `body.no-bulb-anim`.
 - **Drop-shadow gotcha**: `filter: drop-shadow(...)` for the bulb glow goes on the **inner SVG**, not the outer wrapper — wrapping it produces a rectangular halo instead of following the bulb shape.
-- The "scribble underline" under the active nav link and emphasized words is a hand-drawn Caveat-font SVG (`ScribbleUnder`), not a CSS underline.
+- The "scribble underline" is a hand-drawn SVG (`ScribbleUnder`), not a CSS underline. It is used in exactly two places: the active nav link and one word of the homepage h1. Other page headings stay plain.
+
+### Visual direction ("bench ledger"), which supersedes the handoff where they differ
+
+- **Type**: Fraunces for display. Recursive (Linear) for body, replacing the handoff's Inter. Monospace is Recursive with the MONO axis: any rule that sets `font-family: var(--f-mono)` must also set `font-variation-settings: var(--fv-mono)`.
+- **Labels**: section labels (`.eyebrow`, side-panel and footer headings) are sentence case in the body face. Uppercase tracked mono is only for status and dates. No `//` code-comment prefixes.
+- **Colour**: amber is for fills, stamps and underlines. Text in amber uses `--bulb-text`. No coloured words inside headlines or body copy; emphasis is italic in ink.
+- **Surfaces**: flat paper separated by 1px rules. One level of container at most (no bordered boxes inside a card). Opaque nav, no glass, no radial glows, no gradients standing in for images.
+- **Spacing**: use the `--s-1`…`--s-8` scale in `tokens.css` (4 · 8 · 12 · 16 · 24 · 40 · 64 · 104). No inline `style` for layout.
+- **Motion**: only the bulb animations, the scribble draw-in and the stamp press. No scroll reveals or pulsing dots.
+- **Empty states**: plain ruled blocks with the real copy. No fake terminals, skeleton cards or placeholder content.

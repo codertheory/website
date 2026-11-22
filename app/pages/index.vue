@@ -16,7 +16,7 @@
             </div>
             <h1 class="hero-title">
               Think first. <br>
-              <span class="accented">Type</span> second.
+              <span class="scribble">Type<ScribbleUnder /></span> second.
             </h1>
             <p class="hero-sub">
               I'm a self-taught full-stack developer in Edmonton. Over 7 years of Python on the back and Vue or React on the front, and lately a lot of Kotlin and Swift for my own apps.
@@ -65,10 +65,10 @@
 
     <!-- Now strip -->
     <section v-if="now && nowIsFresh" class="wrap now-wrap">
-      <a v-if="now.href" :href="now.href" class="now-strip fade-up">
-        <span class="pulse" aria-hidden="true" />
+      <a v-if="now.href" :href="now.href" class="now-strip">
+        <span class="now-dot" aria-hidden="true" />
         <div>
-          <div class="label">// now</div>
+          <div class="label">Now</div>
           <div class="what">
             <em>{{ now.focus }}</em> {{ now.what }}
           </div>
@@ -80,10 +80,10 @@
           </template>
         </ClientOnly>
       </a>
-      <div v-else class="now-strip fade-up">
-        <span class="pulse" aria-hidden="true" />
+      <div v-else class="now-strip">
+        <span class="now-dot" aria-hidden="true" />
         <div>
-          <div class="label">// now</div>
+          <div class="label">Now</div>
           <div class="what">
             <em>{{ now.focus }}</em> {{ now.what }}
           </div>
@@ -115,7 +115,7 @@
 
     <section class="section wrap more">
       <h2 class="h-section">
-        What I've been <span class="scribble scribble--scroll">making<ScribbleUnder /></span><br>
+        What I've been making<br>
         and thinking about.
       </h2>
 
@@ -250,5 +250,4 @@
         description: "Lucas builds small software, mentors newer engineers, and writes about the why behind the code. Projects, posts, and the workshop in one place."
     })
 
-    useScrollReveal()
 </script>

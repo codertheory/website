@@ -1,9 +1,9 @@
 <template>
   <div class="page">
-    <section class="wrap-narrow" style="padding-top: 60px;">
+    <section class="wrap-narrow page-head">
       <span class="eyebrow">Search</span>
-      <h1 class="h-section" style="margin-top: 14px;">
-        Look through <span class="scribble">everything<ScribbleUnder /></span> here.
+      <h1 class="h-section">
+        Look through everything here.
       </h1>
 
       <div class="search-box">

@@ -1,8 +1,8 @@
 <template>
-  <div class="es-v5 fade-up">
+  <div class="es-v5">
     <div class="pill">
       <button class="x" aria-label="Clear filter" @click="clear">×</button>
-      <span>{{ copy.pillLabel }}: <b style="color: var(--ink);">{{ filter }}</b></span>
+      <span>{{ copy.pillLabel }}: <b>{{ filter }}</b></span>
     </div>
     <h2>{{ copy.headlinePrefix }} <em>{{ filter }}</em> {{ copy.headlineSuffix }}</h2>
     <p class="body">{{ body }}</p>

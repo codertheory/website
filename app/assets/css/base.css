@@ -34,17 +34,22 @@ img { max-width: 100%; display: block; }
 /* ============================================================
    Typography utilities
    ============================================================ */
+/* A section label: sentence case, set in the body face. Uppercase tracked
+   mono is kept for status and dates only. */
 .eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.18em;
-  text-transform: uppercase; font-weight: 600;
-  color: var(--bulb-text);
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  font-family: var(--f-sans); font-size: 14px; font-weight: 600;
+  color: var(--ink-mute);
 }
 .eyebrow::before {
   content: ""; width: 18px; height: 2px; background: var(--bulb-deep);
 }
-/* --bulb-text already flips per theme, so no dark override is needed. */
 [data-theme="dark"] .eyebrow::before { background: var(--bulb); }
+
+/* Every page opens the same way: a label, the h1, then an optional lede. */
+.page-head { padding-top: var(--s-7); }
+.page-head .h-section { margin-top: var(--s-3); max-width: 800px; }
+.page-lede { max-width: 600px; color: var(--ink-soft); margin: var(--s-4) 0 0; font-size: 18px; }
 
 .h-display {
   font-family: var(--f-display);

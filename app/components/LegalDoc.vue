@@ -6,7 +6,7 @@
       <span class="when">last updated · {{ formattedUpdated }}</span>
     </section>
 
-    <section class="wrap section" style="padding-top: 0;">
+    <section class="wrap section doc-body">
       <div class="doc-grid">
         <aside class="doc-toc">
           <h6>On this page</h6>
@@ -63,6 +63,4 @@
         modifiedTime: doc.value?.updatedAt,
         noindex: false
     }))
-
-    useScrollReveal()
 </script>

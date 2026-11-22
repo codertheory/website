@@ -1,6 +1,6 @@
 <template>
   <article :class="['prow', { 'prow--compact': compact, 'prow--figure': $slots.figure }]">
-    <div :class="['proj-thumb', 'prow-thumb', `tone-${project.tone || 'blue'}`]" :style="inTransit ? { viewTransitionName: 'proj-icon' } : undefined">
+    <div :class="['proj-thumb', 'prow-thumb']" :style="inTransit ? { viewTransitionName: 'proj-icon' } : undefined">
       <div :class="['icon-mark', { 'icon-mark--img': project.iconImage && !project.iconImageTile, 'icon-mark--tile': project.iconImage && project.iconImageTile }]">
         <ProjectIcon :image="project.iconImage" :image-dark="project.iconImageDark" :glyph="project.icon" alt="" />
       </div>

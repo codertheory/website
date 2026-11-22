@@ -14,7 +14,7 @@
       <ContentRenderer :value="post" />
 
       <div v-if="nextPost" class="post-next">
-        <div class="label">// next up</div>
+        <div class="label">Next up</div>
         <div class="next-title">{{ nextPost.title }}</div>
         <NuxtLink class="arrow-link" :to="`/blog/${slugFromPath(nextPost.path)}`">
           Read it <ArrowRight :size="14" />
@@ -127,6 +127,4 @@
 
         return { script: scripts }
     })
-
-    useScrollReveal()
 </script>

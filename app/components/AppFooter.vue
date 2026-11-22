@@ -20,7 +20,7 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 codertheory.dev</span>
-      <span>// built with care, deployed on cloudflare</span>
+      <span>built with care, deployed on cloudflare</span>
     </div>
   </footer>
 </template>
