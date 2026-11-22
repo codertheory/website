@@ -10,13 +10,13 @@
               <NuxtLink class="hero-status" to="/contact?topic=role">
                 <span class="dot dot--active" aria-hidden="true" />
                 Looking for work
-                <ArrowRight :size="13" />
+                <ArrowRight />
               </NuxtLink>
               <a class="hero-github" href="https://github.com/codertheory/"><TechIcon :icon="UI_ICONS.github" /> GitHub</a>
             </div>
             <h1 class="hero-title">
               Think first. <br>
-              <span class="accented">Type</span> second.
+              <span class="scribble">Type<ScribbleUnder /></span> second.
             </h1>
             <p class="hero-sub">
               I'm a self-taught full-stack developer in Edmonton. Over 7 years of Python on the back and Vue or React on the front, and lately a lot of Kotlin and Swift for my own apps.
@@ -46,7 +46,7 @@
                 <NuxtLink class="showcase-name" :to="showcase.href">{{ showcase.project.title }}</NuxtLink>
                 <span v-if="showcase.live" class="showcase-domain">{{ showcase.domain }}</span>
                 <a v-if="showcase.live" class="prow-ext" :href="showcase.live.href">
-                  <TechIcon :icon="UI_ICONS.play" /> {{ showcase.live.label }} <ExternalIcon :size="12" />
+                  <TechIcon :icon="UI_ICONS.play" /> {{ showcase.live.label }} <ExternalIcon />
                 </a>
               </figcaption>
             </figure>
@@ -56,7 +56,7 @@
               </li>
             </ul>
             <NuxtLink class="arrow-link featured-all" to="/projects">
-              All {{ (projects || []).length }} projects <ArrowRight :size="14" />
+              All {{ (projects || []).length }} projects <ArrowRight />
             </NuxtLink>
           </div>
         </div>
@@ -65,10 +65,10 @@
 
     <!-- Now strip -->
     <section v-if="now && nowIsFresh" class="wrap now-wrap">
-      <a v-if="now.href" :href="now.href" class="now-strip fade-up">
-        <span class="pulse" aria-hidden="true" />
+      <a v-if="now.href" :href="now.href" class="now-strip">
+        <span class="now-dot" aria-hidden="true" />
         <div>
-          <div class="label">// now</div>
+          <div class="label">Now</div>
           <div class="what">
             <em>{{ now.focus }}</em> {{ now.what }}
           </div>
@@ -80,10 +80,10 @@
           </template>
         </ClientOnly>
       </a>
-      <div v-else class="now-strip fade-up">
-        <span class="pulse" aria-hidden="true" />
+      <div v-else class="now-strip">
+        <span class="now-dot" aria-hidden="true" />
         <div>
-          <div class="label">// now</div>
+          <div class="label">Now</div>
           <div class="what">
             <em>{{ now.focus }}</em> {{ now.what }}
           </div>
@@ -102,7 +102,7 @@
       <div>
         <h2 class="path-h">The path so far</h2>
         <NuxtLink class="arrow-link" to="/about">
-          About <ArrowRight :size="14" />
+          About <ArrowRight />
         </NuxtLink>
       </div>
       <ol class="path-list">
@@ -115,7 +115,7 @@
 
     <section class="section wrap more">
       <h2 class="h-section">
-        What I've been <span class="scribble scribble--scroll">making<ScribbleUnder /></span><br>
+        What I've been making<br>
         and thinking about.
       </h2>
 
@@ -133,7 +133,7 @@
               </div>
               <p class="prow-tag">{{ item.sub }}</p>
             </div>
-            <span class="prow-arrow" aria-hidden="true"><ArrowRight :size="18" /></span>
+            <span class="prow-arrow" aria-hidden="true"><ArrowRight /></span>
           </article>
         </li>
       </ul>
@@ -250,5 +250,4 @@
         description: "Lucas builds small software, mentors newer engineers, and writes about the why behind the code. Projects, posts, and the workshop in one place."
     })
 
-    useScrollReveal()
 </script>

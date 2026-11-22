@@ -11,7 +11,7 @@
           <div class="detail-status">
             <!-- Same icon as the project's row, and the element that row's icon travels to. -->
             <div
-              :class="['proj-thumb', 'prow-thumb', 'detail-icon', `tone-${project.tone || 'blue'}`]"
+              :class="['proj-thumb', 'prow-thumb', 'detail-icon']"
               :style="transitDetail ? { viewTransitionName: 'proj-icon' } : undefined"
             >
               <div :class="['icon-mark', { 'icon-mark--img': project.iconImage && !project.iconImageTile, 'icon-mark--tile': project.iconImage && project.iconImageTile }]">
@@ -64,11 +64,8 @@
           <p class="detail-lede">The features I'd actually point a friend to.</p>
           <ul class="detail-features">
             <li v-for="(f, i) in project.features" :key="i">
-              <span class="num">{{ padNum(i + 1) }}</span>
-              <div>
-                <b>{{ f.t }}</b>
-                <span>{{ f.d }}</span>
-              </div>
+              <b>{{ f.t }}</b>
+              <span>{{ f.d }}</span>
             </li>
           </ul>
         </div>
@@ -105,12 +102,12 @@
 
     <nav v-if="prevProject && nextProject" class="wrap project-nav" aria-label="More projects">
       <NuxtLink class="project-nav__item" :to="`/projects/${slugFromPath(prevProject.path)}`">
-        <span class="dir">// previous</span>
+        <span class="dir">Previous</span>
         <span class="title">{{ prevProject.title }}</span>
         <span class="tag">{{ prevProject.tag }}</span>
       </NuxtLink>
       <NuxtLink class="project-nav__item project-nav__item--next" :to="`/projects/${slugFromPath(nextProject.path)}`">
-        <span class="dir">// next</span>
+        <span class="dir">Next</span>
         <span class="title">{{ nextProject.title }}</span>
         <span class="tag">{{ nextProject.tag }}</span>
       </NuxtLink>
@@ -158,7 +155,6 @@
         (project.value?.links || []).filter(l => !heroLinks.value.some(h => h.href === l.href))
     )
 
-    const padNum = (n: number) => String(n).padStart(2, '0')
 
     const slugFromPath = (path: string | undefined) => (path || '').split('/').filter(Boolean).pop() || ''
 
@@ -274,6 +270,4 @@
 
         return { script: scripts }
     })
-
-    useScrollReveal()
 </script>

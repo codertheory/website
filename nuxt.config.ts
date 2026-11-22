@@ -220,9 +220,14 @@ export default defineNuxtConfig({
         experimental: {processCSSVariables: true},
         families: [
             {name: 'Fraunces', provider: 'google', weights: [400, 500, 600, 700]},
-            {name: 'Inter', provider: 'google', weights: [400, 500, 600, 700]},
-            {name: 'JetBrains Mono', provider: 'google', weights: [400, 500, 600]},
-            {name: 'Caveat', provider: 'google', weights: [400, 500, 600, 700]}
+            // Recursive is the body face and, with its MONO axis at 1 (--fv-mono in
+            // tokens.css), the monospace too. CASL stays at 0 (Linear).
+            {
+                name: 'Recursive',
+                provider: 'google',
+                weights: ['300 800'],
+                providerOptions: {google: {experimental: {variableAxis: {MONO: [['0', '1']], CASL: ['0']}}}}
+            }
         ]
     },
 

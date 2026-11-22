@@ -1,9 +1,9 @@
 <template>
   <div v-if="doc" class="page">
-    <section class="wrap-narrow" style="padding-top: 60px;">
+    <section class="wrap-narrow page-head">
       <span class="eyebrow">Uses</span>
-      <h1 class="h-section" style="margin-top: 14px;">
-        The tools I <span class="scribble">actually reach for<ScribbleUnder /></span>.
+      <h1 class="h-section">
+        The tools I actually reach for.
       </h1>
       <p class="uses-lede">{{ doc.lede }}</p>
       <p class="uses-meta">updated {{ formatDate(doc.updatedAt) }}</p>
@@ -36,6 +36,4 @@
         title: 'Uses',
         description: 'The editors, languages, infrastructure and small tools Lucas actually reaches for.'
     })
-
-    useScrollReveal()
 </script>

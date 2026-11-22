@@ -1,9 +1,9 @@
 <template>
   <div class="page">
-    <section class="wrap" style="padding-top: 60px;">
+    <section class="wrap page-head">
       <span class="eyebrow">Contact</span>
-      <h1 class="h-section" style="margin-top: 14px; max-width: 720px;">
-        Send me a <span class="scribble">note<ScribbleUnder /></span>. I read everything.
+      <h1 class="h-section">
+        Send me a note. I read everything.
       </h1>
       <!-- Shown to visitors who arrive from the "Looking for work" status on the homepage. -->
       <!-- Shown to visitors who arrive from the "Android beta" button on Mangasteen. -->
@@ -23,10 +23,10 @@
         <div v-if="status === 'sent'" class="card contact-form contact-sent" role="status">
           <p class="contact-sent-h">{{ buttonLabel }}</p>
           <button class="arrow-link" type="button" @click="status = 'idle'">
-            Send message <ArrowRight :size="14" />
+            Send message <ArrowRight />
           </button>
         </div>
-        <form v-else class="card contact-form fade-up" @submit.prevent="onSubmit">
+        <form v-else class="card contact-form" @submit.prevent="onSubmit">
           <label>
             Your name
             <input v-model="form.name" type="text" name="name" autocomplete="name" required placeholder="Ada Lovelace">
@@ -64,13 +64,13 @@
             >
               {{ buttonLabel }} <ArrowRight />
             </button>
-            <a class="form-hint" href="mailto:support@codertheory.dev">// or email me directly →</a>
+            <a class="form-hint" href="mailto:support@codertheory.dev">or email me directly →</a>
           </div>
           <!-- Shown with the email link above, not instead of it: a failed send is when it is needed. -->
-          <p v-if="status === 'error'" class="form-hint form-hint--error" role="alert">// {{ error }}</p>
+          <p v-if="status === 'error'" class="form-hint form-hint--error" role="alert">{{ error }}</p>
         </form>
 
-        <div class="card contact-aside fade-up">
+        <div class="card contact-aside">
           <h2 class="contact-aside-h">Other ways to reach me</h2>
           <p>Email is fastest. Everything else I check, but slower.</p>
           <div class="channels">
@@ -151,6 +151,4 @@
         title: 'Contact',
         description: 'Mentoring questions, project feedback, bug reports, or just hello. Lucas usually replies within a day or two.'
     })
-
-    useScrollReveal()
 </script>
