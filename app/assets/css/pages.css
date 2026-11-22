@@ -29,7 +29,7 @@
 .about-bio p { margin: 0 0 20px; }
 
 .about-meta {
-  font-family: var(--f-display); font-size: 28px; margin-top: var(--s-6); margin-bottom: var(--s-1); font-weight: 600;
+  font-family: var(--f-display); font-size: 28px; margin-top: var(--s-6); margin-bottom: var(--s-1); font-weight: 500;
 }
 .about-meta-sub { color: var(--ink-mute); font-size: 15px; margin: 0; }
 
@@ -50,17 +50,17 @@
   box-shadow: 0 0 0 2px var(--bulb-deep);
 }
 .timeline .when {
-  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px;
   color: var(--ink-mute);
 }
 .timeline .what {
-  font-family: var(--f-display); font-size: 20px; font-weight: 600; margin: 4px 0 4px;
+  font-family: var(--f-display); font-size: 20px; font-weight: 500; margin: 4px 0 4px;
 }
 .timeline .where { font-size: 14px; color: var(--ink-soft); }
 
 .skills {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  margin-top: 18px;
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 20px;
 }
 .skills .chip { background: var(--bg-elev); }
 
@@ -74,13 +74,12 @@
   .about-portrait { max-width: 220px; margin: 0 auto; }
   .about-bio { font-size: 18px; }
   .timeline { padding-left: 24px; }
-  .timeline .when { font-size: 11px; }
 }
 
 /* ============================================================
    Contact
    ============================================================ */
-.contact-lede { max-width: 560px; color: var(--ink-soft); margin: 14px 0 0; font-size: 18px; }
+.contact-lede { max-width: 560px; color: var(--ink-soft); margin: 16px 0 0; font-size: 18px; }
 .contact-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
@@ -92,7 +91,7 @@
   padding: 36px;
 }
 .contact-form label {
-  display: grid; gap: 6px;
+  display: grid; gap: 8px;
   font-size: 14px; font-weight: 600; color: var(--ink-soft);
 }
 .contact-form input,
@@ -100,7 +99,7 @@
 .contact-form select {
   font-family: var(--f-sans);
   font-size: 16px;
-  padding: 14px 16px;
+  padding: 16px 16px;
   border-radius: var(--r-md);
   border: 1.5px solid var(--rule);
   background: var(--bg);
@@ -117,21 +116,21 @@
   outline-offset: 2px;
 }
 .contact-form .form-foot {
-  display: flex; gap: 12px; align-items: center; margin-top: 6px;
+  display: flex; gap: 12px; align-items: center; margin-top: 8px;
 }
 a.form-hint { text-decoration: underline; text-decoration-color: var(--bulb-deep); text-underline-offset: 3px; }
 .contact-form .form-hint {
-  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 12px; color: var(--ink-mute);
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--ink-mute);
 }
 .contact-form .form-hint--error { color: var(--danger, #c0392b); }
 .contact-form .cf-turnstile { min-height: 65px; }
 .contact-form p.form-hint--error { margin: 0; font-size: 13px; }
 .contact-sent { justify-items: start; gap: 20px; }
-.contact-sent-h { font-family: var(--f-display); font-weight: 600; font-size: 32px; letter-spacing: -0.015em; margin: 0; }
+.contact-sent-h { font-family: var(--f-display); font-weight: 500; font-size: 32px; letter-spacing: -0.015em; margin: 0; }
 
 .contact-aside { padding: 36px; }
-.contact-aside .contact-aside-h { font-family: var(--f-display); font-size: 28px; margin: 0 0 12px; font-weight: 600; }
-.contact-aside p { color: var(--ink-soft); margin: 0 0 22px; }
+.contact-aside .contact-aside-h { font-family: var(--f-display); font-size: 28px; margin: 0 0 12px; font-weight: 500; }
+.contact-aside p { color: var(--ink-soft); margin: 0 0 24px; }
 /* One container only: the channels are ruled rows inside the panel, not
    boxes inside a box. */
 .contact-aside .channels { display: grid; border-top: 1px solid var(--rule); }
@@ -146,7 +145,7 @@ a.form-hint { text-decoration: underline; text-decoration-color: var(--bulb-deep
 .contact-aside .ch .ic { display: inline-flex; color: var(--ink-mute); font-size: 18px; flex-shrink: 0; }
 .contact-aside .ch .body { flex: 1; }
 .contact-aside .ch .t { font-weight: 600; font-size: 15px; }
-.contact-aside .ch .s { font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 12px; color: var(--ink-mute); }
+.contact-aside .ch .s { font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--ink-mute); }
 
 @media (max-width: 800px) { .contact-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; } }
 
@@ -154,7 +153,7 @@ a.form-hint { text-decoration: underline; text-decoration-color: var(--bulb-deep
   .contact-grid h1 { font-size: clamp(36px, 10vw, 52px) !important; }
   .contact-form input,
   .contact-form textarea,
-  .contact-form select { font-size: 16px; padding: 12px 14px; } /* 16px prevents iOS zoom */
+  .contact-form select { font-size: 16px; padding: 12px 16px; } /* 16px prevents iOS zoom */
 }
 
 @media (max-width: 700px) and (pointer: coarse) {
@@ -170,25 +169,24 @@ a.form-hint { text-decoration: underline; text-decoration-color: var(--bulb-deep
   margin-bottom: var(--s-6);
 }
 .doc-hero h1 {
-  font-family: var(--f-display); font-weight: 600;
-  font-size: clamp(40px, 5vw, 60px); letter-spacing: -0.02em; margin: 14px 0 0;
+  font-family: var(--f-display); font-weight: 500;
+  font-size: clamp(40px, 5vw, 60px); letter-spacing: -0.02em; margin: 16px 0 0;
 }
 .doc-hero .when {
-  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 12px; color: var(--ink-mute);
-  letter-spacing: 0.1em; text-transform: uppercase; margin-top: 12px; display: block;
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--ink-mute); margin-top: 12px; display: block;
 }
 .doc-toc {
   position: sticky; top: 100px;
-  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 13px;
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 13px;
 }
 .doc-toc h6 {
   font-family: var(--f-sans); font-size: 14px;
   color: var(--ink-mute); margin: 0 0 var(--s-3); font-weight: 600;
 }
 .doc-toc a {
-  display: block; padding: 6px 12px;
+  display: block; padding: 8px 12px;
   color: var(--ink-soft); border-left: 2px solid var(--rule);
-  transition: all 0.15s var(--ease);
+  transition: color 0.15s var(--ease), border-color 0.15s var(--ease), background-color 0.15s var(--ease);
 }
 .doc-toc a:hover, .doc-toc a.active {
   color: var(--ink); border-color: var(--bulb-deep); background: var(--bg-elev);
@@ -225,11 +223,11 @@ a.form-hint { text-decoration: underline; text-decoration-color: var(--bulb-deep
 .notfound .cta { margin-top: 28px; }
 
 /* /now — the current-focus page. Reuses .now-strip from the homepage. */
-.now-lede { color: var(--ink-soft); margin-top: 14px; font-size: 18px; max-width: 560px; }
+.now-lede { color: var(--ink-soft); margin-top: 16px; font-size: 18px; max-width: 560px; }
 .now-lede a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--bulb-deep); text-underline-offset: 3px; }
 .now-body { margin-top: var(--s-6); }
 .now-detail { padding: 0; margin-top: var(--s-6); }
-.now-empty { color: var(--ink-mute); margin-top: 32px; font-style: italic; }
+.now-empty { color: var(--ink-mute); margin-top: 32px; }
 .now-foot { margin-top: 56px; padding-bottom: 96px; }
 .now-foot p { color: var(--ink-mute); font-size: 15px; }
 .now-foot a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--bulb-deep); text-underline-offset: 3px; }
@@ -239,7 +237,7 @@ a.form-hint { text-decoration: underline; text-decoration-color: var(--bulb-deep
   display: flex; align-items: center; gap: 12px;
   margin-top: 28px;
   border-bottom: 2px solid var(--rule);
-  padding-bottom: 10px;
+  padding-bottom: 12px;
 }
 .search-input {
   flex: 1; min-width: 0;
@@ -251,36 +249,35 @@ a.form-hint { text-decoration: underline; text-decoration-color: var(--bulb-deep
 .search-input:focus-visible { outline: none; }
 .search-box:focus-within { border-bottom-color: var(--bulb-deep); }
 .search-count {
-  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 12px; color: var(--ink-mute); white-space: nowrap;
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--ink-mute); white-space: nowrap;
 }
 .search-results { margin-top: 28px; padding-bottom: 96px; }
 .search-hint { color: var(--ink-mute); font-size: 15px; margin: 0 0 24px; }
 .search-hit {
   display: block; text-decoration: none; color: inherit;
-  padding: 18px 0; border-bottom: 1px solid var(--rule);
+  padding: 20px 0; border-bottom: 1px solid var(--rule);
 }
 .search-hit:hover .title { color: var(--bulb-text); }
 .search-hit .kind {
   display: block; font-size: 13px; font-weight: 600; color: var(--ink-mute);
 }
 .search-hit .title {
-  display: block; font-family: var(--f-display); font-size: 22px; font-weight: 600;
+  display: block; font-family: var(--f-display); font-size: 22px; font-weight: 500;
   color: var(--ink); margin-top: 4px;
 }
 .search-hit .sub { display: block; color: var(--ink-soft); margin-top: 4px; font-size: 15px; }
-.search-hit .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.search-hit .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 
 /* /uses — tooling list, driven by content/uses.md. */
-.uses-lede { color: var(--ink-soft); margin-top: 14px; font-size: 18px; max-width: 560px; }
+.uses-lede { color: var(--ink-soft); margin-top: 16px; font-size: 18px; max-width: 560px; }
 .uses-meta {
-  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 12px; color: var(--ink-mute);
-  letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px;
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--ink-mute); margin-top: 12px;
 }
 .uses-body { margin-top: 44px; padding-bottom: 96px; }
 
 /* Shown instead of the Turnstile widget when no site key is configured. */
 .form-unavailable {
-  margin: 0; padding: 14px 16px;
+  margin: 0; padding: 16px 16px;
   border: 1px solid var(--rule); border-radius: var(--r-md);
   background: var(--bg-sunk); color: var(--ink-soft); font-size: 14px;
 }

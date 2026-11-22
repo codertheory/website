@@ -10,7 +10,7 @@
               <NuxtLink class="hero-status" to="/contact?topic=role">
                 <span class="dot dot--active" aria-hidden="true" />
                 Looking for work
-                <ArrowRight :size="13" />
+                <ArrowRight />
               </NuxtLink>
               <a class="hero-github" href="https://github.com/codertheory/"><TechIcon :icon="UI_ICONS.github" /> GitHub</a>
             </div>
@@ -46,7 +46,7 @@
                 <NuxtLink class="showcase-name" :to="showcase.href">{{ showcase.project.title }}</NuxtLink>
                 <span v-if="showcase.live" class="showcase-domain">{{ showcase.domain }}</span>
                 <a v-if="showcase.live" class="prow-ext" :href="showcase.live.href">
-                  <TechIcon :icon="UI_ICONS.play" /> {{ showcase.live.label }} <ExternalIcon :size="12" />
+                  <TechIcon :icon="UI_ICONS.play" /> {{ showcase.live.label }} <ExternalIcon />
                 </a>
               </figcaption>
             </figure>
@@ -56,7 +56,7 @@
               </li>
             </ul>
             <NuxtLink class="arrow-link featured-all" to="/projects">
-              All {{ (projects || []).length }} projects <ArrowRight :size="14" />
+              All {{ (projects || []).length }} projects <ArrowRight />
             </NuxtLink>
           </div>
         </div>
@@ -102,7 +102,7 @@
       <div>
         <h2 class="path-h">The path so far</h2>
         <NuxtLink class="arrow-link" to="/about">
-          About <ArrowRight :size="14" />
+          About <ArrowRight />
         </NuxtLink>
       </div>
       <ol class="path-list">
@@ -133,7 +133,7 @@
               </div>
               <p class="prow-tag">{{ item.sub }}</p>
             </div>
-            <span class="prow-arrow" aria-hidden="true"><ArrowRight :size="18" /></span>
+            <span class="prow-arrow" aria-hidden="true"><ArrowRight /></span>
           </article>
         </li>
       </ul>

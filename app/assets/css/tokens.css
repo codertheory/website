@@ -63,11 +63,13 @@
   --s-7: 64px;
   --s-8: 104px;
 
-  /* Shape: cut paper, not app cards. */
+  /* Shape: tag, control, card, panel. Buttons, inputs, filters and nav links
+     share the control radius. An inner radius is the outer one minus the
+     padding between them, never below --r-sm. */
   --r-sm: 4px;
-  --r-md: 6px;
-  --r-lg: 10px;
-  --r-xl: 14px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
 
   /* Motion */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);

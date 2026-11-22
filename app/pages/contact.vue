@@ -23,7 +23,7 @@
         <div v-if="status === 'sent'" class="card contact-form contact-sent" role="status">
           <p class="contact-sent-h">{{ buttonLabel }}</p>
           <button class="arrow-link" type="button" @click="status = 'idle'">
-            Send message <ArrowRight :size="14" />
+            Send message <ArrowRight />
           </button>
         </div>
         <form v-else class="card contact-form" @submit.prevent="onSubmit">

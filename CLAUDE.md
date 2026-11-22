@@ -51,9 +51,12 @@ Enforced by ESLint (`eslint.config.mjs`) — `npx eslint . --fix` will reorder/r
 ### Visual direction ("bench ledger"), which supersedes the handoff where they differ
 
 - **Type**: Fraunces for display. Recursive (Linear) for body, replacing the handoff's Inter. Monospace is Recursive with the MONO axis: any rule that sets `font-family: var(--f-mono)` must also set `font-variation-settings: var(--fv-mono)`.
-- **Labels**: section labels (`.eyebrow`, side-panel and footer headings) are sentence case in the body face. Uppercase tracked mono is only for status and dates. No `//` code-comment prefixes.
-- **Colour**: amber is for fills, stamps and underlines. Text in amber uses `--bulb-text`. No coloured words inside headlines or body copy; emphasis is italic in ink.
+- **Labels**: sentence case everywhere, including status ("Active") and dates. No uppercase, no wide tracking, no `//` code-comment prefixes. Mono is for metadata and dates, with `tabular-nums`, at 12px minimum.
+- **Colour**: amber is for fills, stamps and underlines. Text in amber uses `--bulb-text`. No coloured words inside headlines or body copy. Emphasis is weight (600 in ink), not italic or colour.
+- **Weights**: Fraunces headings at 500 (600 for the wordmark only). Body 400 to 600. No negative letter spacing below 16px.
 - **Surfaces**: flat paper separated by 1px rules. One level of container at most (no bordered boxes inside a card). Opaque nav, no glass, no radial glows, no gradients standing in for images.
-- **Spacing**: use the `--s-1`…`--s-8` scale in `tokens.css` (4 · 8 · 12 · 16 · 24 · 40 · 64 · 104). No inline `style` for layout.
-- **Motion**: only the bulb animations, the scribble draw-in and the stamp press. No scroll reveals or pulsing dots.
+- **Spacing**: every padding, margin and gap is a multiple of 4 (1 to 3px nudges inside small controls excepted). Prefer the `--s-1`…`--s-8` scale in `tokens.css` (4 · 8 · 12 · 16 · 24 · 40 · 64 · 104). No inline `style` for layout.
+- **Radius**: `--r-sm` 4 for tags and chips, `--r-md` 8 for every control (buttons, inputs, filters, nav links), `--r-lg` 12 for cards, `--r-xl` 16 for panels. Pills are not used; round icon buttons and dots are circles.
+- **Icons**: UI icons (`ArrowRight`, `ExternalIcon`, theme icons) at their default size (16, external 14) with a 1.5 stroke. Do not pass ad hoc `:size` values.
+- **Motion**: only the bulb animations, the scribble draw-in and the stamp press. Hovers are colour, border or surface changes. Name transitioned properties (never `transition: all`) and never animate layout properties like `gap`, width or margins. No scroll reveals, pulsing dots or hover rotations.
 - **Empty states**: plain ruled blocks with the real copy. No fake terminals, skeleton cards or placeholder content.

@@ -4,7 +4,7 @@
     <p class="body">{{ copy.body }}</p>
     <div class="es-ctas">
       <NuxtLink class="btn btn--primary" :to="copy.primary.to">
-        {{ copy.primary.label }} <ArrowRight :size="14" />
+        {{ copy.primary.label }} <ArrowRight />
       </NuxtLink>
       <NuxtLink class="btn btn--ghost" :to="copy.secondary.to">
         {{ copy.secondary.label }}

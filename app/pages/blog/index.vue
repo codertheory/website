@@ -55,7 +55,7 @@
               height="125"
               sizes="200px"
             />
-            <span class="prow-arrow" aria-hidden="true"><ArrowRight :size="18" /></span>
+            <span class="prow-arrow" aria-hidden="true"><ArrowRight /></span>
           </article>
         </li>
       </ul>

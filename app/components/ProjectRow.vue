@@ -21,7 +21,7 @@
           <span v-for="pl in (project.platforms || [])" :key="pl" class="icon-item"><TechIcon :name="pl" />{{ pl }}</span>
         </span>
         <a v-if="external" class="prow-ext" :href="external.href">
-          <TechIcon :icon="linkIcon(external)" /> {{ external.label }} <ExternalIcon :size="12" />
+          <TechIcon :icon="linkIcon(external)" /> {{ external.label }} <ExternalIcon />
         </a>
       </p>
       <p v-if="showStack && project.stack?.length" class="prow-stack icon-list">
@@ -31,7 +31,7 @@
     <div v-if="$slots.figure" class="prow-figure" aria-hidden="true">
       <slot name="figure" />
     </div>
-    <span class="prow-arrow" aria-hidden="true"><ArrowRight :size="compact ? 16 : 18" /></span>
+    <span class="prow-arrow" aria-hidden="true"><ArrowRight /></span>
   </article>
 </template>
 

@@ -17,7 +17,7 @@
         <div class="label">Next up</div>
         <div class="next-title">{{ nextPost.title }}</div>
         <NuxtLink class="arrow-link" :to="`/blog/${slugFromPath(nextPost.path)}`">
-          Read it <ArrowRight :size="14" />
+          Read it <ArrowRight />
         </NuxtLink>
       </div>
     </article>

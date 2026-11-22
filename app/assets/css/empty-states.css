@@ -11,7 +11,7 @@
   max-width: 640px;
 }
 .es-block h2 {
-  font-family: var(--f-display); font-weight: 600;
+  font-family: var(--f-display); font-weight: 500;
   font-size: clamp(28px, 3vw, 38px); letter-spacing: -0.018em; line-height: 1.1;
   margin: 0 0 var(--s-3);
 }
@@ -28,26 +28,26 @@
 }
 .es-v5 .pill {
   display: inline-flex; align-items: center; gap: var(--s-2);
-  padding: 4px 12px 4px 4px; border-radius: 999px;
+  padding: 4px 12px 4px 4px; border-radius: var(--r-md);
   background: var(--bulb-soft); color: var(--bulb-ink);
-  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 12px;
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px;
   border: 1px solid var(--bulb-deep);
   margin-bottom: var(--s-4);
 }
 .es-v5 .pill b { color: var(--ink); }
 [data-theme="dark"] .es-v5 .pill { background: rgba(244,198,105,0.14); color: var(--bulb); }
 .es-v5 .pill .x {
-  width: 22px; height: 22px; border-radius: 999px;
+  width: 24px; height: 24px; border-radius: var(--r-sm);
   background: var(--ink); color: var(--bg);
   display: inline-flex; align-items: center; justify-content: center;
   font-weight: 600; cursor: pointer; border: 0;
 }
 .es-v5 h2 {
-  font-family: var(--f-display); font-weight: 600;
+  font-family: var(--f-display); font-weight: 500;
   font-size: clamp(28px, 3.4vw, 40px); letter-spacing: -0.018em;
   line-height: 1.08; margin: 0 0 var(--s-3);
 }
-.es-v5 h2 em { font-style: italic; }
+.es-v5 h2 em { font-style: normal; text-decoration: underline; text-decoration-color: var(--bulb-deep); text-decoration-thickness: 2px; text-underline-offset: 6px; }
 .es-v5 p.body { color: var(--ink-soft); font-size: 17px; margin: 0 0 var(--s-5); }
 .es-v5 .alt-tags {
   margin-top: var(--s-5);
@@ -55,9 +55,9 @@
   font-size: 14px; color: var(--ink-mute);
 }
 .es-v5 .alt-tags .alt {
-  padding: 6px 12px; border-radius: 999px; border: 1px solid var(--rule);
+  padding: 8px 12px; border-radius: var(--r-md); border: 1px solid var(--rule);
   background: var(--bg-elev); color: var(--ink-soft); cursor: pointer;
-  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-size: 12px;
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px;
   transition: border-color 0.15s var(--ease), color 0.15s var(--ease);
 }
 .es-v5 .alt-tags .alt:hover { border-color: var(--ink); color: var(--ink); }
@@ -72,7 +72,7 @@
   color: var(--ink-soft);
   max-width: 40ch;
 }
-.es-feed em { font-style: italic; color: var(--ink); }
+.es-feed em { font-style: normal; font-weight: 600; color: var(--ink); }
 
 @media (pointer: coarse) {
   .es-v5 .alt-tags .alt { min-height: 44px; }
