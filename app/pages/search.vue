@@ -26,9 +26,12 @@
         description, tech and topic.
       </p>
 
-      <p v-else-if="results.length === 0" class="search-hint">
-        Nothing matches <b>{{ q }}</b>. Try a language, a platform, or a project name.
-      </p>
+      <template v-else-if="results.length === 0">
+        <TerminalPanel label="~ /codertheory" :lines="noHitLines" />
+        <p class="search-hint">
+          Nothing matches <b>{{ q }}</b>. Try a language, a platform, or a project name.
+        </p>
+      </template>
 
       <NuxtLink
         v-for="r in results"
@@ -48,6 +51,8 @@
 </template>
 
 <script setup lang="ts">
+    import type { TerminalLine } from '~/components/TerminalPanel.vue'
+
     type Hit = { href: string, kind: string, title: string, sub: string, tags: string[], haystack: string }
 
     const route = useRoute()
@@ -108,4 +113,9 @@
         description: 'Search projects and writing on codertheory.',
         noindex: true
     })
+
+    // A search that finds nothing prints nothing, then waits at the prompt.
+    const noHitLines = computed<TerminalLine[]>(() => [
+        { kind: 'cmd', text: 'grep -ril', arg: `"${q.value.trim()}" ./projects ./posts` }
+    ])
 </script>

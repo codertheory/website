@@ -1,5 +1,6 @@
 <template>
   <div class="es-v5">
+    <TerminalPanel :label="`~ /codertheory/${kind === 'blog' ? 'blog' : 'projects'}`" :lines="lines" />
     <div class="pill">
       <button class="x" aria-label="Clear filter" @click="clear">×</button>
       <span>{{ copy.pillLabel }}: <b>{{ filter }}</b></span>
@@ -25,6 +26,8 @@
 </template>
 
 <script setup lang="ts">
+    import type { TerminalLine } from './TerminalPanel.vue'
+
     const props = defineProps<{
         filter: string
         filters: readonly string[]
@@ -58,4 +61,9 @@
     )
 
     const clear = () => emit('update:filter', 'All')
+
+    // A search through the folder that finds nothing prints nothing.
+    const lines = computed<TerminalLine[]>(() => [
+        { kind: 'cmd', text: 'grep -ril', arg: `"${props.filter}" ${props.kind === 'blog' ? './posts' : './projects'}` }
+    ])
 </script>

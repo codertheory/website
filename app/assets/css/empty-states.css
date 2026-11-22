@@ -19,10 +19,12 @@
   color: var(--ink-soft); font-size: 17px; margin: 0 0 var(--s-5);
 }
 
-/* The blog's terminal: the dark code-block panel from the prose styles, so it
-   stays dark in both themes. Decorative, so it is hidden from screen readers. */
+/* The terminal that opens every empty state (TerminalPanel.vue): the dark
+   code-block panel from the prose styles, so it stays dark in both themes. */
 .term {
   margin: 0 0 var(--s-6);
+  max-width: 640px;
+  text-align: left;
   background: var(--code-block-bg); color: var(--code-block-ink);
   border: 1px solid var(--code-block-rule);
   border-radius: var(--r-lg);
@@ -44,9 +46,12 @@
 .term .pmpt { color: var(--bulb); }
 .term .arg { color: #B6E3A8; }   /* the string green from the code theme */
 .term .cmt { color: var(--code-block-label); }
-.term .dim { opacity: 0.7; }
-.term-gap { margin-top: var(--s-3); }
-.term-gap-sm { margin-top: var(--s-2); }
+.term-line--out { opacity: 0.7; }
+/* Output hugs its command; a comment or the next command opens a gap. */
+.term-line + .term-line { margin-top: var(--s-2); }
+.term-line--out + .term-line--out { margin-top: 0; }
+.term-line--out + .term-line--cmd,
+.term-line + .term-line--cmt { margin-top: var(--s-3); }
 /* The cursor is the one thing that blinks: it says the prompt is waiting. */
 .term .blink::after {
   content: "▍"; color: var(--bulb); margin-left: 2px;
@@ -104,7 +109,9 @@
 }
 .es-v5 .alt-tags .alt:hover { border-color: var(--ink); color: var(--ink); }
 
-/* The home feed with nothing in it: one line where the rows would be. */
+/* The home feed with nothing in it: the terminal, then one line. */
+.es-block--feed { border-top: 0; padding-top: 0; }
+.es-block--feed .term { margin-bottom: var(--s-4); }
 .es-feed {
   margin: 0;
   padding: var(--s-5) 0;
