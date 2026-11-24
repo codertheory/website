@@ -7,7 +7,7 @@ headlineName: Lucas
 headlineAfter: ", a programmer who'd rather teach you the why."
 portrait:
   src: /portrait.jpg
-  alt: Lucas Lukowski
+  alt: Lucas
 timelineHeading: The path so far
 timelineSub: // roughly chronological
 skillsHeading: What I work in

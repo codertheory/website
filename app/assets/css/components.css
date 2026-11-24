@@ -180,6 +180,10 @@ a.card:hover { border-color: var(--ink); }
 .prow-link::after { content: ""; position: absolute; inset: 0; }
 .prow-link:focus-visible { outline: none; }
 .prow:has(.prow-link:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: var(--r-sm); }
+.prow-aside {
+  display: inline-flex; align-items: baseline; gap: var(--s-4);
+  font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--ink-mute); white-space: nowrap;
+}
 .prow-status {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--ink-mute); white-space: nowrap;
@@ -206,24 +210,17 @@ a.card:hover { border-color: var(--ink); }
   font-family: var(--f-mono); font-variation-settings: var(--fv-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--ink-mute);
   margin: 8px 0 0;
 }
+/* A plain arrow, quiet until the row is pointed at. */
 .prow-arrow {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  background: var(--bg-elev);
-  border: 1.5px solid var(--rule);
+  width: 24px; height: 24px;
   display: flex; align-items: center; justify-content: center;
-  color: var(--ink);
-  transition: transform 0.2s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  color: var(--ink-mute);
+  transition: transform 0.2s var(--ease), color 0.2s var(--ease);
 }
-.prow--compact .prow-arrow { width: 34px; height: 34px; }
-/* The arrow means "open the project page", so it stays quiet while the pointer
-   is on the link that leaves the site. */
 .prow:hover:not(:has(.prow-ext:hover)) .prow-arrow,
 .prow:has(.prow-link:focus-visible) .prow-arrow {
-  background: var(--ink);
-  color: var(--bg);
-  transform: translate(3px, -3px);
-  box-shadow: -3px 3px 0 var(--stamp);
+  color: var(--ink);
+  transform: translateX(4px);
 }
 .prow:hover:not(:has(.prow-ext:hover)) .prow-title { text-decoration: underline; text-decoration-color: var(--bulb-deep); text-decoration-thickness: 2px; text-underline-offset: 4px; }
 
@@ -240,7 +237,7 @@ a.card:hover { border-color: var(--ink); }
   .prow--figure .prow-figure { grid-column: 1 / -1; grid-row: 2; }
   .proj-thumb.prow-thumb { width: 52px; }
   .prow--compact .proj-thumb.prow-thumb { width: 40px; }
-  .prow-arrow, .prow--compact .prow-arrow { width: 30px; height: 30px; }
+  .prow-arrow, .prow--compact .prow-arrow { width: 20px; height: 20px; }
   .prow-title { font-size: 22px; }
   .prow-head { flex-wrap: wrap; gap: 2px 12px; }
 }
@@ -255,7 +252,6 @@ a.card:hover { border-color: var(--ink); }
 .chip .ti { width: 1.05em; height: 1.05em; opacity: 0.85; }
 .btn .ti { width: 1.05em; height: 1.05em; }
 .prose strong .ti { margin-right: 0.35em; }
-.footer-col a .ti { margin-right: 0.4em; }
 
 /* ============================================================
    Section heading + dividers

@@ -5,28 +5,20 @@
       <div class="wrap">
         <div class="hero-grid">
           <div class="hero-copy">
-            <div class="hero-id">
-              <span class="hero-name">Lucas</span>
+            <h1 class="hero-name">Lucas</h1>
+            <p class="hero-id">
               <NuxtLink class="hero-status" to="/contact?topic=role">
                 <span class="dot dot--active" aria-hidden="true" />
                 Looking for work
-                <ArrowRight />
               </NuxtLink>
               <a class="hero-github" href="https://github.com/codertheory/"><TechIcon :icon="UI_ICONS.github" /> GitHub</a>
-            </div>
-            <h1 class="hero-title">
-              Think first. <br>
-              <span class="scribble">Type<ScribbleUnder /></span> second.
-            </h1>
+            </p>
             <p class="hero-sub">
               I'm a self-taught full-stack developer in Edmonton. Over 7 years of Python on the back and Vue or React on the front, and lately a lot of Kotlin and Swift for my own apps.
             </p>
             <div class="hero-ctas">
               <NuxtLink class="btn btn--primary" to="/projects">
                 See what I've built <ArrowRight />
-              </NuxtLink>
-              <NuxtLink class="btn btn--ghost" to="/blog">
-                Read recent posts
               </NuxtLink>
             </div>
           </div>
@@ -52,7 +44,7 @@
             </figure>
             <ul class="prow-list" aria-label="Featured projects">
               <li v-for="p in featured" :key="p.path">
-                <ProjectRow :project="p" compact />
+                <ProjectRow :project="p" compact show-year />
               </li>
             </ul>
             <NuxtLink class="arrow-link featured-all" to="/projects">
@@ -113,16 +105,13 @@
       </ol>
     </section>
 
-    <section class="section wrap more">
-      <h2 class="h-section">
-        What I've been making<br>
-        and thinking about.
-      </h2>
+    <section class="wrap path more">
+      <h2 class="path-h">What I've been making and thinking about</h2>
 
       <HomeFeedEmpty v-if="feedItems.length === 0" />
       <ul v-else class="prow-list">
         <li v-for="item in feedItems" :key="item.href">
-          <ProjectRow v-if="item.project" :project="item.project" heading="h3" />
+          <ProjectRow v-if="item.project" :project="item.project" heading="h3" show-year />
           <article v-else class="prow prow--post">
             <div class="prow-body">
               <div class="prow-head">
