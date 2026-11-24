@@ -11,17 +11,25 @@
   gap: 72px;
   align-items: center;
 }
-/* Who he is, that he is available, where the code is, then one way in. */
-.hero-name {
+/* Who he is, that he is available and where the code is: one quiet line
+   above the one big line, which is his own words. */
+.hero-id { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-5); }
+.hero-who { display: inline-flex; align-items: center; gap: var(--s-3); }
+.hero-memoji {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--rule);
+  object-fit: cover;
+}
+.hero-name { font-weight: 600; font-size: 16px; color: var(--ink); }
+.hero-title {
   font-family: var(--f-display);
-  font-size: clamp(40px, 4.4vw, 60px);
+  font-size: clamp(44px, 5.4vw, 76px);
   font-weight: 500;
   font-variation-settings: "opsz" 144;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
-  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+  margin: var(--s-5) 0 0;
 }
-.hero-id { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-5); margin: var(--s-4) 0 0; }
 .hero-status, .hero-github {
   display: inline-flex; align-items: center; gap: var(--s-2);
   font-size: 15px; font-weight: 500; color: var(--ink-soft);
@@ -33,7 +41,7 @@
   font-size: 18px;
   color: var(--ink-soft);
   max-width: 31em;
-  margin: var(--s-5) 0 32px;
+  margin: 32px 0 32px;
   line-height: 1.55;
   text-wrap: pretty;
 }
@@ -150,7 +158,7 @@
   .hero-grid { gap: 28px; }
   .hero-id { gap: 8px 12px; }
   .showcase-domain { display: none; }
-  .hero-name { font-size: clamp(36px, 10vw, 44px); }
+  .hero-title { font-size: clamp(40px, 11vw, 56px); line-height: 1.0; margin-top: var(--s-4); }
   .hero-sub { font-size: 17px; margin: 20px 0 24px; }
 
   .path-list li { grid-template-columns: 96px minmax(0, 1fr); gap: 16px; }

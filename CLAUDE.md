@@ -46,7 +46,7 @@ Enforced by ESLint (`eslint.config.mjs`) — `npx eslint . --fix` will reorder/r
 - **Signature shadow style**: hard offset "stamp" shadows (`0 6px 0 var(--stamp)`), never with a soft blur stacked under them. The stamp is reserved for the primary button (grows `6px → 8px` on hover) and the one real showcase screenshot; panels and cards carry no shadow.
 - **Hero animations** (gears spinning, 16 halo dots pulsing with 0.16s stagger, dashed loop flow) must be gated behind `prefers-reduced-motion` and an opt-out class `body.no-bulb-anim`.
 - **Drop-shadow gotcha**: `filter: drop-shadow(...)` for the bulb glow goes on the **inner SVG**, not the outer wrapper — wrapping it produces a rectangular halo instead of following the bulb shape.
-- The "scribble underline" is a hand-drawn SVG drawn as a background on `.nav-link.is-active::after` (shell.css), not a text underline. The active nav link is the only place it appears; page headings stay plain (the homepage h1 is his first name since 2026-11-24). `ScribbleUnder.vue` and the `.scribble` rules in base.css are no longer used.
+- The "scribble underline" is hand-drawn, never a CSS text underline. It appears in exactly two places: the active nav link (an SVG background on `.nav-link.is-active::after` in shell.css) and "Type" in the homepage h1 (`ScribbleUnder`). Other page headings stay plain.
 
 ### Visual direction ("bench ledger"), which supersedes the handoff where they differ
 

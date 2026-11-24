@@ -35,7 +35,7 @@ What a neighbouring portfolio could not copy is the project writing: each projec
 - Five projects: Rolesmith, Cresthold, Shiritori, Mangasteen, Iceteabot. Rolesmith replaced the Job Pipeline and InterviewHelper pages in October 2026; their old URLs redirect to it.
 - The homepage first viewport features Mangasteen, Shiritori and Cresthold (confirmed 2026-10-05).
 - The blog route stays in the primary navigation while it has no posts (confirmed 2026-10-05). It left the hero on 2026-11-24: the hero has one action, "See what I've built", because two hero buttons read as a template.
-- The homepage hero is his first name, the availability status and his bio, not a slogan. "Think first. Type second." moved to the footer beside the brand (decided 2026-11-24).
+- The homepage hero opens with a small line (his Memoji, first name, availability status, GitHub), then "Think first. Type second." as the large headline, then his bio and one action (decided 2026-11-24, after a brief text-only hero read as too plain). He may replace the headline with a new line of his own.
 - The site shows his first name only (decided 2026-11-24).
 - Lucas writes all replacement copy himself. Design work may restructure pages and flag copy that needs changing, but does not reword it for him.
 - Undecided: whether a resume PDF or a LinkedIn link will be added later.
