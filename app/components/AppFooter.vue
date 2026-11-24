@@ -1,26 +1,18 @@
 <template>
   <footer class="footer">
     <div class="footer-inner">
-      <div>
-        <NuxtLink to="/" class="brand">
-          <span class="brand-mark"><BrandLogo :size="32" /></span>
-          <b>codertheory</b>
-        </NuxtLink>
-        <p class="footer-tagline">Software, writing, and the ideas behind them. By Lucas.</p>
-      </div>
-      <div v-for="c in cols" :key="c.h" class="footer-col">
-        <h2 class="footer-col-h">{{ c.h }}</h2>
-        <ul>
-          <li v-for="l in c.links" :key="l.label">
-            <NuxtLink v-if="'to' in l" :to="l.to">{{ l.label }}</NuxtLink>
-            <a v-else :href="l.href"><TechIcon v-if="'icon' in l" :icon="l.icon" />{{ l.label }}</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 codertheory.dev</span>
-      <span>built with care, deployed on cloudflare</span>
+      <NuxtLink to="/" class="brand footer-brand">
+        <span class="brand-mark"><BrandLogo :size="24" /></span>
+        <b>codertheory</b>
+      </NuxtLink>
+      <p class="footer-tagline">Think first. Type second.</p>
+      <nav class="footer-links" aria-label="More pages">
+        <template v-for="l in links" :key="l.label">
+          <NuxtLink v-if="'to' in l" :to="l.to">{{ l.label }}</NuxtLink>
+          <a v-else :href="l.href"><TechIcon :icon="l.icon" />{{ l.label }}</a>
+        </template>
+      </nav>
+      <span class="footer-copy">© 2026</span>
     </div>
   </footer>
 </template>
@@ -28,33 +20,13 @@
 <script setup lang="ts">
     import { UI_ICONS } from '~/data/icons'
 
-    const cols = [
-        {
-            h: 'Site',
-            links: [
-                { label: 'Home', to: '/' },
-                { label: 'Projects', to: '/projects' },
-                { label: 'Blog', to: '/blog' },
-                { label: 'About', to: '/about' },
-                { label: 'Now', to: '/now' },
-                { label: 'Uses', to: '/uses' },
-                { label: 'Search', to: '/search' }
-            ]
-        },
-        {
-            h: 'Contact',
-            links: [
-                { label: 'Get in touch', to: '/contact' },
-                { label: 'Latest writing', to: '/blog' },
-                { label: 'GitHub', href: 'https://github.com/codertheory/', icon: UI_ICONS.github }
-            ]
-        },
-        {
-            h: 'Legal',
-            links: [
-                { label: 'Privacy', to: '/privacy' },
-                { label: 'Terms', to: '/terms' }
-            ]
-        }
+    // The header carries the main pages; these are the ones only reachable from here.
+    const links = [
+        { label: 'Now', to: '/now' },
+        { label: 'Uses', to: '/uses' },
+        { label: 'Search', to: '/search' },
+        { label: 'Privacy', to: '/privacy' },
+        { label: 'Terms', to: '/terms' },
+        { label: 'GitHub', href: 'https://github.com/codertheory/', icon: UI_ICONS.github }
     ] as const
 </script>

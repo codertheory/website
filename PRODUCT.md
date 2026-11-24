@@ -15,7 +15,7 @@ Two audiences, weighted equally (confirmed 2026-10-05):
 
 ## Product Purpose
 
-codertheory.dev is Lucas Lukowski's personal site and the umbrella brand his products are released under. It exists to show what he has built and how he thinks about building it. It succeeds when a hiring visitor can tell within one screen who he is and see real work, and when a product user can find the product they came for.
+codertheory.dev is Lucas's personal site and the umbrella brand his products are released under. It exists to show what he has built and how he thinks about building it. It succeeds when a hiring visitor can tell within one screen who he is and see real work, and when a product user can find the product they came for.
 
 ## Positioning
 
@@ -34,7 +34,9 @@ What a neighbouring portfolio could not copy is the project writing: each projec
 - Nuxt 4 with `@nuxt/content`; pages in `app/pages/`, styles in `app/assets/css/`.
 - Five projects: Rolesmith, Cresthold, Shiritori, Mangasteen, Iceteabot. Rolesmith replaced the Job Pipeline and InterviewHelper pages in October 2026; their old URLs redirect to it.
 - The homepage first viewport features Mangasteen, Shiritori and Cresthold (confirmed 2026-10-05).
-- The blog route stays in the primary navigation and the hero while it has no posts (confirmed 2026-10-05).
+- The blog route stays in the primary navigation while it has no posts (confirmed 2026-10-05). It left the hero on 2026-11-24: the hero has one action, "See what I've built", because two hero buttons read as a template.
+- The homepage hero is his first name, the availability status and his bio, not a slogan. "Think first. Type second." moved to the footer beside the brand (decided 2026-11-24).
+- The site shows his first name only (decided 2026-11-24).
 - Lucas writes all replacement copy himself. Design work may restructure pages and flag copy that needs changing, but does not reword it for him.
 - Undecided: whether a resume PDF or a LinkedIn link will be added later.
 

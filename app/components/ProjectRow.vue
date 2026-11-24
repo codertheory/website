@@ -10,9 +10,13 @@
         <component :is="heading" class="prow-title" :style="inTransit ? { viewTransitionName: 'proj-title' } : undefined">
           <NuxtLink class="prow-link" :to="`/projects/${slug}`">{{ project.title }}</NuxtLink>
         </component>
-        <span class="prow-status">
-          <span :class="['dot', `dot--${project.status}`]" aria-hidden="true" />
-          {{ project.statusLabel }}
+        <span v-if="(project.status !== 'active' && project.statusLabel) || (showYear && year)" class="prow-aside">
+          <!-- "Active" is the normal case, so only the exceptions are labelled. -->
+          <span v-if="project.status !== 'active' && project.statusLabel" class="prow-status">
+            <span :class="['dot', `dot--${project.status}`]" aria-hidden="true" />
+            {{ project.statusLabel }}
+          </span>
+          <span v-if="showYear && year" class="prow-year">{{ year }}</span>
         </span>
       </div>
       <p v-if="!compact" class="prow-tag">{{ project.tag }}</p>
@@ -43,6 +47,7 @@
         path?: string
         title: string
         tag: string
+        date?: string
         status?: string
         statusLabel?: string
         platforms?: string[]
@@ -59,8 +64,14 @@
         project: Project
         compact?: boolean
         showStack?: boolean
+        showYear?: boolean
         heading?: 'h2' | 'h3'
-    }>(), { compact: false, showStack: false, heading: 'h2' })
+    }>(), { compact: false, showStack: false, showYear: false, heading: 'h2' })
+
+    const year = computed(() => {
+        const y = new Date(props.project.date || '').getUTCFullYear()
+        return Number.isNaN(y) ? '' : String(y)
+    })
 
     const slug = computed(() => (props.project.path || '').split('/').filter(Boolean).pop() || '')
 
