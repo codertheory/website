@@ -5,7 +5,6 @@
         <span class="brand-mark"><BrandLogo :size="24" /></span>
         <b>codertheory</b>
       </NuxtLink>
-      <p class="footer-tagline">Think first. Type second.</p>
       <nav class="footer-links" aria-label="More pages">
         <template v-for="l in links" :key="l.label">
           <NuxtLink v-if="'to' in l" :to="l.to">{{ l.label }}</NuxtLink>

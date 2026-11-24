@@ -5,14 +5,21 @@
       <div class="wrap">
         <div class="hero-grid">
           <div class="hero-copy">
-            <h1 class="hero-name">Lucas</h1>
-            <p class="hero-id">
+            <div class="hero-id">
+              <span class="hero-who">
+                <NuxtImg class="hero-memoji" src="/portrait.jpg" alt="" width="40" height="40" sizes="80px" />
+                <span class="hero-name">Lucas</span>
+              </span>
               <NuxtLink class="hero-status" to="/contact?topic=role">
                 <span class="dot dot--active" aria-hidden="true" />
                 Looking for work
               </NuxtLink>
               <a class="hero-github" href="https://github.com/codertheory/"><TechIcon :icon="UI_ICONS.github" /> GitHub</a>
-            </p>
+            </div>
+            <h1 class="hero-title">
+              Think first. <br>
+              <span class="scribble">Type<ScribbleUnder /></span> second.
+            </h1>
             <p class="hero-sub">
               I'm a self-taught full-stack developer in Edmonton. Over 7 years of Python on the back and Vue or React on the front, and lately a lot of Kotlin and Swift for my own apps.
             </p>

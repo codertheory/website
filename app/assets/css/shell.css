@@ -83,7 +83,6 @@
 }
 .footer-brand { color: var(--ink); }
 .footer-brand b { font-size: 16px; }
-.footer-tagline { margin: 0; font-family: var(--f-display); font-size: 16px; color: var(--ink-soft); }
 .footer-links { display: flex; flex-wrap: wrap; gap: var(--s-1) 20px; margin-left: auto; }
 .footer-links a { display: inline-flex; align-items: center; gap: var(--s-2); color: var(--ink-soft); }
 .footer-links a:hover { color: var(--bulb-text); }
